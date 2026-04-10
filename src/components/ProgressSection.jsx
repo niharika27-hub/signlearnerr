@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Clock3, Flame, Trophy, Zap } from "lucide-react";
+import StickySectionLabel from "@/components/StickySectionLabel";
 
 const stats = [
   {
@@ -42,7 +43,7 @@ function CircleMeter({ percent }) {
         cx="45"
         cy="45"
         r={radius}
-        className="stroke-white/15"
+        className="stroke-slate-200"
         strokeWidth="8"
         fill="none"
       />
@@ -77,9 +78,10 @@ function CircleMeter({ percent }) {
 
 function ProgressSection() {
   return (
-    <section className="relative px-6 py-20 sm:py-24">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#060a16] via-[#070f1d] to-[#05070d]" />
+    <section data-scene="Momentum Dashboard" className="relative px-6 py-20 sm:py-24">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#f8fbff] via-[#eef5ff] to-[#f4f9ff]" />
       <div className="mx-auto w-full max-w-6xl">
+        <StickySectionLabel label="Momentum Dashboard" />
         <motion.div
           initial={{ opacity: 0, y: 22 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -87,10 +89,10 @@ function ProgressSection() {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <p className="text-xs font-semibold tracking-[0.18em] text-cyan-200/80 uppercase">
+          <p className="text-xs font-semibold tracking-[0.18em] text-cyan-900/80 uppercase">
             Your Momentum
           </p>
-          <h3 className="mt-2 font-display text-3xl leading-tight font-semibold text-white sm:text-4xl">
+          <h3 className="mt-2 font-display text-3xl leading-tight font-semibold text-slate-900 sm:text-4xl">
             Keep the streak alive
           </h3>
         </motion.div>
@@ -110,10 +112,10 @@ function ProgressSection() {
               >
                 <div className="mb-5 flex items-start justify-between">
                   <div>
-                    <p className="text-xs font-semibold tracking-[0.16em] text-blue-100/75 uppercase">
+                    <p className="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">
                       {stat.label}
                     </p>
-                    <p className="mt-2 text-2xl font-semibold text-white">
+                    <p className="mt-2 text-2xl font-semibold text-slate-900">
                       {stat.value}
                     </p>
                   </div>
@@ -126,11 +128,11 @@ function ProgressSection() {
 
                 <div className="flex items-center justify-between">
                   <div className="mr-4 flex-1">
-                    <div className="mb-2 flex justify-between text-xs font-semibold text-blue-100/80">
+                    <div className="mb-2 flex justify-between text-xs font-semibold text-slate-600">
                       <span>Weekly Goal</span>
                       <span>{stat.percent}%</span>
                     </div>
-                    <div className="h-2.5 rounded-full bg-white/10">
+                    <div className="h-2.5 rounded-full bg-slate-200/70">
                       <motion.div
                         className={`h-full rounded-full bg-gradient-to-r ${stat.color}`}
                         initial={{ width: 0 }}
@@ -154,7 +156,7 @@ function ProgressSection() {
           transition={{ duration: 0.7 }}
           className="mt-14"
         >
-          <h4 className="font-display text-2xl font-semibold text-white sm:text-3xl">
+          <h4 className="font-display text-2xl font-semibold text-slate-900 sm:text-3xl">
             Continue learning
           </h4>
           <div className="mt-5 -mx-1 flex snap-x gap-4 overflow-x-auto px-1 pb-2">
@@ -167,18 +169,18 @@ function ProgressSection() {
                 transition={{ duration: 0.5, delay: index * 0.08 }}
                 className="glass min-w-[280px] snap-start rounded-3xl p-5 shadow-soft sm:min-w-[320px]"
               >
-                <p className="text-lg font-semibold text-white">{module.title}</p>
-                <div className="mt-2 inline-flex items-center gap-1.5 text-sm text-blue-100/85">
+                <p className="text-lg font-semibold text-slate-900">{module.title}</p>
+                <div className="mt-2 inline-flex items-center gap-1.5 text-sm text-slate-600">
                   <Clock3 className="h-4 w-4" />
                   {module.eta}
                 </div>
-                <div className="mt-4 h-2.5 rounded-full bg-white/10">
+                <div className="mt-4 h-2.5 rounded-full bg-slate-200/75">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-300 to-emerald-300"
                     style={{ width: `${module.progress}%` }}
                   />
                 </div>
-                <button className="mt-5 inline-flex items-center gap-1 rounded-xl border border-white/35 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20">
+                <button className="mt-5 inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
                   Resume
                   <ArrowRight className="h-4 w-4" />
                 </button>

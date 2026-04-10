@@ -4,12 +4,12 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Sora"', "sans-serif"],
-        body: ['"Manrope"', "sans-serif"],
+        display: ['"Outfit"', "sans-serif"],
+        body: ['"Plus Jakarta Sans"', "sans-serif"],
       },
       boxShadow: {
         glow: "0 0 40px rgba(87, 181, 231, 0.35)",
-        soft: "0 20px 60px rgba(4, 14, 24, 0.45)",
+        soft: "0 24px 60px rgba(71, 107, 168, 0.2)",
       },
       backgroundImage: {
         "aurora-gradient":

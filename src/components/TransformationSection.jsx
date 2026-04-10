@@ -1,10 +1,17 @@
 import { motion } from "framer-motion";
 import { Hand } from "lucide-react";
+import StickySectionLabel from "@/components/StickySectionLabel";
 
 function TransformationSection() {
   return (
-    <section className="relative overflow-hidden px-6 py-24 sm:py-32">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#061022] via-[#0f1f35] to-[#f3f8ff]" />
+    <section
+      data-scene="Transformation"
+      className="relative overflow-hidden px-6 py-24 sm:py-32"
+    >
+      <div className="mx-auto max-w-6xl">
+        <StickySectionLabel label="Transformation" align="right" />
+      </div>
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#f7fbff] via-[#eef6ff] to-[#f5f9ff]" />
       <div className="absolute inset-0 -z-10 bg-aurora-gradient opacity-90" />
 
       <motion.div
@@ -24,7 +31,7 @@ function TransformationSection() {
               changes everything
             </span>
           </h3>
-          <p className="mt-6 max-w-xl text-lg font-medium text-slate-700/85">
+          <p className="mt-6 max-w-xl text-lg font-medium text-slate-600">
             From frustration to confidence. One gesture at a time.
           </p>
         </div>
@@ -37,13 +44,13 @@ function TransformationSection() {
           transition={{ duration: 0.7, delay: 0.2 }}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-cyan-300/30 via-violet-200/20 to-emerald-300/30" />
-          <div className="relative flex aspect-video items-center justify-center rounded-2xl bg-black/30">
+          <div className="relative flex aspect-video items-center justify-center rounded-2xl bg-slate-100/70">
             <motion.video
               autoPlay
               muted
               loop
               playsInline
-              className="absolute inset-0 h-full w-full object-cover opacity-75"
+              className="absolute inset-0 h-full w-full rounded-2xl object-cover opacity-80"
               animate={{ scale: [1, 1.04, 1] }}
               transition={{ duration: 6, repeat: Infinity }}
             >
@@ -52,8 +59,8 @@ function TransformationSection() {
                 type="video/mp4"
               />
             </motion.video>
-            <div className="relative z-10 rounded-full border border-white/40 bg-white/25 p-5 text-white shadow-glow backdrop-blur">
-              <Hand className="h-10 w-10" />
+            <div className="relative z-10 rounded-full border border-white/70 bg-white/70 p-5 text-slate-900 shadow-glow backdrop-blur">
+              <Hand className="h-10 w-10 text-cyan-700" />
             </div>
           </div>
         </motion.div>

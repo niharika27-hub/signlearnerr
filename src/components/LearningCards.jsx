@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { BookText, MessageCircle, Signature } from "lucide-react";
+import StickySectionLabel from "@/components/StickySectionLabel";
 
 const lessons = [
   {
@@ -30,9 +31,10 @@ const lessons = [
 
 function LearningCards() {
   return (
-    <section className="relative px-6 py-24 sm:py-28">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#f3f8ff] via-[#d8e7ff] to-[#091125]" />
+    <section data-scene="Learning Modules" className="relative px-6 py-24 sm:py-28">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#f7fbff] via-[#ecf4ff] to-[#f4f9ff]" />
       <div className="mx-auto w-full max-w-6xl">
+        <StickySectionLabel label="Learning Modules" />
         <motion.div
           className="mb-10 text-slate-900"
           initial={{ opacity: 0, y: 20 }}
