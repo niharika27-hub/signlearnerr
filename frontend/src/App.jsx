@@ -5,8 +5,11 @@ import SignLanguageBackground from "@/components/SignLanguageBackground";
 import { useLenisSmoothScroll } from "@/hooks/useLenisSmoothScroll";
 import HomePage from "@/pages/HomePage";
 import LearnPage from "@/pages/LearnPage";
+import LoginPage from "@/pages/LoginPage";
 import PracticePage from "@/pages/PracticePage";
 import ProgressPage from "@/pages/ProgressPage";
+import ProfilePage from "@/pages/ProfilePage";
+import SignUpPage from "@/pages/SignUpPage";
 
 function App() {
   const { pathname } = useLocation();
@@ -27,6 +30,9 @@ function App() {
           <Route path="/learn" element={<LearnPage />} />
           <Route path="/practice" element={<PracticePage />} />
           <Route path="/progress" element={<ProgressPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

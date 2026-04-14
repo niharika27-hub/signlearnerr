@@ -8,6 +8,12 @@ const navItems = [
   { label: "Learn", to: "/learn" },
   { label: "Practice", to: "/practice" },
   { label: "Progress", to: "/progress" },
+  { label: "Profile", to: "/profile" },
+];
+
+const authItems = [
+  { label: "Log in", to: "/login", style: "subtle" },
+  { label: "Sign up", to: "/signup", style: "primary" },
 ];
 
 function linkClass({ isActive }) {
@@ -29,11 +35,34 @@ function AppNavbar() {
         </NavLink>
 
         <div className="hidden items-center gap-2 md:flex">
-          {navItems.map((item) => (
-            <NavLink key={item.to} to={item.to} className={linkClass}>
-              {item.label}
-            </NavLink>
-          ))}
+          <div className="flex items-center gap-2">
+            {navItems.map((item) => (
+              <NavLink key={item.to} to={item.to} className={linkClass}>
+                {item.label}
+              </NavLink>
+            ))}
+          </div>
+          <div className="ml-2 flex items-center gap-2 border-l border-slate-200 pl-3">
+            {authItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `rounded-xl px-4 py-2 text-sm font-semibold tracking-wide transition ${
+                    item.style === "primary"
+                      ? isActive
+                        ? "bg-indigo-700 text-white"
+                        : "bg-indigo-600 text-white hover:bg-indigo-700"
+                      : isActive
+                        ? "bg-slate-200 text-slate-900"
+                        : "border border-slate-200 bg-white/75 text-slate-700 hover:bg-white hover:text-slate-900"
+                  }`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </div>
         </div>
 
         <button
@@ -64,6 +93,23 @@ function AppNavbar() {
                 {item.label}
               </NavLink>
             ))}
+
+            <div className="mt-2 space-y-2 border-t border-slate-200 pt-3">
+              {authItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={`block rounded-xl px-4 py-3 text-sm font-semibold transition ${
+                    item.style === "primary"
+                      ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                      : "border border-slate-200 bg-white/75 text-slate-700 hover:bg-white hover:text-slate-900"
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

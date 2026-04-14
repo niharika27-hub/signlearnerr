@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { PlayCircle, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Particles } from "@/components/ui/particles";
+import { getStoredProfile } from "@/lib/profileStorage";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -13,6 +15,32 @@ const fadeUp = {
 };
 
 function HeroSection() {
+  const [profileSummary, setProfileSummary] = useState({
+    roleLabel: "Guest learner",
+    modulesCompleted: 3,
+    totalModules: 12,
+  });
+
+  useEffect(() => {
+    const profile = getStoredProfile();
+
+    if (!profile) {
+      return;
+    }
+
+    setProfileSummary({
+      roleLabel: profile.roleLabel ?? "Guest learner",
+      modulesCompleted: profile.completion?.modulesCompleted ?? 0,
+      totalModules: profile.completion?.totalModules ?? 12,
+    });
+  }, []);
+
+  const progressPercent = useMemo(() => {
+    const safeTotal = Math.max(profileSummary.totalModules, 1);
+    const ratio = (profileSummary.modulesCompleted / safeTotal) * 100;
+    return Math.max(0, Math.min(100, Math.round(ratio)));
+  }, [profileSummary.modulesCompleted, profileSummary.totalModules]);
+
   return (
     <section
       data-scene="Opening Hero"
@@ -46,18 +74,43 @@ function HeroSection() {
         <p className="mt-1 text-sm font-semibold">Finger Spelling - 18 min</p>
       </motion.div>
       <motion.div
-        className="pointer-events-none absolute right-6 bottom-16 z-10 hidden rounded-2xl border border-white/65 bg-white/78 px-4 py-3 text-slate-700 shadow-soft backdrop-blur md:block"
+        className="pointer-events-none absolute right-6 bottom-16 z-10 hidden w-[260px] rounded-2xl border border-white/65 bg-white/62 px-4 py-4 text-slate-700 shadow-soft backdrop-blur md:block"
         animate={{ y: [0, 7, 0] }}
         transition={{ duration: 4.8, repeat: Infinity }}
       >
-        <p className="text-[11px] tracking-[0.14em] uppercase text-slate-500">
-          Weekly Streak
-        </p>
-        <p className="mt-1 text-sm font-semibold">12 Days Consistent</p>
+        <div className="flex items-center gap-3">
+          <div className="grid h-10 w-10 place-items-center rounded-full border border-white/80 bg-white/75 text-xl shadow-sm">
+            👤
+          </div>
+          <div>
+            <p className="text-[11px] tracking-[0.14em] uppercase text-slate-500">
+              Profile
+            </p>
+            <p className="text-sm font-semibold text-slate-800">{profileSummary.roleLabel}</p>
+          </div>
+        </div>
+
+        <div className="mt-4 space-y-1.5">
+          <div className="flex items-center justify-between text-[11px] font-semibold tracking-[0.14em] text-slate-500 uppercase">
+            <span>Progress</span>
+            <span>{progressPercent}%</span>
+          </div>
+          <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-200/90">
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-indigo-300 to-violet-300"
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPercent}%` }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            />
+          </div>
+          <p className="text-xs font-medium text-slate-600">
+            {profileSummary.modulesCompleted}/{profileSummary.totalModules} modules complete
+          </p>
+        </div>
       </motion.div>
 
       <motion.div
-        className="glass relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center rounded-4xl border border-white/70 px-6 py-10 text-center shadow-soft md:px-10 md:py-14"
+        className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center rounded-4xl border border-white/55 bg-[linear-gradient(140deg,rgba(255,255,255,0.42),rgba(255,255,255,0.24))] px-6 py-10 text-center shadow-soft backdrop-blur-[10px] md:px-10 md:py-14"
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}

@@ -1,0 +1,12 @@
+[
+  {
+    "id": "4203f33a-c1ed-4ee3-8d98-c53ccaf10f9d",
+    "fullName": "nih",
+    "email": "niharikakhosla20@gmail.com",
+    "passwordHash": "$2a$10$hJBhF/j/hy8n3bD6Ac31yeFpKQKIXN9x7TjwNwiu/YCa2V4OrCwq6",
+    "roleCategory": "support-circle",
+    "role": "teacher",
+    "roleLabel": "Teacher",
+    "joinedAt": "2026-04-14T07:14:29.331Z"
+  }
+]
