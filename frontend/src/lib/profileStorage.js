@@ -1,3 +1,11 @@
+import {
+  getStoredProfileFromCookie,
+  saveStoredProfileToCookie,
+  getSessionFromCookie,
+  saveSessionToCookie,
+  clearAuthCookies,
+} from "./cookieStorage";
+
 export const PROFILE_STORAGE_KEY = "signlearn_profile";
 export const SESSION_STORAGE_KEY = "signlearn_session";
 
@@ -55,6 +63,13 @@ export function getRolesForCategory(category) {
 }
 
 export function getStoredProfile() {
+  // Try to get from cookie first
+  const profileFromCookie = getStoredProfileFromCookie();
+  if (profileFromCookie) {
+    return profileFromCookie;
+  }
+
+  // Fallback to localStorage for backward compatibility
   if (!hasLocalStorage()) {
     return null;
   }
@@ -68,19 +83,34 @@ export function getStoredProfile() {
 }
 
 export function saveStoredProfile(profile) {
-  if (!hasLocalStorage()) {
-    return;
-  }
+  // Save to cookie (primary storage)
+  saveStoredProfileToCookie(profile);
 
-  window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+  // Also save to localStorage for backward compatibility
+  if (hasLocalStorage()) {
+    window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+  }
 }
 
 export function saveSession(session) {
-  if (!hasLocalStorage()) {
-    return;
-  }
+  // Save to cookie (primary storage)
+  saveSessionToCookie(session);
 
-  window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  // Also save to localStorage for backward compatibility
+  if (hasLocalStorage()) {
+    window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  }
+}
+
+export function clearSession() {
+  // Clear cookies
+  clearAuthCookies();
+
+  // Clear localStorage
+  if (hasLocalStorage()) {
+    window.localStorage.removeItem(PROFILE_STORAGE_KEY);
+    window.localStorage.removeItem(SESSION_STORAGE_KEY);
+  }
 }
 
 export function createStarterRecommendations(roleValue) {
