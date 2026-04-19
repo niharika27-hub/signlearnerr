@@ -64,7 +64,7 @@ function SignUpPage() {
 
       saveStoredProfile(profile);
       saveSession({ email: profile.email, createdAt: new Date().toISOString(), role: profile.role });
-      navigate("/login");
+      navigate("/profile");
     } catch (error) {
       setErrorMessage(error.message || "Unable to create account right now.");
     } finally {

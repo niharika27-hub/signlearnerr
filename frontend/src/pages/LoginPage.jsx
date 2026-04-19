@@ -72,9 +72,6 @@ function LoginPage() {
         loggedInAt: new Date().toISOString(),
       });
 
-      // Dispatch custom event to notify navbar of login
-      window.dispatchEvent(new Event("user-logged-in"));
-
       navigate("/profile");
     } catch (error) {
       setErrorMessage(error.message || "Unable to log in right now.");
