@@ -1,7 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Menu, X, LogOut } from "lucide-react";
+import { useEffect, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { logoutUser } from "@/lib/authApi";
+import { getStoredProfile, clearProfile, clearSession } from "@/lib/profileStorage";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -25,7 +27,39 @@ function linkClass({ isActive }) {
 }
 
 function AppNavbar() {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Check profile on mount
+    const profile = getStoredProfile();
+    if (profile) {
+      setUser(profile);
+    }
+
+    // Listen for custom profile update events
+    const handleProfileUpdate = (event) => {
+      setUser(event.detail || null);
+    };
+
+    window.addEventListener("profileUpdated", handleProfileUpdate);
+    return () => {
+      window.removeEventListener("profileUpdated", handleProfileUpdate);
+    };
+  }, []);
+
+  async function handleLogout() {
+    try {
+      await logoutUser();
+      clearProfile();
+      clearSession();
+      setUser(null);
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  }
 
   return (
     <header className="pointer-events-none fixed top-0 right-0 left-0 z-50 p-4">
@@ -43,25 +77,41 @@ function AppNavbar() {
             ))}
           </div>
           <div className="ml-2 flex items-center gap-2 border-l border-slate-200 pl-3">
-            {authItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                  `rounded-xl px-4 py-2 text-sm font-semibold tracking-wide transition ${
-                    item.style === "primary"
-                      ? isActive
-                        ? "bg-indigo-700 text-white"
-                        : "bg-indigo-600 text-white hover:bg-indigo-700"
-                      : isActive
-                        ? "bg-slate-200 text-slate-900"
-                        : "border border-slate-200 bg-white/75 text-slate-700 hover:bg-white hover:text-slate-900"
-                  }`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
+            {user ? (
+              <>
+                <span className="text-sm font-semibold text-slate-700">
+                  👋 {user.fullName}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="rounded-xl bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-600 flex items-center gap-2"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </button>
+              </>
+            ) : (
+              authItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    `rounded-xl px-4 py-2 text-sm font-semibold tracking-wide transition ${
+                      item.style === "primary"
+                        ? isActive
+                          ? "bg-indigo-700 text-white"
+                          : "bg-indigo-600 text-white hover:bg-indigo-700"
+                        : isActive
+                          ? "bg-slate-200 text-slate-900"
+                          : "border border-slate-200 bg-white/75 text-slate-700 hover:bg-white hover:text-slate-900"
+                    }`
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ))
+            )}
           </div>
         </div>
 
@@ -95,20 +145,39 @@ function AppNavbar() {
             ))}
 
             <div className="mt-2 space-y-2 border-t border-slate-200 pt-3">
-              {authItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={`block rounded-xl px-4 py-3 text-sm font-semibold transition ${
-                    item.style === "primary"
-                      ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                      : "border border-slate-200 bg-white/75 text-slate-700 hover:bg-white hover:text-slate-900"
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {item.label}
-                </NavLink>
-              ))}
+              {user ? (
+                <>
+                  <div className="block px-4 py-3 text-sm font-semibold text-slate-700">
+                    👋 {user.fullName}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleLogout();
+                      setIsOpen(false);
+                    }}
+                    className="w-full rounded-xl bg-red-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600 flex items-center justify-center gap-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                authItems.map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className={`block rounded-xl px-4 py-3 text-sm font-semibold transition ${
+                      item.style === "primary"
+                        ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                        : "border border-slate-200 bg-white/75 text-slate-700 hover:bg-white hover:text-slate-900"
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.label}
+                  </NavLink>
+                ))
+              )}
             </div>
           </motion.div>
         )}

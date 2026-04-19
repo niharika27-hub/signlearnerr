@@ -5,10 +5,7 @@ import StickySectionLabel from "@/components/StickySectionLabel";
 import { signupUser } from "@/lib/authApi";
 import {
   ROLE_CATEGORY_OPTIONS,
-  createStarterRecommendations,
   getRolesForCategory,
-  saveSession,
-  saveStoredProfile,
 } from "@/lib/profileStorage";
 
 function SignUpPage() {
@@ -34,37 +31,19 @@ function SignUpPage() {
     setErrorMessage("");
     setIsSubmitting(true);
 
-    const selectedRoleLabel = roleOptions.find((item) => item.value === role)?.label ?? role;
-
     try {
-      const { user } = await signupUser({
+      await signupUser({
         fullName,
         email,
         password,
         roleCategory,
         role,
-        roleLabel: selectedRoleLabel,
+        roleLabel: roleOptions.find((item) => item.value === role)?.label ?? role,
       });
 
-      const profile = {
-        fullName: user?.fullName ?? fullName,
-        email: user?.email ?? email,
-        roleCategory: user?.roleCategory ?? roleCategory,
-        role: user?.role ?? role,
-        roleLabel: user?.roleLabel ?? selectedRoleLabel,
-        joinedAt: user?.joinedAt ?? new Date().toISOString(),
-        goals: ["Build confidence", "Practice 15 mins daily", "Track consistent progress"],
-        recommendations: createStarterRecommendations(user?.role ?? role),
-        completion: {
-          modulesCompleted: 0,
-          totalModules: 12,
-          streakDays: 0,
-        },
-      };
-
-      saveStoredProfile(profile);
-      saveSession({ email: profile.email, createdAt: new Date().toISOString(), role: profile.role });
-      navigate("/profile");
+      // Account created successfully - redirect to login
+      // User will see their name only AFTER they login
+      navigate("/login");
     } catch (error) {
       setErrorMessage(error.message || "Unable to create account right now.");
     } finally {

@@ -73,6 +73,11 @@ export function saveStoredProfile(profile) {
   }
 
   window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+  
+  // Dispatch a custom event so components like AppNavbar can listen
+  window.dispatchEvent(
+    new CustomEvent("profileUpdated", { detail: profile })
+  );
 }
 
 export function saveSession(session) {
@@ -81,6 +86,27 @@ export function saveSession(session) {
   }
 
   window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+}
+
+export function clearProfile() {
+  if (!hasLocalStorage()) {
+    return;
+  }
+
+  window.localStorage.removeItem(PROFILE_STORAGE_KEY);
+  
+  // Dispatch event when profile is cleared
+  window.dispatchEvent(
+    new CustomEvent("profileUpdated", { detail: null })
+  );
+}
+
+export function clearSession() {
+  if (!hasLocalStorage()) {
+    return;
+  }
+
+  window.localStorage.removeItem(SESSION_STORAGE_KEY);
 }
 
 export function createStarterRecommendations(roleValue) {

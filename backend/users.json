@@ -8,5 +8,45 @@
     "role": "teacher",
     "roleLabel": "Teacher",
     "joinedAt": "2026-04-14T07:14:29.331Z"
+  },
+  {
+    "id": "94425dd3-7213-40b8-81c2-74c945e3f341",
+    "fullName": "Muskan",
+    "email": "muskan123@gmail.com",
+    "passwordHash": "$2a$10$d.q.7HhOnJgAPliCUn/Uie/DiWQtmXWVqKgQQC18PDLDpODClQK2C",
+    "roleCategory": "accessibility-needs",
+    "role": "speech-support-learner",
+    "roleLabel": "Speech support learner",
+    "joinedAt": "2026-04-16T03:42:17.046Z"
+  },
+  {
+    "id": "05d71bc4-d151-444f-ae8d-cdcb8d548761",
+    "fullName": "muskan",
+    "email": "muskan1@gmail.com",
+    "passwordHash": "$2a$10$GGWUrf23kpKvRHFbOVjUReLpJvdKZCvXnD37hhMk24WAk92nEJEEe",
+    "roleCategory": "accessibility-needs",
+    "role": "hard-of-hearing-learner",
+    "roleLabel": "Hard of hearing learner",
+    "joinedAt": "2026-04-16T05:12:16.592Z"
+  },
+  {
+    "id": "49d59b03-ae3a-4ccf-813f-22d5aa3b2610",
+    "fullName": "muskan",
+    "email": "muskan@gmail.com",
+    "passwordHash": "$2a$10$inHRcARw1dDHlBGO4XMDL.s11i4t//vCdevEcmTT76.MHC5wuVVCC",
+    "roleCategory": "accessibility-needs",
+    "role": "hard-of-hearing-learner",
+    "roleLabel": "Hard of hearing learner",
+    "joinedAt": "2026-04-19T17:08:00.587Z"
+  },
+  {
+    "id": "7c7a2b73-1eee-4f3f-a17d-16dde6a4443b",
+    "fullName": "musiiee",
+    "email": "muskan1234@gmail.com",
+    "passwordHash": "$2a$10$.Fpcx6Z0MMDX/uhunT5iReYLnLWmDTiKoBkZ1Dmdy1LJ/O/JjWNlC",
+    "roleCategory": "support-circle",
+    "role": "family-member",
+    "roleLabel": "Family member",
+    "joinedAt": "2026-04-19T17:13:37.575Z"
   }
 ]
