@@ -1,35 +1,38 @@
 import { motion } from "framer-motion";
-import { BookText, MessageCircle, Signature } from "lucide-react";
+import { BookText, MessageCircle, Signature, Zap, Eye, Users, Briefcase, Globe, Play, Award, Heart, Accessibility } from "lucide-react";
 import StickySectionLabel from "@/components/StickySectionLabel";
 
-const lessons = [
-  {
-    icon: Signature,
-    title: "A-Z Alphabets",
-    description: "Master finger spelling with guided gesture loops.",
-    progress: 36,
-    color:
-      "from-cyan-300/45 via-blue-300/25 to-transparent group-hover:from-cyan-300/55",
-  },
-  {
-    icon: BookText,
-    title: "Basic Words",
-    description: "Learn everyday essentials for real conversations.",
-    progress: 22,
-    color:
-      "from-violet-300/45 via-indigo-300/25 to-transparent group-hover:from-violet-300/55",
-  },
-  {
-    icon: MessageCircle,
-    title: "Daily Sentences",
-    description: "Build complete thoughts with practical sentence drills.",
-    progress: 14,
-    color:
-      "from-emerald-300/45 via-teal-300/25 to-transparent group-hover:from-emerald-300/55",
-  },
-];
+// Map icon names to Lucide components
+const iconMap = {
+  Signature,
+  BookText,
+  MessageCircle,
+  Zap,
+  Eye,
+  Users,
+  Briefcase,
+  Globe,
+  Play,
+  Award,
+  Heart,
+  Accessibility,
+};
 
-function LearningCards() {
+// Map categories to gradient colors
+const gradientMap = {
+  alphabet: "from-cyan-300/45 via-blue-300/25 to-transparent group-hover:from-cyan-300/55",
+  vocabulary: "from-violet-300/45 via-indigo-300/25 to-transparent group-hover:from-violet-300/55",
+  sentences: "from-emerald-300/45 via-teal-300/25 to-transparent group-hover:from-emerald-300/55",
+  conversation: "from-pink-300/45 via-rose-300/25 to-transparent group-hover:from-pink-300/55",
+};
+
+function LearningCards({ modules = [], loading = false, error = null }) {
+  // Fallback gradient
+  const getGradient = (category) => gradientMap[category] || gradientMap.vocabulary;
+
+  // Get icon component or fallback
+  const getIcon = (iconName) => iconMap[iconName] || BookText;
+
   return (
     <section data-scene="Learning Modules" className="relative px-6 py-24 sm:py-28">
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#f7fbff] via-[#ecf4ff] to-[#f4f9ff]" />
@@ -50,53 +53,85 @@ function LearningCards() {
           </h3>
         </motion.div>
 
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {lessons.map((lesson, index) => {
-            const Icon = lesson.icon;
-            return (
-              <motion.article
-                key={lesson.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, delay: index * 0.08 }}
-                whileHover={{ scale: 1.02, y: -4 }}
-                className="group glass relative overflow-hidden rounded-3xl p-6 shadow-soft"
-              >
-                <div
-                  className={`pointer-events-none absolute inset-0 bg-gradient-to-br transition duration-300 ${lesson.color}`}
-                />
-                <div className="relative">
-                  <div className="mb-6 inline-flex rounded-2xl border border-white/35 bg-white/20 p-3 text-slate-900">
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <h4 className="font-display text-2xl font-semibold text-slate-950">
-                    {lesson.title}
-                  </h4>
-                  <p className="mt-3 text-sm leading-relaxed font-medium text-slate-800/85">
-                    {lesson.description}
-                  </p>
+        {error && (
+          <motion.div
+            className="mb-6 rounded-xl bg-red-50 border border-red-200 p-4 text-red-700"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            {error}
+          </motion.div>
+        )}
 
-                  <div className="mt-7">
-                    <div className="mb-2 flex items-center justify-between text-xs font-semibold tracking-wide text-slate-700/80 uppercase">
-                      <span>Progress</span>
-                      <span>{lesson.progress}%</span>
+        {loading ? (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <motion.div
+                key={i}
+                className="glass relative overflow-hidden rounded-3xl p-6 shadow-soft bg-slate-100/40 animate-pulse"
+                style={{ height: "280px" }}
+              />
+            ))}
+          </div>
+        ) : modules.length === 0 ? (
+          <motion.div
+            className="rounded-xl bg-slate-50 border border-slate-200 p-8 text-center text-slate-600"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <p className="text-lg font-semibold">No modules available yet</p>
+            <p className="text-sm mt-2">Check back soon for new learning content!</p>
+          </motion.div>
+        ) : (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {modules.map((module, index) => {
+              const Icon = getIcon(module.icon);
+              const gradient = getGradient(module.category);
+
+              return (
+                <motion.article
+                  key={module.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, delay: index * 0.08 }}
+                  whileHover={{ scale: 1.02, y: -4 }}
+                  className="group glass relative overflow-hidden rounded-3xl p-6 shadow-soft cursor-pointer transition-all"
+                >
+                  <div
+                    className={`pointer-events-none absolute inset-0 bg-gradient-to-br transition duration-300 ${gradient}`}
+                  />
+                  <div className="relative">
+                    <div className="mb-6 inline-flex rounded-2xl border border-white/35 bg-white/20 p-3 text-slate-900">
+                      <Icon className="h-6 w-6" />
                     </div>
-                    <div className="h-2.5 overflow-hidden rounded-full bg-slate-300/55">
-                      <motion.div
-                        className="h-full rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-violet-500"
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${lesson.progress}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.2 + index * 0.1 }}
-                      />
+                    <h4 className="font-display text-2xl font-semibold text-slate-950">
+                      {module.title}
+                    </h4>
+                    <p className="mt-3 text-sm leading-relaxed font-medium text-slate-800/85">
+                      {module.description}
+                    </p>
+
+                    <div className="mt-7">
+                      <div className="mb-2 flex items-center justify-between text-xs font-semibold tracking-wide text-slate-700/80 uppercase">
+                        <span>{module.lessonsCount} Lessons</span>
+                      </div>
+                      <div className="h-2.5 overflow-hidden rounded-full bg-slate-300/55">
+                        <motion.div
+                          className="h-full rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-violet-500"
+                          initial={{ width: 0 }}
+                          whileInView={{ width: "0%" }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.8, delay: 0.2 + index * 0.1 }}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.article>
-            );
-          })}
-        </div>
+                </motion.article>
+              );
+            })}
+          </div>
+        )}
       </div>
     </section>
   );

@@ -1,8 +1,33 @@
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import LearningCards from "@/components/LearningCards";
 import StickySectionLabel from "@/components/StickySectionLabel";
+import { getModules } from "@/lib/authApi";
 
 function LearnPage() {
+  const [modules, setModules] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchModules = async () => {
+      try {
+        setLoading(true);
+        const data = await getModules();
+        setModules(data.modules || []);
+        setError(null);
+      } catch (err) {
+        console.error("Failed to fetch modules:", err);
+        setError("Failed to load learning modules");
+        setModules([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchModules();
+  }, []);
+
   return (
     <div className="pt-20">
       <motion.section
@@ -26,7 +51,7 @@ function LearnPage() {
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
             <span className="rounded-full border border-slate-200 bg-white/75 px-3 py-1.5 text-xs font-semibold text-slate-600">
-              3 active tracks
+              {modules.length > 0 ? `${modules.length} active tracks` : "Loading tracks..."}
             </span>
             <span className="rounded-full border border-slate-200 bg-white/75 px-3 py-1.5 text-xs font-semibold text-slate-600">
               Visual drills
@@ -37,7 +62,7 @@ function LearnPage() {
           </div>
         </div>
       </motion.section>
-      <LearningCards />
+      <LearningCards modules={modules} loading={loading} error={error} />
     </div>
   );
 }

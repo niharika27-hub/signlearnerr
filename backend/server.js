@@ -1,7 +1,18 @@
+import "dotenv/config";
+import path from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// NOW import other modules that depend on environment variables
 import cors from "cors";
 import express from "express";
 import cookieParser from "cookie-parser";
+import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import learningRoutes from "./routes/learningRoutes.js";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 5000;
@@ -14,11 +25,6 @@ const PORT = Number(process.env.PORT) || 5000;
 app.use(cors({
 	origin: [
 		"http://localhost:5173",
-		"http://localhost:5174",
-		"http://localhost:3000",
-		"http://127.0.0.1:5173",
-		"http://127.0.0.1:5174",
-		"http://127.0.0.1:3000",
 	],
 	credentials: true,
 	methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -49,10 +55,25 @@ app.get("/api/health", (_request, response) => {
 // Auth routes
 app.use("/api/auth", authRoutes);
 
+// Learning routes
+app.use("/api/learning", learningRoutes);
+
 /**
  * Start Server
  */
 
-app.listen(PORT, () => {
-	console.log(`✅ SignLearn backend running on http://localhost:${PORT}`);
-});
+async function startServer() {
+	try {
+		// Connect to MongoDB
+		await connectDB();
+
+		app.listen(PORT, () => {
+			console.log(`✅ SignLearn backend running on http://localhost:${PORT}`);
+		});
+	} catch (error) {
+		console.error("Failed to start server:", error);
+		process.exit(1);
+	}
+}
+
+startServer();

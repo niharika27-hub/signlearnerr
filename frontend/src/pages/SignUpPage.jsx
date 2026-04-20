@@ -2,14 +2,18 @@ import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import StickySectionLabel from "@/components/StickySectionLabel";
-import { signupUser } from "@/lib/authApi";
+import { useAuth } from "@/lib/AuthContext";
 import {
   ROLE_CATEGORY_OPTIONS,
   getRolesForCategory,
+  saveStoredProfile,
+  getStoredProfile,
 } from "@/lib/profileStorage";
 
 function SignUpPage() {
   const navigate = useNavigate();
+  const { signup } = useAuth();
+  
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +36,7 @@ function SignUpPage() {
     setIsSubmitting(true);
 
     try {
-      await signupUser({
+      const result = await signup({
         fullName,
         email,
         password,
@@ -41,9 +45,34 @@ function SignUpPage() {
         roleLabel: roleOptions.find((item) => item.value === role)?.label ?? role,
       });
 
-      // Account created successfully - redirect to login
-      // User will see their name only AFTER they login
-      navigate("/login");
+      if (!result.success) {
+        setErrorMessage(result.error || "Unable to create account right now.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Account created and user logged in
+      const existingProfile = getStoredProfile();
+      const user = result.data.user;
+      
+      const normalizedProfile = {
+        fullName: user?.fullName ?? fullName,
+        email: user?.email ?? email,
+        roleCategory: user?.roleCategory ?? roleCategory,
+        role: user?.role ?? role,
+        roleLabel: user?.roleLabel ?? roleOptions.find((item) => item.value === role)?.label ?? role,
+        joinedAt: user?.joinedAt ?? new Date().toISOString(),
+        goals: ["Start module 1", "Practice consistently", "Track weekly improvement"],
+        recommendations: existingProfile?.recommendations ?? [],
+        completion: {
+          modulesCompleted: 0,
+          totalModules: 12,
+          streakDays: 0,
+        },
+      };
+
+      saveStoredProfile(normalizedProfile);
+      navigate("/profile");
     } catch (error) {
       setErrorMessage(error.message || "Unable to create account right now.");
     } finally {
@@ -76,6 +105,15 @@ function SignUpPage() {
             className="mt-8 grid gap-6 rounded-3xl border border-slate-200/80 bg-white/75 p-6 shadow-[0_20px_70px_-36px_rgba(15,23,42,0.55)] backdrop-blur sm:p-8"
             onSubmit={handleSubmit}
           >
+            <div className="relative py-2">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-200" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white/75 px-2 text-slate-500">Create your account</span>
+              </div>
+            </div>
+
             <div className="grid gap-4 md:grid-cols-2">
               <label className="space-y-2 text-sm font-semibold text-slate-700">
                 Full name

@@ -1,8 +1,39 @@
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import ProgressSection from "@/components/ProgressSection";
 import StickySectionLabel from "@/components/StickySectionLabel";
+import { getUserProgress } from "@/lib/authApi";
 
 function ProgressPage() {
+  const [progress, setProgress] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        setLoading(true);
+        const data = await getUserProgress();
+        setProgress(data.progress || {});
+        setError(null);
+      } catch (err) {
+        console.error("Failed to fetch progress:", err);
+        setError("Failed to load progress data");
+        setProgress(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProgress();
+  }, []);
+
+  // Use real data or fallback defaults
+  const streak = progress?.streak ?? 0;
+  const xpThisWeek = progress?.xpThisWeek ?? 0;
+  const modulesCompleted = progress?.modulesCompleted ?? 0;
+  const totalModules = progress?.totalModules ?? 0;
+
   return (
     <div className="pt-20">
       <motion.section
@@ -25,18 +56,18 @@ function ProgressPage() {
           </p>
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-sm font-semibold text-slate-700">
-              Current streak: 12 days
+              Current streak: {streak} days
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-sm font-semibold text-slate-700">
-              XP this week: +420
+              XP this week: +{xpThisWeek}
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-sm font-semibold text-slate-700">
-              Completed modules: 7/12
+              Completed modules: {modulesCompleted}/{totalModules}
             </div>
           </div>
         </div>
       </motion.section>
-      <ProgressSection />
+      <ProgressSection progress={progress} loading={loading} error={error} />
     </div>
   );
 }

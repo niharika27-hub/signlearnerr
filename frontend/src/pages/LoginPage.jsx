@@ -2,18 +2,19 @@ import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import StickySectionLabel from "@/components/StickySectionLabel";
-import { loginUser } from "@/lib/authApi";
+import { useAuth } from "@/lib/AuthContext";
 import {
   ROLE_CATEGORY_OPTIONS,
   ROLE_OPTIONS_BY_CATEGORY,
   createStarterRecommendations,
   getStoredProfile,
-  saveSession,
   saveStoredProfile,
 } from "@/lib/profileStorage";
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { login } = useAuth();
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
@@ -40,12 +41,21 @@ function LoginPage() {
     setIsSubmitting(true);
 
     try {
+      const result = await login(email, password);
+      
+      if (!result.success) {
+        setErrorMessage(result.error || "Unable to log in right now.");
+        setIsSubmitting(false);
+        return;
+      }
+
       const existingProfile = getStoredProfile();
-      const { user } = await loginUser({ email, password });
+      const user = result.data.user;
 
       const fallbackRole = selectedRole;
       const fallbackCategory = inferCategoryFromRole(fallbackRole);
       const fallbackRoleLabel = roleOptions.find((item) => item.value === fallbackRole)?.label ?? fallbackRole;
+      
       const normalizedProfile = {
         fullName: user?.fullName ?? existingProfile?.fullName ?? email.split("@")[0] ?? "SignLearn member",
         email: user?.email ?? email,
@@ -64,14 +74,6 @@ function LoginPage() {
       };
 
       saveStoredProfile(normalizedProfile);
-
-      saveSession({
-        email: normalizedProfile.email,
-        role: normalizedProfile.role,
-        rememberMe,
-        loggedInAt: new Date().toISOString(),
-      });
-
       navigate("/profile");
     } catch (error) {
       setErrorMessage(error.message || "Unable to log in right now.");
@@ -107,6 +109,15 @@ function LoginPage() {
               onSubmit={handleSubmit}
             >
               <div className="grid gap-4">
+                <div className="relative py-2">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-200" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-white/75 px-2 text-slate-500">Sign in with your account</span>
+                  </div>
+                </div>
+
                 <label className="space-y-2 text-sm font-semibold text-slate-700">
                   Email
                   <input

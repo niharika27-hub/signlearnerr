@@ -8,32 +8,24 @@ import {
 	changePassword,
 	deleteAccount,
 } from "../controllers/authController.js";
+import { authMiddleware, generateToken } from "../middleware/authMiddleware.js";
+import { sanitizeUser } from "../services/userService.js";
+import {
+	validateSignup,
+	validateLogin,
+	validatePasswordChange,
+	validateProfileUpdate,
+	handleValidationErrors,
+} from "../middleware/validation.js";
 
 const authRoutes = Router();
 
-/**
- * Authentication Routes
- */
-
-// Get current user profile
-authRoutes.get("/me", getProfile);
-
-// User signup
-authRoutes.post("/signup", signup);
-
-// User login
-authRoutes.post("/login", login);
-
-// User logout
-authRoutes.post("/logout", logout);
-
-// Update user profile
-authRoutes.patch("/update", updateProfile);
-
-// Change password
-authRoutes.patch("/change-password", changePassword);
-
-// Delete account
-authRoutes.delete("/delete", deleteAccount);
-
+// JWT-based routes (Email/Password)
+authRoutes.get("/me", authMiddleware, getProfile);
+authRoutes.post("/signup", validateSignup, handleValidationErrors, signup);
+authRoutes.post("/login", validateLogin, handleValidationErrors, login);
+authRoutes.post("/logout", authMiddleware, logout);
+authRoutes.patch("/update", authMiddleware, validateProfileUpdate, handleValidationErrors, updateProfile);
+authRoutes.patch("/change-password", authMiddleware, validatePasswordChange, handleValidationErrors, changePassword);
+authRoutes.delete("/delete", authMiddleware, deleteAccount);
 export default authRoutes;

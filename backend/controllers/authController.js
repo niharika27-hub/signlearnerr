@@ -1,31 +1,26 @@
 import bcrypt from "bcryptjs";
 import { randomUUID } from "node:crypto";
-import { sanitizeUser, readUsers, writeUsers } from "../utils/fileStorage.js";
-
-/**
- * GET /api/auth/me
- * Get current user profile from cookie
- */
+import { sanitizeUser, getUserByEmail, createUser, updateUser, deleteUser, emailExists } from "../services/userService.js";
+import { generateToken } from "../middleware/authMiddleware.js";
 export async function getProfile(request, response) {
 	try {
-		const profileCookie = request.cookies?.signlearn_profile;
-
-		if (!profileCookie) {
+		// JWT middleware already validated token and set request.user
+		if (!request.user) {
 			return response.status(401).json({ message: "Not authenticated." });
 		}
 
-		const user = JSON.parse(profileCookie);
-		return response.json({ user });
+		const user = await getUserByEmail(request.user.email);
+		if (!user) {
+			return response.status(404).json({ message: "User not found." });
+		}
+
+	return response.json(sanitizeUser(user));
 	} catch (error) {
 		console.error("Get user error:", error);
 		return response.status(401).json({ message: "Invalid session." });
 	}
 }
 
-/**
- * POST /api/auth/signup
- * Create new user account
- */
 export async function signup(request, response) {
 	try {
 		const { fullName, email, password, roleCategory, role, roleLabel } = request.body ?? {};
@@ -43,8 +38,7 @@ export async function signup(request, response) {
 		}
 
 		const normalizedEmail = String(email).trim().toLowerCase();
-		const users = await readUsers();
-		const existingUser = users.find((user) => user.email === normalizedEmail);
+		const existingUser = await emailExists(normalizedEmail);
 
 		if (existingUser) {
 			return response.status(409).json({
@@ -53,7 +47,7 @@ export async function signup(request, response) {
 		}
 
 		const hashedPassword = await bcrypt.hash(password, 10);
-		const newUser = {
+		const newUser = await createUser({
 			id: randomUUID(),
 			fullName: String(fullName).trim(),
 			email: normalizedEmail,
@@ -61,31 +55,24 @@ export async function signup(request, response) {
 			roleCategory,
 			role,
 			roleLabel: roleLabel || role,
-			joinedAt: new Date().toISOString(),
-		};
-
-		users.push(newUser);
-		await writeUsers(users);
-
-		// Set user profile cookie
-		const userProfile = sanitizeUser(newUser);
-		response.cookie("signlearn_profile", JSON.stringify(userProfile), {
-			maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-			httpOnly: false,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "Lax",
 		});
 
-		// Set session cookie
-		response.cookie("signlearn_session", JSON.stringify({ email: newUser.email, createdAt: new Date().toISOString() }), {
-			maxAge: 30 * 24 * 60 * 60 * 1000,
-			httpOnly: false,
+		// Generate JWT token
+		const token = generateToken(newUser.id, newUser.email);
+		const userProfile = sanitizeUser(newUser);
+
+		// Set JWT in httpOnly cookie
+		response.cookie("authToken", token, {
+			maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: "Lax",
+			path: "/",
 		});
 
 		return response.status(201).json({
 			message: "Account created successfully.",
+			token, // Also return token for frontend storage
 			user: userProfile,
 		});
 	} catch (error) {
@@ -93,11 +80,6 @@ export async function signup(request, response) {
 		return response.status(500).json({ message: "Something went wrong while creating your account." });
 	}
 }
-
-/**
- * POST /api/auth/login
- * Login user with email and password
- */
 export async function login(request, response) {
 	try {
 		const { email, password } = request.body ?? {};
@@ -109,8 +91,7 @@ export async function login(request, response) {
 		}
 
 		const normalizedEmail = String(email).trim().toLowerCase();
-		const users = await readUsers();
-		const user = users.find((item) => item.email === normalizedEmail);
+		const user = await getUserByEmail(normalizedEmail);
 
 		if (!user) {
 			return response.status(401).json({ message: "Invalid email or password." });
@@ -122,25 +103,25 @@ export async function login(request, response) {
 			return response.status(401).json({ message: "Invalid email or password." });
 		}
 
-		// Set user profile cookie
-		const userProfile = sanitizeUser(user);
-		response.cookie("signlearn_profile", JSON.stringify(userProfile), {
-			maxAge: 30 * 24 * 60 * 60 * 1000,
-			httpOnly: false,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "Lax",
-		});
+		// Update last login
+		await updateUser(user.id, { lastLogin: new Date() });
 
-		// Set session cookie
-		response.cookie("signlearn_session", JSON.stringify({ email: user.email, loggedInAt: new Date().toISOString() }), {
-			maxAge: 30 * 24 * 60 * 60 * 1000,
-			httpOnly: false,
+		// Generate JWT token
+		const token = generateToken(user.id, user.email);
+		const userProfile = sanitizeUser(user);
+
+		// Set JWT in httpOnly cookie
+		response.cookie("authToken", token, {
+			maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: "Lax",
+			path: "/",
 		});
 
 		return response.json({
 			message: "Login successful.",
+			token, // Also return token for frontend storage
 			user: userProfile,
 		});
 	} catch (error) {
@@ -148,59 +129,42 @@ export async function login(request, response) {
 		return response.status(500).json({ message: "Something went wrong while logging in." });
 	}
 }
-
-/**
- * POST /api/auth/logout
- * Clear user session cookies
- */
 export async function logout(request, response) {
-	response.clearCookie("signlearn_profile");
-	response.clearCookie("signlearn_session");
+	response.clearCookie("authToken", {
+		path: "/",
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+		sameSite: "Lax",
+	});
 	return response.json({ message: "Logged out successfully." });
 }
-
-/**
- * PATCH /api/auth/update
- * Update user profile (fullName, role, etc.)
- */
 export async function updateProfile(request, response) {
 	try {
 		const { fullName, roleCategory, role, roleLabel } = request.body ?? {};
-		const profileCookie = request.cookies?.signlearn_profile;
 
-		if (!profileCookie) {
+		if (!request.user) {
 			return response.status(401).json({ message: "Not authenticated." });
 		}
 
-		const currentProfile = JSON.parse(profileCookie);
-		const users = await readUsers();
-		const userIndex = users.findIndex((item) => item.email === currentProfile.email);
+		const user = await getUserByEmail(request.user.email);
 
-		if (userIndex === -1) {
+		if (!user) {
 			return response.status(404).json({ message: "User not found." });
 		}
 
-		// Update user fields
-		if (fullName) users[userIndex].fullName = String(fullName).trim();
-		if (roleCategory) users[userIndex].roleCategory = roleCategory;
-		if (role) users[userIndex].role = role;
-		if (roleLabel) users[userIndex].roleLabel = roleLabel;
+		// Build update object
+		const updateData = {};
+		if (fullName) updateData.fullName = String(fullName).trim();
+		if (roleCategory) updateData.roleCategory = roleCategory;
+		if (role) updateData.role = role;
+		if (roleLabel) updateData.roleLabel = roleLabel;
 
-		await writeUsers(users);
-
-		const updatedUser = sanitizeUser(users[userIndex]);
-
-		// Update cookie with new profile
-		response.cookie("signlearn_profile", JSON.stringify(updatedUser), {
-			maxAge: 30 * 24 * 60 * 60 * 1000,
-			httpOnly: false,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "Lax",
-		});
+		const updatedUser = await updateUser(user.id, updateData);
+		const updatedProfile = sanitizeUser(updatedUser);
 
 		return response.json({
 			message: "User updated successfully.",
-			user: updatedUser,
+			user: updatedProfile,
 		});
 	} catch (error) {
 		console.error("Update error:", error);
@@ -215,9 +179,8 @@ export async function updateProfile(request, response) {
 export async function changePassword(request, response) {
 	try {
 		const { currentPassword, newPassword } = request.body ?? {};
-		const profileCookie = request.cookies?.signlearn_profile;
 
-		if (!profileCookie) {
+		if (!request.user) {
 			return response.status(401).json({ message: "Not authenticated." });
 		}
 
@@ -239,15 +202,12 @@ export async function changePassword(request, response) {
 			});
 		}
 
-		const currentProfile = JSON.parse(profileCookie);
-		const users = await readUsers();
-		const userIndex = users.findIndex((item) => item.email === currentProfile.email);
+		const user = await getUserByEmail(request.user.email);
 
-		if (userIndex === -1) {
+		if (!user) {
 			return response.status(404).json({ message: "User not found." });
 		}
 
-		const user = users[userIndex];
 		const validPassword = await bcrypt.compare(currentPassword, user.passwordHash);
 
 		if (!validPassword) {
@@ -256,8 +216,7 @@ export async function changePassword(request, response) {
 
 		// Hash and update password
 		const hashedPassword = await bcrypt.hash(newPassword, 10);
-		users[userIndex].passwordHash = hashedPassword;
-		await writeUsers(users);
+		await updateUser(user.id, { passwordHash: hashedPassword });
 
 		return response.json({
 			message: "Password changed successfully.",
@@ -275,9 +234,8 @@ export async function changePassword(request, response) {
 export async function deleteAccount(request, response) {
 	try {
 		const { password } = request.body ?? {};
-		const profileCookie = request.cookies?.signlearn_profile;
 
-		if (!profileCookie) {
+		if (!request.user) {
 			return response.status(401).json({ message: "Not authenticated." });
 		}
 
@@ -285,28 +243,20 @@ export async function deleteAccount(request, response) {
 			return response.status(400).json({ message: "Password is required to delete account." });
 		}
 
-		const currentProfile = JSON.parse(profileCookie);
-		const users = await readUsers();
-		const userIndex = users.findIndex((item) => item.email === currentProfile.email);
+		const user = await getUserByEmail(request.user.email);
 
-		if (userIndex === -1) {
+		if (!user) {
 			return response.status(404).json({ message: "User not found." });
 		}
 
-		const user = users[userIndex];
 		const validPassword = await bcrypt.compare(password, user.passwordHash);
 
 		if (!validPassword) {
 			return response.status(401).json({ message: "Invalid password." });
 		}
 
-		// Remove user from array
-		users.splice(userIndex, 1);
-		await writeUsers(users);
-
-		// Clear cookies
-		response.clearCookie("signlearn_profile");
-		response.clearCookie("signlearn_session");
+		// Soft delete - mark as inactive
+		await deleteUser(user.id);
 
 		return response.json({
 			message: "Account deleted successfully.",

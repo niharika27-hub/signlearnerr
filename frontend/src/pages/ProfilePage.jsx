@@ -5,10 +5,6 @@ import StickySectionLabel from "@/components/StickySectionLabel";
 import {
   ROLE_CATEGORY_OPTIONS,
   getRolesForCategory,
-  getStoredProfile,
-  saveStoredProfile,
-  clearProfile,
-  clearSession,
 } from "@/lib/profileStorage";
 import { updateProfile, changePassword, deleteAccount, logoutUser } from "@/lib/authApi";
 
@@ -29,8 +25,18 @@ function ProfilePage() {
   const [deletePassword, setDeletePassword] = useState("");
 
   useEffect(() => {
-    const stored = getStoredProfile();
-    setProfile(stored);
+    fetch("http://localhost:5000/api/auth/me", {
+      credentials: "include", // 🔥 MOST IMPORTANT
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log("User from backend:", data);
+        setProfile(data);
+      })
+      .catch(err => {
+        console.error(err);
+        setProfile(null);
+      });
   }, []);
 
   const roleOptions = useMemo(() => {
@@ -61,37 +67,37 @@ function ProfilePage() {
       roleLabel: selectedRole?.label ?? nextRole,
     }));
   }
-
   async function handleSave(event) {
-    event.preventDefault();
-    setErrorMessage("");
-    setSavedMessage("");
-    setIsSubmitting(true);
+  event.preventDefault();
+  setErrorMessage("");
+  setSavedMessage("");
+  setIsSubmitting(true);
 
-    try {
-      const { user } = await updateProfile({
-        fullName: profile.fullName,
-        roleCategory: profile.roleCategory,
-        role: profile.role,
-        roleLabel: profile.roleLabel,
-      });
+  try {
+    const res = await updateProfile({
+      fullName: profile.fullName,
+      roleCategory: profile.roleCategory,
+      role: profile.role,
+      roleLabel: profile.roleLabel,
+    });
+    const user = res.user;
 
-      const updatedProfile = {
-        ...profile,
-        fullName: user.fullName,
-        roleLabel: user.roleLabel,
-      };
+    const updatedProfile = {
+      ...profile,
+      fullName: user.fullName,
+      roleLabel: user.roleLabel,
+    };
 
-      saveStoredProfile(updatedProfile);
-      setProfile(updatedProfile);
-      setSavedMessage("Profile updated successfully!");
-      window.setTimeout(() => setSavedMessage(""), 2200);
-    } catch (error) {
-      setErrorMessage(error.message || "Failed to update profile.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    setProfile(updatedProfile); // ✅ ONLY THIS
+
+    setSavedMessage("Profile updated successfully!");
+    window.setTimeout(() => setSavedMessage(""), 2200);
+  } catch (error) {
+    setErrorMessage(error.message || "Failed to update profile.");
+  } finally {
+    setIsSubmitting(false);
   }
+}
 
   async function handleChangePassword(event) {
     event.preventDefault();
