@@ -8,6 +8,34 @@ import {
 
 const learningRoutes = Router();
 
+async function buildUserProgressPayload(userId) {
+	const { UserProgress } = await import("../models/UserProgress.js");
+	const { ModuleProgress } = await import("../models/ModuleProgress.js");
+
+	const userProgress = await UserProgress.findOne({ userId }).lean();
+	const moduleProgress = await ModuleProgress.find({ userId })
+		.populate("moduleId", "title icon category")
+		.lean();
+
+	if (!userProgress) {
+		return {
+			streak: 0,
+			xpThisWeek: 0,
+			totalXp: 0,
+			overallProgressPercentage: 0,
+			modulesCompleted: 0,
+			totalModules: 0,
+			lessonsCompleted: 0,
+			moduleProgress: [],
+		};
+	}
+
+	return {
+		...userProgress,
+		moduleProgress,
+	};
+}
+
 // All learning routes require authentication
 learningRoutes.use(authMiddleware);
 
@@ -103,40 +131,68 @@ learningRoutes.post("/lessons/:lessonId/complete", async (req, res) => {
 learningRoutes.get("/progress", async (req, res) => {
 	try {
 		const { id: userId } = req.user;
-
-		// Import UserProgress model
-		const { UserProgress } = await import("../models/UserProgress.js");
-
-		const userProgress = await UserProgress.findOne({ userId }).populate({
-			path: "moduleProgress",
-			populate: {
-				path: "moduleId",
-				select: "title icon category",
-			},
-		});
-
-		if (!userProgress) {
-			return res.json({
-				success: true,
-				data: {
-					streak: 0,
-					xpThisWeek: 0,
-					totalXp: 0,
-					overallProgressPercentage: 0,
-					moduleProgress: [],
-				},
-			});
-		}
+		const data = await buildUserProgressPayload(userId);
 
 		res.json({
 			success: true,
-			data: userProgress,
+			data,
 		});
 	} catch (error) {
 		console.error("Error fetching progress:", error);
 		res.status(500).json({
 			success: false,
 			message: "Failed to fetch progress",
+			error: error.message,
+		});
+	}
+});
+
+/**
+ * Compatibility alias used by frontend clients
+ */
+learningRoutes.get("/user/progress", async (req, res) => {
+	try {
+		const { id: userId } = req.user;
+		const data = await buildUserProgressPayload(userId);
+
+		res.json({
+			success: true,
+			data,
+		});
+	} catch (error) {
+		console.error("Error fetching user progress:", error);
+		res.status(500).json({
+			success: false,
+			message: "Failed to fetch user progress",
+			error: error.message,
+		});
+	}
+});
+
+/**
+ * Get per-module progress for current user
+ */
+learningRoutes.get("/user/progress/modules", async (req, res) => {
+	try {
+		const { id: userId } = req.user;
+		const { ModuleProgress } = await import("../models/ModuleProgress.js");
+
+		const modules = await ModuleProgress.find({ userId })
+			.populate("moduleId", "title icon category")
+			.sort({ lastAccessedAt: -1 })
+			.lean();
+
+		res.json({
+			success: true,
+			data: {
+				modules,
+			},
+		});
+	} catch (error) {
+		console.error("Error fetching module progress:", error);
+		res.status(500).json({
+			success: false,
+			message: "Failed to fetch module progress",
 			error: error.message,
 		});
 	}

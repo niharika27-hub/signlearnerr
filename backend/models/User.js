@@ -28,6 +28,17 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			select: false, // Don't include in queries by default
 		},
+		resetPasswordTokenHash: {
+			type: String,
+			default: null,
+			select: false,
+		},
+		resetPasswordExpiresAt: {
+			type: Date,
+			default: null,
+			select: false,
+			index: true,
+		},
 		avatar: {
 			type: String,
 			default: null,

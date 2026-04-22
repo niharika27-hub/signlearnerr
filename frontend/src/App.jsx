@@ -1,27 +1,21 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { useEffect } from "react";
 import AppNavbar from "@/components/AppNavbar";
 import ScrollProgressHud from "@/components/ScrollProgressHud";
 import SignLanguageBackground from "@/components/SignLanguageBackground";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useLenisSmoothScroll } from "@/hooks/useLenisSmoothScroll";
-import { useAuth } from "@/lib/AuthContext";
 import HomePage from "@/pages/HomePage";
 import LearnPage from "@/pages/LearnPage";
 import LoginPage from "@/pages/LoginPage";
 import PracticePage from "@/pages/PracticePage";
 import ProgressPage from "@/pages/ProgressPage";
 import ProfilePage from "@/pages/ProfilePage";
+import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
+import ResetPasswordPage from "@/pages/ResetPasswordPage";
 import SignUpPage from "@/pages/SignUpPage";
 
 function App() {
   const { pathname } = useLocation();
-  const { init } = useAuth();
-
-  // Initialize auth on app load
-  useEffect(() => {
-    init?.();
-  }, [init]);
 
   useLenisSmoothScroll(pathname);
 
@@ -70,6 +64,8 @@ function App() {
             }
           />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

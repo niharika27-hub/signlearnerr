@@ -40,6 +40,29 @@ export const validateLogin = [
 ];
 
 /**
+ * Validation rules for forgot password
+ */
+export const validateForgotPassword = [
+	body("email")
+		.trim()
+		.isEmail().withMessage("Invalid email address")
+		.normalizeEmail(),
+];
+
+/**
+ * Validation rules for reset password
+ */
+export const validateResetPassword = [
+	body("token")
+		.trim()
+		.notEmpty().withMessage("Reset token is required"),
+
+	body("newPassword")
+		.isLength({ min: 6 }).withMessage("New password must be at least 6 characters long")
+		.matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage("Password must contain uppercase, lowercase, and number"),
+];
+
+/**
  * Validation rules for password change
  */
 export const validatePasswordChange = [
@@ -93,6 +116,8 @@ export function handleValidationErrors(request, response, next) {
 export default {
 	validateSignup,
 	validateLogin,
+	validateForgotPassword,
+	validateResetPassword,
 	validatePasswordChange,
 	validateProfileUpdate,
 	handleValidationErrors,

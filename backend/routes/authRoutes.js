@@ -5,6 +5,8 @@ import {
 	signup,
 	login,
 	logout,
+  forgotPassword,
+  resetPassword,
 	updateProfile,
 	changePassword,
 	deleteAccount,
@@ -14,6 +16,8 @@ import { sanitizeUser } from "../services/userService.js";
 import {
 	validateSignup,
 	validateLogin,
+  validateForgotPassword,
+  validateResetPassword,
 	validatePasswordChange,
 	validateProfileUpdate,
 	handleValidationErrors,
@@ -25,6 +29,8 @@ const authRoutes = Router();
 authRoutes.get("/me", authMiddleware, getProfile);
 authRoutes.post("/signup", validateSignup, handleValidationErrors, signup);
 authRoutes.post("/login", validateLogin, handleValidationErrors, login);
+authRoutes.post("/forgot-password", validateForgotPassword, handleValidationErrors, forgotPassword);
+authRoutes.post("/reset-password", validateResetPassword, handleValidationErrors, resetPassword);
 authRoutes.post("/logout", authMiddleware, logout);
 authRoutes.patch("/update", authMiddleware, validateProfileUpdate, handleValidationErrors, updateProfile);
 authRoutes.patch("/change-password", authMiddleware, validatePasswordChange, handleValidationErrors, changePassword);

@@ -133,6 +133,15 @@ function LoginPage() {
                   />
                 </label>
 
+                <div>
+                  <Link
+                    to="/forgot-password"
+                    className="text-sm font-semibold text-indigo-700 transition hover:text-indigo-900"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+
                 <label className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
                   <input
                     type="checkbox"

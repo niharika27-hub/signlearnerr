@@ -75,6 +75,16 @@ export async function logoutUser() {
 	return response.data;
 }
 
+export async function requestPasswordReset(payload) {
+	const response = await apiClient.post("/auth/forgot-password", payload);
+	return response.data;
+}
+
+export async function resetPasswordWithToken(payload) {
+	const response = await apiClient.post("/auth/reset-password", payload);
+	return response.data;
+}
+
 // ============================================================================
 // Learning Module APIs
 // ============================================================================
@@ -116,8 +126,22 @@ export async function completeLesson(lessonId, score = null) {
  * @returns {Promise} { progress: Object }
  */
 export async function getUserProgress() {
-	const response = await apiClient.get("/learning/user/progress");
-	return response.data;
+	const response = await apiClient.get("/learning/progress");
+	const payload = response.data?.data ?? response.data?.progress ?? {};
+
+	return {
+		success: response.data?.success ?? true,
+		progress: {
+			streak: payload.streak ?? 0,
+			xpThisWeek: payload.xpThisWeek ?? 0,
+			totalXp: payload.totalXp ?? 0,
+			modulesCompleted: payload.modulesCompleted ?? 0,
+			totalModules: payload.totalModules ?? 0,
+			lessonsCompleted: payload.lessonsCompleted ?? 0,
+			overallProgress:
+				payload.overallProgress ?? payload.overallProgressPercentage ?? 0,
+		},
+	};
 }
 
 /**
@@ -126,6 +150,10 @@ export async function getUserProgress() {
  */
 export async function getUserModuleProgress() {
 	const response = await apiClient.get("/learning/user/progress/modules");
-	return response.data;
+	const modules = response.data?.data?.modules ?? response.data?.modules ?? [];
+	return {
+		success: response.data?.success ?? true,
+		modules,
+	};
 }
 

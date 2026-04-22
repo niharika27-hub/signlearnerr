@@ -1,7 +1,11 @@
 import bcrypt from "bcryptjs";
-import { randomUUID } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
+import User from "../models/User.js";
 import { sanitizeUser, getUserByEmail, createUser, updateUser, deleteUser, emailExists } from "../services/userService.js";
 import { generateToken } from "../middleware/authMiddleware.js";
+
+const RESET_TOKEN_TTL_MS = 15 * 60 * 1000;
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 export async function getProfile(request, response) {
 	try {
 		// JWT middleware already validated token and set request.user
@@ -269,6 +273,106 @@ export async function deleteAccount(request, response) {
 		return response.status(500).json({ message: "Something went wrong while deleting account." });
 	}
 }
+
+/**
+ * POST /api/auth/forgot-password
+ * Request password reset token (generic response to avoid account enumeration)
+ */
+export async function forgotPassword(request, response) {
+	try {
+		const normalizedEmail = String(request.body?.email || "").trim().toLowerCase();
+
+		if (!normalizedEmail) {
+			return response.status(400).json({
+				message: "Email is required.",
+			});
+		}
+
+		const user = await getUserByEmail(normalizedEmail);
+
+		if (user && user.isActive) {
+			const rawToken = randomBytes(32).toString("hex");
+			const tokenHash = createHash("sha256").update(rawToken).digest("hex");
+
+			await updateUser(user.id, {
+				resetPasswordTokenHash: tokenHash,
+				resetPasswordExpiresAt: new Date(Date.now() + RESET_TOKEN_TTL_MS),
+			});
+
+			const resetUrl = `${FRONTEND_URL}/reset-password?token=${rawToken}`;
+			console.log("Password reset URL:", resetUrl);
+
+			if (process.env.NODE_ENV !== "production") {
+				return response.json({
+					message:
+						"If this email exists, a password reset link has been generated.",
+					resetUrl,
+				});
+			}
+		}
+
+		return response.json({
+			message: "If this email exists, a password reset link has been sent.",
+		});
+	} catch (error) {
+		console.error("Forgot password error:", error);
+		return response.status(500).json({
+			message: "Something went wrong while requesting password reset.",
+		});
+	}
+}
+
+/**
+ * POST /api/auth/reset-password
+ * Reset password using token from forgot-password flow
+ */
+export async function resetPassword(request, response) {
+	try {
+		const { token, newPassword } = request.body ?? {};
+
+		if (!token || !newPassword) {
+			return response.status(400).json({
+				message: "Token and new password are required.",
+			});
+		}
+
+		if (typeof newPassword !== "string" || newPassword.length < 6) {
+			return response.status(400).json({
+				message: "New password must be at least 6 characters long.",
+			});
+		}
+
+		const tokenHash = createHash("sha256").update(String(token)).digest("hex");
+
+		const user = await User.findOne({
+			resetPasswordTokenHash: tokenHash,
+			resetPasswordExpiresAt: { $gt: new Date() },
+			isActive: true,
+		}).select("+passwordHash +resetPasswordTokenHash +resetPasswordExpiresAt");
+
+		if (!user) {
+			return response.status(400).json({
+				message: "Invalid or expired reset token.",
+			});
+		}
+
+		const hashedPassword = await bcrypt.hash(newPassword, 10);
+		user.passwordHash = hashedPassword;
+		user.resetPasswordTokenHash = null;
+		user.resetPasswordExpiresAt = null;
+		await user.save();
+
+		return response.json({
+			message: "Password reset successful. Please log in.",
+		});
+	} catch (error) {
+		console.error("Reset password error:", error);
+		return response.status(500).json({
+			message: "Something went wrong while resetting password.",
+		});
+	}
+}
+
 export async function googleCallback(request, response) {
   try {
     if (!request.user) {
