@@ -15,8 +15,7 @@ export const validateSignup = [
 		.normalizeEmail(),
 	
 	body("password")
-		.isLength({ min: 6 }).withMessage("Password must be at least 6 characters")
-		.matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage("Password must contain uppercase, lowercase, and number"),
+		.isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
 	
 	body("roleCategory")
 		.notEmpty().withMessage("Role category is required")

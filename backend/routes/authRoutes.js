@@ -1,4 +1,5 @@
 import { Router } from "express";
+import passport from "passport";
 import {
 	getProfile,
 	signup,
@@ -28,4 +29,33 @@ authRoutes.post("/logout", authMiddleware, logout);
 authRoutes.patch("/update", authMiddleware, validateProfileUpdate, handleValidationErrors, updateProfile);
 authRoutes.patch("/change-password", authMiddleware, validatePasswordChange, handleValidationErrors, changePassword);
 authRoutes.delete("/delete", authMiddleware, deleteAccount);
+
+// Google OAuth Routes (existing routes ke baad add karo)
+
+// Google login initiate
+authRoutes.get("/google", passport.authenticate("google", {
+  scope: ["profile", "email"],
+}));
+
+// Google callback
+authRoutes.get("/google/callback",
+  passport.authenticate("google", { failureRedirect: "http://localhost:5173/login" }),
+  (req, res) => {
+    // Authentication successful
+    const token = generateToken(req.user._id, req.user.email);
+    
+    // Set JWT in httpOnly cookie (same as manual login/signup)
+    res.cookie("authToken", token, {
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+      path: "/",
+    });
+    
+    // Redirect to home - cookie will be sent automatically in subsequent requests
+    // User will be authenticated via the authToken cookie
+    res.redirect("http://localhost:5173/");
+  }
+);
 export default authRoutes;

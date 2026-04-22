@@ -32,6 +32,14 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			default: null,
 		},
+		googleId: {
+			type: String,
+			default: null,
+		},
+		photoURL: {
+			type: String,
+			default: null,
+		},
 		roleCategory: {
 			type: String,
 			required: true,

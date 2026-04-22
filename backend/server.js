@@ -1,4 +1,6 @@
 import "dotenv/config";
+import session from "express-session";
+import passport from "./config/passport.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
@@ -25,6 +27,7 @@ const PORT = Number(process.env.PORT) || 5000;
 app.use(cors({
 	origin: [
 		"http://localhost:5173",
+		"http://localhost:5174",
 	],
 	credentials: true,
 	methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -34,7 +37,22 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser());
+// Session Configuration (Passport ke liye)
+app.use(session({
+  secret: process.env.SESSION_SECRET || "your-secret-key",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // Production mein true karna (https ke liye)
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: "lax",
+  },
+}));
 
+// Passport initialization
+app.use(passport.initialize());
+app.use(passport.session());
 /**
  * Routes
  */

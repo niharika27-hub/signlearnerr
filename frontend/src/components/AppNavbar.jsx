@@ -2,8 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { logoutUser } from "@/lib/authApi";
-import { getStoredProfile, clearProfile, clearSession } from "@/lib/profileStorage";
+import { useAuth } from "@/lib/AuthContext";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -28,33 +27,12 @@ function linkClass({ isActive }) {
 
 function AppNavbar() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    // Check profile on mount
-    const profile = getStoredProfile();
-    if (profile) {
-      setUser(profile);
-    }
-
-    // Listen for custom profile update events
-    const handleProfileUpdate = (event) => {
-      setUser(event.detail || null);
-    };
-
-    window.addEventListener("profileUpdated", handleProfileUpdate);
-    return () => {
-      window.removeEventListener("profileUpdated", handleProfileUpdate);
-    };
-  }, []);
 
   async function handleLogout() {
     try {
-      await logoutUser();
-      clearProfile();
-      clearSession();
-      setUser(null);
+      await logout();
       navigate("/login");
     } catch (error) {
       console.error("Logout error:", error);

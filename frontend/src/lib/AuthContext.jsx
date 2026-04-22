@@ -22,32 +22,22 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       // Try to fetch fresh user profile from server
+      // Token is automatically sent via cookie (withCredentials: true)
       const data = await getProfile();
       setUser(data.user);
       setIsAuthenticated(true);
-      setLoading(false);
     } catch (error) {
-      // If API fails, check localStorage
-      const storedToken = localStorage.getItem("authToken");
-      const storedUser = localStorage.getItem("user");
-
-      if (storedToken && storedUser) {
-        try {
-          setUser(JSON.parse(storedUser));
-          setIsAuthenticated(true);
-          setLoading(false);
-        } catch {
-          setIsAuthenticated(false);
-          setLoading(false);
-          setError(null);
-        }
-      } else {
-        setIsAuthenticated(false);
-        setLoading(false);
-        setError(null);
-      }
+      // API failed - user not authenticated
+      setIsAuthenticated(false);
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Initialize auth on provider mount
+  useEffect(() => {
+    init();
+  }, []);
 
   // Login action
   const login = async (email, password) => {
@@ -56,13 +46,8 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await loginUser({ email, password });
       const user = data.user;
-      const token = data.token;
-
-      // Store token in localStorage for API requests
-      if (token) {
-        localStorage.setItem("authToken", token);
-        localStorage.setItem("user", JSON.stringify(user));
-      }
+      // Token is automatically set as httpOnly cookie by backend
+      // No need to store in localStorage
 
       setUser(user);
       setIsAuthenticated(true);
@@ -83,19 +68,9 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     try {
       const data = await signupUser(payload);
-      const user = data.user;
-      const token = data.token;
-
-      // Store token in localStorage for API requests
-      if (token) {
-        localStorage.setItem("authToken", token);
-        localStorage.setItem("user", JSON.stringify(user));
-      }
-
-      setUser(user);
-      setIsAuthenticated(true);
+      // Account created successfully
+      // DO NOT auto-login - user must login manually
       setLoading(false);
-
       return { success: true, data };
     } catch (error) {
       const errorMsg = error.response?.data?.message || "Signup failed";
@@ -104,24 +79,48 @@ export const AuthProvider = ({ children }) => {
       return { success: false, error: errorMsg };
     }
   };
+  // Google login action
+const loginWithGoogle = async (token) => {
+  setLoading(true);
+  setError(null);
+  try {
+    // Token is already set as httpOnly cookie by backend
+    // No need to store in localStorage
+    
+    // Fetch user profile (token sent automatically via cookie)
+    const data = await getProfile();
+    const user = data.user;
+    
+    setUser(user);
+    setIsAuthenticated(true);
+    setLoading(false);
+
+    return { success: true, data };
+  } catch (error) {
+    const errorMsg = error.response?.data?.message || "Google login failed";
+    setError(errorMsg);
+    setLoading(false);
+    return { success: false, error: errorMsg };
+  }
+};
+
+// AuthContext.Provider mein add karo:
+// value={{ ..., loginWithGoogle }}
 
   // Logout action
   const logout = async () => {
-    setLoading(true);
-    setError(null);
+    // Clear state immediately so user sees "not authenticated" right away
+    setUser(null);
+    setIsAuthenticated(false);
+    // Token is in httpOnly cookie - only server can clear it
+
+    // Try to notify backend to clear session (fire and forget)
     try {
       await logoutUser();
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error("Logout API error (non-blocking):", error);
+      // Continue even if API fails - client state is already cleared
     }
-
-    // Clear token from localStorage
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("user");
-
-    setUser(null);
-    setIsAuthenticated(false);
-    setLoading(false);
 
     return { success: true };
   };
@@ -141,6 +140,7 @@ export const AuthProvider = ({ children }) => {
     login,
     signup,
     logout,
+    loginWithGoogle,
     setUser: setUserInfo,
     clearError,
   };

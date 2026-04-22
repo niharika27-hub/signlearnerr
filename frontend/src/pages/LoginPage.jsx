@@ -1,19 +1,16 @@
 import { motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import StickySectionLabel from "@/components/StickySectionLabel";
 import { useAuth } from "@/lib/AuthContext";
 import {
   ROLE_CATEGORY_OPTIONS,
   ROLE_OPTIONS_BY_CATEGORY,
-  createStarterRecommendations,
-  getStoredProfile,
-  saveStoredProfile,
 } from "@/lib/profileStorage";
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,13 +22,21 @@ function LoginPage() {
     () => Object.entries(ROLE_OPTIONS_BY_CATEGORY).flatMap(([, items]) => items),
     []
   );
-  const [selectedRole, setSelectedRole] = useState(roleOptions[0].value);
 
+  const [selectedRole, setSelectedRole] = useState(roleOptions[0]?.value || "");
+
+  useEffect(() => {
+    // Token handling removed - Google callback sets cookie directly
+    // init() in AuthContext will automatically restore user from cookie
+  }, []);
+  const handleGoogleLogin = () => {
+  // Google OAuth ke liye backend par redirect karo
+  window.location.href = "http://localhost:5000/api/auth/google";
+};
   function inferCategoryFromRole(roleValue) {
     if (ROLE_OPTIONS_BY_CATEGORY["accessibility-needs"].some((item) => item.value === roleValue)) {
       return "accessibility-needs";
     }
-
     return "support-circle";
   }
 
@@ -49,32 +54,8 @@ function LoginPage() {
         return;
       }
 
-      const existingProfile = getStoredProfile();
-      const user = result.data.user;
-
-      const fallbackRole = selectedRole;
-      const fallbackCategory = inferCategoryFromRole(fallbackRole);
-      const fallbackRoleLabel = roleOptions.find((item) => item.value === fallbackRole)?.label ?? fallbackRole;
-      
-      const normalizedProfile = {
-        fullName: user?.fullName ?? existingProfile?.fullName ?? email.split("@")[0] ?? "SignLearn member",
-        email: user?.email ?? email,
-        roleCategory: user?.roleCategory ?? existingProfile?.roleCategory ?? fallbackCategory,
-        role: user?.role ?? existingProfile?.role ?? fallbackRole,
-        roleLabel: user?.roleLabel ?? existingProfile?.roleLabel ?? fallbackRoleLabel,
-        joinedAt: user?.joinedAt ?? existingProfile?.joinedAt ?? new Date().toISOString(),
-        goals: existingProfile?.goals ?? ["Start module 1", "Practice consistently", "Track weekly improvement"],
-        recommendations:
-          existingProfile?.recommendations ?? createStarterRecommendations(user?.role ?? existingProfile?.role ?? fallbackRole),
-        completion: existingProfile?.completion ?? {
-          modulesCompleted: 0,
-          totalModules: 12,
-          streakDays: 0,
-        },
-      };
-
-      saveStoredProfile(normalizedProfile);
-      navigate("/profile");
+      // Login successful - AuthContext has user, navigate to home
+      navigate("/");
     } catch (error) {
       setErrorMessage(error.message || "Unable to log in right now.");
     } finally {
@@ -104,6 +85,16 @@ function LoginPage() {
           </p>
 
           <div className="mt-8 grid gap-6 lg:grid-cols-[1.3fr_1fr]">
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 px-4 py-3 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
+                {/* Google icon SVG */}
+              </svg>
+              Continue with Google
+            </button> 
             <form
               className="rounded-3xl border border-slate-200/80 bg-white/75 p-6 shadow-[0_20px_70px_-36px_rgba(15,23,42,0.55)] backdrop-blur sm:p-8"
               onSubmit={handleSubmit}

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Particles } from "@/components/ui/particles";
 import { getStoredProfile } from "@/lib/profileStorage";
+import { useAuth } from "@/lib/AuthContext";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -15,6 +16,7 @@ const fadeUp = {
 };
 
 function HeroSection() {
+  const { user } = useAuth();
   const [profileSummary, setProfileSummary] = useState({
     roleLabel: "Guest learner",
     modulesCompleted: 3,

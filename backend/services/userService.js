@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import { randomUUID } from "node:crypto";
 
 /**
  * Sanitize user object - remove sensitive fields
@@ -67,6 +68,10 @@ export async function getUserById(id) {
  */
 export async function createUser(userData) {
 	try {
+		// Generate unique id if not provided
+		if (!userData.id) {
+			userData.id = randomUUID();
+		}
 		const user = new User(userData);
 		await user.save();
 		return user;

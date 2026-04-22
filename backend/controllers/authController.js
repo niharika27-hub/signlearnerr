@@ -14,7 +14,10 @@ export async function getProfile(request, response) {
 			return response.status(404).json({ message: "User not found." });
 		}
 
-	return response.json(sanitizeUser(user));
+		return response.json({
+			message: "Profile fetched successfully.",
+			user: sanitizeUser(user),
+		});
 	} catch (error) {
 		console.error("Get user error:", error);
 		return response.status(401).json({ message: "Invalid session." });
@@ -77,7 +80,7 @@ export async function signup(request, response) {
 		});
 	} catch (error) {
 		console.error("Signup error:", error);
-		return response.status(500).json({ message: "Something went wrong while creating your account." });
+		return response.status(500).json({ message: "Something went wrong while creating your account: " + error.message });
 	}
 }
 export async function login(request, response) {
@@ -265,4 +268,22 @@ export async function deleteAccount(request, response) {
 		console.error("Delete error:", error);
 		return response.status(500).json({ message: "Something went wrong while deleting account." });
 	}
+}
+export async function googleCallback(request, response) {
+  try {
+    if (!request.user) {
+      return response.status(401).json({ message: "Authentication failed." });
+    }
+
+    const token = generateToken(request.user);
+    
+    return response.json({
+      success: true,
+      user: sanitizeUser(request.user),
+      token,
+    });
+  } catch (error) {
+    console.error("Google callback error:", error);
+    return response.status(500).json({ message: "Authentication failed." });
+  }
 }

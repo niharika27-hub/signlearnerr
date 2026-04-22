@@ -67,6 +67,7 @@ function ProfilePage() {
       roleLabel: selectedRole?.label ?? nextRole,
     }));
   }
+
   async function handleSave(event) {
   event.preventDefault();
   setErrorMessage("");
