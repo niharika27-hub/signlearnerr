@@ -4,6 +4,8 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import StickySectionLabel from "@/components/StickySectionLabel";
 import { resetPasswordWithToken } from "@/lib/authApi";
 
+const STRONG_PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+
 function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -34,12 +36,26 @@ function ResetPasswordPage() {
       return;
     }
 
+    if (!STRONG_PASSWORD_REGEX.test(newPassword)) {
+      setErrorMessage(
+        "Password must be at least 6 characters and include uppercase, lowercase, and a number."
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const data = await resetPasswordWithToken({ token, newPassword });
       setSuccessMessage(data.message || "Password updated successfully.");
       setTimeout(() => navigate("/login"), 1500);
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || "Unable to reset password.");
+      const backendErrors = error.response?.data?.errors;
+      const firstValidationError = Array.isArray(backendErrors) ? backendErrors[0]?.message : null;
+      setErrorMessage(
+        firstValidationError ||
+          error.response?.data?.message ||
+          "Unable to reset password."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -88,7 +104,7 @@ function ResetPasswordPage() {
                   value={newPassword}
                   onChange={(event) => setNewPassword(event.target.value)}
                   className="w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200"
-                  placeholder="At least 6 characters"
+                  placeholder="6+ chars, uppercase, lowercase, number"
                 />
               </label>
 
