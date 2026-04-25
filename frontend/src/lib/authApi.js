@@ -150,6 +150,16 @@ export async function deleteTeacherLesson(lessonId) {
 	return response.data;
 }
 
+export async function getTeacherCloudinaryUploadSignature(payload = {}) {
+	const response = await apiClient.post("/teacher/cloudinary/sign-upload", payload);
+	return response.data;
+}
+
+export async function getAdminCloudinaryUploadSignature(payload = {}) {
+	const response = await apiClient.post("/admin/cloudinary/sign-upload", payload);
+	return response.data;
+}
+
 // ============================================================================
 // Learning Module APIs
 // ============================================================================
@@ -203,6 +213,7 @@ export async function getUserProgress() {
 			modulesCompleted: payload.modulesCompleted ?? 0,
 			totalModules: payload.totalModules ?? 0,
 			lessonsCompleted: payload.lessonsCompleted ?? 0,
+			moduleProgress: payload.moduleProgress ?? [],
 			overallProgress:
 				payload.overallProgress ?? payload.overallProgressPercentage ?? 0,
 		},

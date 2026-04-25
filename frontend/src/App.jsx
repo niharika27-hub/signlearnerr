@@ -6,6 +6,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useLenisSmoothScroll } from "@/hooks/useLenisSmoothScroll";
 import HomePage from "@/pages/HomePage";
 import LearnPage from "@/pages/LearnPage";
+import LearnModulePage from "@/pages/LearnModulePage";
 import LoginPage from "@/pages/LoginPage";
 import PracticePage from "@/pages/PracticePage";
 import ProgressPage from "@/pages/ProgressPage";
@@ -40,6 +41,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <LearnPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/learn/module/:moduleId"
+            element={
+              <ProtectedRoute>
+                <LearnModulePage />
               </ProtectedRoute>
             }
           />

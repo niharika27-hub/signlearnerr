@@ -6,7 +6,9 @@
   "main": "server.js",
   "scripts": {
     "dev": "node --watch server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "seed:modules": "node utils/seedModules.js",
+    "import:modules": "node utils/importModuleManifest.js --file ../docs/examples/module-manifest.example.json --mode upsert"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
