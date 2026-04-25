@@ -2,9 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import {
   createTeacherLesson,
   deleteTeacherLesson,
+  getTeacherCloudinaryUploadSignature,
   getTeacherModules,
   updateTeacherLesson,
 } from "@/lib/authApi";
+import { uploadFileToCloudinary } from "@/lib/cloudinaryUpload";
 import { useAuth } from "@/lib/AuthContext";
 
 const EMPTY_LESSON_FORM = {
@@ -19,7 +21,33 @@ const EMPTY_LESSON_FORM = {
 
 const DIFFICULTY_OPTIONS = ["beginner", "intermediate", "advanced"];
 
-function LessonEditor({ lesson, moduleId, onSaved, onDeleted }) {
+function inferResourceType(file) {
+  if (!file?.type) {
+    return "auto";
+  }
+
+  if (file.type.startsWith("video/")) {
+    return "video";
+  }
+
+  if (file.type.startsWith("image/")) {
+    return "image";
+  }
+
+  return "auto";
+}
+
+function buildPublicId(fileName) {
+  const baseName = String(fileName || "lesson-asset")
+    .replace(/\.[^/.]+$/, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9-_]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return `${Date.now()}-${baseName || "lesson-asset"}`;
+}
+
+function LessonEditor({ lesson, moduleId, onSaved, onDeleted, onUploadLessonAsset }) {
   const [form, setForm] = useState({
     title: lesson.title,
     description: lesson.description || "",
@@ -30,7 +58,9 @@ function LessonEditor({ lesson, moduleId, onSaved, onDeleted }) {
     isActive: lesson.isActive ?? true,
   });
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState("");
+  const [uploadError, setUploadError] = useState("");
   const [saved, setSaved] = useState("");
 
   async function handleSave(event) {
@@ -71,6 +101,29 @@ function LessonEditor({ lesson, moduleId, onSaved, onDeleted }) {
     }
   }
 
+  async function handleUploadFile(event) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) {
+      return;
+    }
+
+    setUploadError("");
+    setSaved("");
+    setIsUploading(true);
+
+    try {
+      const uploadedUrl = await onUploadLessonAsset(moduleId, file);
+      setForm((current) => ({ ...current, contentUrl: uploadedUrl }));
+      setSaved("Media uploaded. Save lesson to persist this URL.");
+    } catch (err) {
+      setUploadError(err.message || "Cloudinary upload failed.");
+    } finally {
+      setIsUploading(false);
+    }
+  }
+
   return (
     <form onSubmit={handleSave} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
       <div className="grid gap-3 md:grid-cols-2">
@@ -88,8 +141,24 @@ function LessonEditor({ lesson, moduleId, onSaved, onDeleted }) {
             value={form.contentUrl}
             onChange={(event) => setForm((current) => ({ ...current, contentUrl: event.target.value }))}
             className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            placeholder="https://res.cloudinary.com/..."
           />
         </label>
+      </div>
+
+      <div className="mt-2">
+        <label className="text-xs font-semibold text-slate-700">
+          Upload Media To Cloudinary
+          <input
+            type="file"
+            accept="image/*,video/*"
+            onChange={handleUploadFile}
+            disabled={isUploading}
+            className="mt-1 block w-full rounded-xl border border-slate-200 px-3 py-2 text-xs"
+          />
+        </label>
+        {isUploading ? <p className="mt-1 text-xs font-semibold text-indigo-700">Uploading to Cloudinary...</p> : null}
+        {uploadError ? <p className="mt-1 text-xs font-semibold text-rose-700">{uploadError}</p> : null}
       </div>
 
       <label className="mt-3 block text-sm font-semibold text-slate-700">
@@ -167,10 +236,12 @@ function LessonEditor({ lesson, moduleId, onSaved, onDeleted }) {
   );
 }
 
-function ModuleLessonsCard({ moduleItem, onModulesChanged }) {
+function ModuleLessonsCard({ moduleItem, onModulesChanged, onUploadLessonAsset }) {
   const [lessonForm, setLessonForm] = useState(EMPTY_LESSON_FORM);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState("");
+  const [uploadError, setUploadError] = useState("");
   const [saved, setSaved] = useState("");
 
   async function handleCreateLesson(event) {
@@ -191,6 +262,29 @@ function ModuleLessonsCard({ moduleItem, onModulesChanged }) {
       setError(err.response?.data?.message || "Failed to add lesson.");
     } finally {
       setIsSaving(false);
+    }
+  }
+
+  async function handleUploadFile(event) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) {
+      return;
+    }
+
+    setUploadError("");
+    setSaved("");
+    setIsUploading(true);
+
+    try {
+      const uploadedUrl = await onUploadLessonAsset(moduleItem._id, file);
+      setLessonForm((current) => ({ ...current, contentUrl: uploadedUrl }));
+      setSaved("Media uploaded. Add lesson to save this URL.");
+    } catch (err) {
+      setUploadError(err.message || "Cloudinary upload failed.");
+    } finally {
+      setIsUploading(false);
     }
   }
 
@@ -225,6 +319,7 @@ function ModuleLessonsCard({ moduleItem, onModulesChanged }) {
               moduleId={moduleItem._id}
               onSaved={handleLessonSaved}
               onDeleted={handleLessonDeleted}
+              onUploadLessonAsset={onUploadLessonAsset}
             />
           ))}
         </div>
@@ -261,6 +356,21 @@ function ModuleLessonsCard({ moduleItem, onModulesChanged }) {
             Add Lesson
           </button>
         </form>
+
+        <div className="mt-2 rounded-xl border border-slate-200 bg-white px-3 py-2">
+          <label className="text-xs font-semibold text-slate-700">
+            Upload New Lesson Media To Cloudinary
+            <input
+              type="file"
+              accept="image/*,video/*"
+              onChange={handleUploadFile}
+              disabled={isUploading}
+              className="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-xs"
+            />
+          </label>
+          {isUploading ? <p className="mt-1 text-xs font-semibold text-indigo-700">Uploading to Cloudinary...</p> : null}
+          {uploadError ? <p className="mt-1 text-xs font-semibold text-rose-700">{uploadError}</p> : null}
+        </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {saved ? <span className="text-xs font-semibold text-emerald-700">{saved}</span> : null}
@@ -306,6 +416,26 @@ function TeacherLessonsPage() {
     loadModules();
   }
 
+  async function handleUploadLessonAsset(moduleId, file) {
+    const resourceType = inferResourceType(file);
+    const signatureResponse = await getTeacherCloudinaryUploadSignature({
+      folder: `signlearn/modules/${moduleId}`,
+      publicId: buildPublicId(file.name),
+      resourceType,
+    });
+
+    if (!signatureResponse?.success || !signatureResponse?.data) {
+      throw new Error(signatureResponse?.message || "Cloudinary signature request failed.");
+    }
+
+    const result = await uploadFileToCloudinary(file, signatureResponse.data);
+    if (!result.secureUrl) {
+      throw new Error("Cloudinary upload did not return a secure URL.");
+    }
+
+    return result.secureUrl;
+  }
+
   if (!isTeacher) {
     return (
       <div className="pt-24 px-6 pb-16">
@@ -335,7 +465,12 @@ function TeacherLessonsPage() {
 
         <div className="space-y-4">
           {sortedModules.map((moduleItem) => (
-            <ModuleLessonsCard key={moduleItem._id} moduleItem={moduleItem} onModulesChanged={handleModulesChanged} />
+            <ModuleLessonsCard
+              key={moduleItem._id}
+              moduleItem={moduleItem}
+              onModulesChanged={handleModulesChanged}
+              onUploadLessonAsset={handleUploadLessonAsset}
+            />
           ))}
         </div>
       </div>

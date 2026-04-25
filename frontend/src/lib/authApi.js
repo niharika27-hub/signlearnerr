@@ -137,6 +137,16 @@ export async function deleteTeacherLesson(lessonId) {
 	return response.data;
 }
 
+export async function getTeacherCloudinaryUploadSignature(payload = {}) {
+	const response = await apiClient.post("/teacher/cloudinary/sign-upload", payload);
+	return response.data;
+}
+
+export async function getAdminCloudinaryUploadSignature(payload = {}) {
+	const response = await apiClient.post("/admin/cloudinary/sign-upload", payload);
+	return response.data;
+}
+
 // ============================================================================
 // Learning Module APIs
 // ============================================================================

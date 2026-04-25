@@ -4,6 +4,10 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 import { teacherMiddleware } from "../middleware/teacherMiddleware.js";
 import { Module } from "../models/Module.js";
 import { Lesson } from "../models/Lesson.js";
+import {
+	buildSignedUploadPayload,
+	isCloudinaryConfigured,
+} from "../utils/cloudinary.js";
 
 const VALID_DIFFICULTIES = ["beginner", "intermediate", "advanced"];
 
@@ -39,6 +43,35 @@ teacherRoutes.get("/modules", async (_request, response) => {
 	} catch (error) {
 		console.error("Teacher list modules error:", error);
 		return response.status(500).json({ success: false, message: "Failed to fetch modules." });
+	}
+});
+
+teacherRoutes.post("/cloudinary/sign-upload", async (request, response) => {
+	try {
+		if (!isCloudinaryConfigured()) {
+			return response.status(503).json({
+				success: false,
+				message:
+					"Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in backend .env.",
+			});
+		}
+
+		const { folder, publicId, resourceType } = request.body ?? {};
+		const signedPayload = buildSignedUploadPayload({
+			folder,
+			publicId,
+			resourceType,
+		});
+
+		return response.json({
+			success: true,
+			data: signedPayload,
+		});
+	} catch (error) {
+		console.error("Teacher cloudinary sign error:", error);
+		return response
+			.status(500)
+			.json({ success: false, message: "Failed to sign Cloudinary upload." });
 	}
 });
 

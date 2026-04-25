@@ -1,0 +1,109 @@
+{
+  "modules": [
+    {
+      "title": "Basic Alphabets",
+      "description": "ASL finger-spelling A-Z with static hand-shape drills.",
+      "icon": "Signature",
+      "category": "alphabet",
+      "orderIndex": 1,
+      "isSequential": true,
+      "roleCategories": ["learner", "support-circle", "accessibility-needs"],
+      "lessons": [
+        {
+          "title": "A-I Hand Shapes",
+          "description": "Letters A-I with recognition practice.",
+          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20alphabet%20A%20through%20I%20lesson%20Bill%20Vicars",
+          "duration": 10,
+          "order": 1,
+          "difficultyLevel": "beginner"
+        },
+        {
+          "title": "J-R Finger-spelling Flow",
+          "description": "Letters J-R transitions and flow.",
+          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20alphabet%20J%20through%20R%20lesson%20Bill%20Vicars",
+          "duration": 10,
+          "order": 2,
+          "difficultyLevel": "intermediate"
+        },
+        {
+          "title": "S-Z + Recall Quiz",
+          "description": "Letters S-Z recall and fluency practice.",
+          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20alphabet%20S%20through%20Z%20practice%20Bill%20Vicars",
+          "duration": 10,
+          "order": 3,
+          "difficultyLevel": "advanced"
+        }
+      ]
+    },
+    {
+      "title": "Words",
+      "description": "High-frequency vocabulary from WLASL/MS-ASL style classes.",
+      "icon": "BookText",
+      "category": "vocabulary",
+      "orderIndex": 2,
+      "isSequential": true,
+      "roleCategories": ["learner", "support-circle", "accessibility-needs"],
+      "lessons": [
+        {
+          "title": "Common Daily Words",
+          "description": "Greetings, people, common actions.",
+          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20common%20daily%20words%20for%20beginners%20Bill%20Vicars",
+          "duration": 12,
+          "order": 1,
+          "difficultyLevel": "beginner"
+        },
+        {
+          "title": "People, Places, Actions",
+          "description": "Vocabulary groups for people, places, and actions.",
+          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20signs%20people%20places%20actions%20lesson",
+          "duration": 12,
+          "order": 2,
+          "difficultyLevel": "intermediate"
+        },
+        {
+          "title": "Word Recognition Challenge",
+          "description": "Receptive practice with varied signers.",
+          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20receptive%20practice%20common%20words%20beginner",
+          "duration": 12,
+          "order": 3,
+          "difficultyLevel": "advanced"
+        }
+      ]
+    },
+    {
+      "title": "Sentences",
+      "description": "Sentence-level ASL practice from How2Sign/OpenASL style clips.",
+      "icon": "MessageCircle",
+      "category": "sentences",
+      "orderIndex": 3,
+      "isSequential": true,
+      "roleCategories": ["learner", "support-circle", "accessibility-needs"],
+      "lessons": [
+        {
+          "title": "Simple Sentence Patterns",
+          "description": "Continuous signing intro clips.",
+          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20simple%20sentence%20patterns%20for%20beginners",
+          "duration": 15,
+          "order": 1,
+          "difficultyLevel": "beginner"
+        },
+        {
+          "title": "Questions and Responses",
+          "description": "Practice ASL questions and answers.",
+          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20question%20and%20answer%20sentence%20practice",
+          "duration": 15,
+          "order": 2,
+          "difficultyLevel": "intermediate"
+        },
+        {
+          "title": "Context Conversation Drill",
+          "description": "Beginner conversation patterns in context.",
+          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20beginner%20conversation%20practice%20dialogues",
+          "duration": 15,
+          "order": 3,
+          "difficultyLevel": "advanced"
+        }
+      ]
+    }
+  ]
+}

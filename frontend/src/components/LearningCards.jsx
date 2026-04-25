@@ -1,8 +1,24 @@
 import { motion } from "framer-motion";
-import { BookText, MessageCircle, Signature, Zap, Eye, Users, Briefcase, Globe, Play, Award, Heart, Accessibility } from "lucide-react";
+import {
+  BookText,
+  MessageCircle,
+  Signature,
+  Zap,
+  Eye,
+  Users,
+  Briefcase,
+  Globe,
+  Play,
+  Award,
+  Heart,
+  Accessibility,
+} from "lucide-react";
 import StickySectionLabel from "@/components/StickySectionLabel";
+import {
+  formatCategoryLabel,
+  normalizeModuleCategory,
+} from "@/lib/moduleCategories";
 
-// Map icon names to Lucide components
 const iconMap = {
   Signature,
   BookText,
@@ -18,19 +34,19 @@ const iconMap = {
   Accessibility,
 };
 
-// Map categories to gradient colors
 const gradientMap = {
   alphabet: "from-cyan-300/45 via-blue-300/25 to-transparent group-hover:from-cyan-300/55",
   vocabulary: "from-violet-300/45 via-indigo-300/25 to-transparent group-hover:from-violet-300/55",
   sentences: "from-emerald-300/45 via-teal-300/25 to-transparent group-hover:from-emerald-300/55",
-  conversation: "from-pink-300/45 via-rose-300/25 to-transparent group-hover:from-pink-300/55",
 };
 
-function LearningCards({ modules = [], loading = false, error = null }) {
-  // Fallback gradient
-  const getGradient = (category) => gradientMap[category] || gradientMap.vocabulary;
-
-  // Get icon component or fallback
+function LearningCards({
+  modules = [],
+  loading = false,
+  error = null,
+  onSelectModule = () => {},
+}) {
+  const getGradient = (category) => gradientMap[normalizeModuleCategory(category)] || gradientMap.sentences;
   const getIcon = (iconName) => iconMap[iconName] || BookText;
 
   return (
@@ -49,7 +65,7 @@ function LearningCards({ modules = [], loading = false, error = null }) {
             Interactive Learning
           </p>
           <h3 className="mt-2 font-display text-3xl leading-tight font-semibold sm:text-4xl">
-            Start with the basics
+            Learn in three focused tracks
           </h3>
         </motion.div>
 
@@ -64,11 +80,11 @@ function LearningCards({ modules = [], loading = false, error = null }) {
         )}
 
         {loading ? (
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="flex gap-5 overflow-x-auto pb-2">
             {[1, 2, 3].map((i) => (
               <motion.div
                 key={i}
-                className="glass relative overflow-hidden rounded-3xl p-6 shadow-soft bg-slate-100/40 animate-pulse"
+                className="glass relative w-[280px] shrink-0 overflow-hidden rounded-3xl bg-slate-100/40 p-6 shadow-soft animate-pulse sm:w-[320px]"
                 style={{ height: "280px" }}
               />
             ))}
@@ -80,24 +96,35 @@ function LearningCards({ modules = [], loading = false, error = null }) {
             animate={{ opacity: 1, y: 0 }}
           >
             <p className="text-lg font-semibold">No modules available yet</p>
-            <p className="text-sm mt-2">Check back soon for new learning content!</p>
+            <p className="text-sm mt-2">Check back soon for new learning content.</p>
           </motion.div>
         ) : (
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="flex gap-5 overflow-x-auto pb-2">
             {modules.map((module, index) => {
               const Icon = getIcon(module.icon);
               const gradient = getGradient(module.category);
               const moduleKey = module.id || module._id || `${module.title || "module"}-${index}`;
+              const lessonsCount = Number(module.lessonsCount ?? module.lessons?.length ?? 0);
+              const progressPercentage = Number(module.progressPercentage ?? 0);
 
               return (
                 <motion.article
                   key={moduleKey}
+                  onClick={() => onSelectModule(module)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      onSelectModule(module);
+                    }
+                  }}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.6, delay: index * 0.08 }}
                   whileHover={{ scale: 1.02, y: -4 }}
-                  className="group glass relative overflow-hidden rounded-3xl p-6 shadow-soft cursor-pointer transition-all"
+                  className="group glass relative w-[280px] shrink-0 cursor-pointer overflow-hidden rounded-3xl p-6 shadow-soft transition-all sm:w-[320px]"
                 >
                   <div
                     className={`pointer-events-none absolute inset-0 bg-gradient-to-br transition duration-300 ${gradient}`}
@@ -106,22 +133,24 @@ function LearningCards({ modules = [], loading = false, error = null }) {
                     <div className="mb-6 inline-flex rounded-2xl border border-white/35 bg-white/20 p-3 text-slate-900">
                       <Icon className="h-6 w-6" />
                     </div>
-                    <h4 className="font-display text-2xl font-semibold text-slate-950">
-                      {module.title}
-                    </h4>
+                    <h5 className="font-display text-2xl font-semibold text-slate-950">{module.title}</h5>
+                    <p className="mt-2 inline-flex rounded-full border border-slate-200 bg-white/70 px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] text-slate-700 uppercase">
+                      {formatCategoryLabel(module.category)}
+                    </p>
                     <p className="mt-3 text-sm leading-relaxed font-medium text-slate-800/85">
                       {module.description}
                     </p>
 
                     <div className="mt-7">
                       <div className="mb-2 flex items-center justify-between text-xs font-semibold tracking-wide text-slate-700/80 uppercase">
-                        <span>{module.lessonsCount} Lessons</span>
+                        <span>{lessonsCount} Lessons</span>
+                        <span>{Math.max(0, Math.min(progressPercentage, 100))}%</span>
                       </div>
                       <div className="h-2.5 overflow-hidden rounded-full bg-slate-300/55">
                         <motion.div
                           className="h-full rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-violet-500"
                           initial={{ width: 0 }}
-                          whileInView={{ width: "0%" }}
+                          whileInView={{ width: `${Math.max(0, Math.min(progressPercentage, 100))}%` }}
                           viewport={{ once: true }}
                           transition={{ duration: 0.8, delay: 0.2 + index * 0.1 }}
                         />

@@ -1,32 +1,63 @@
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import LearningCards from "@/components/LearningCards";
 import StickySectionLabel from "@/components/StickySectionLabel";
 import { getModules } from "@/lib/authApi";
+import {
+  CORE_MODULE_CATEGORIES,
+  normalizeModuleCategory,
+} from "@/lib/moduleCategories";
 
 function LearnPage() {
+  const navigate = useNavigate();
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchModules = async () => {
-      try {
-        setLoading(true);
-        const data = await getModules();
-        setModules(data.data || data.modules || []);
-        setError(null);
-      } catch (err) {
-        console.error("Failed to fetch modules:", err);
-        setError("Failed to load learning modules");
-        setModules([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  async function fetchModules() {
+    const data = await getModules();
+    const modules = data.data || data.modules || [];
+    return modules
+      .map((module) => ({
+        ...module,
+        category: normalizeModuleCategory(module.category),
+      }))
+      .filter((module) => CORE_MODULE_CATEGORIES.includes(module.category));
+  }
 
-    fetchModules();
+  async function loadModules() {
+    try {
+      setLoading(true);
+      const nextModules = await fetchModules();
+      setModules(nextModules);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to fetch modules:", err);
+      setError("Failed to load learning modules");
+      setModules([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadModules();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  function handleSelectModule(module) {
+    if (!module) {
+      return;
+    }
+
+    const nextModuleId = module._id || module.id;
+    if (!nextModuleId) {
+      return;
+    }
+
+    navigate(`/learn/module/${nextModuleId}`);
+  }
 
   return (
     <div className="pt-20">
@@ -62,7 +93,13 @@ function LearnPage() {
           </div>
         </div>
       </motion.section>
-      <LearningCards modules={modules} loading={loading} error={error} />
+
+      <LearningCards
+        modules={modules}
+        loading={loading}
+        error={error}
+        onSelectModule={handleSelectModule}
+      />
     </div>
   );
 }

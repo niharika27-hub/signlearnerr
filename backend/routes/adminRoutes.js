@@ -6,6 +6,10 @@ import { Module } from "../models/Module.js";
 import { Lesson } from "../models/Lesson.js";
 import User from "../models/User.js";
 import { UserModuleAssignment } from "../models/UserModuleAssignment.js";
+import {
+	buildSignedUploadPayload,
+	isCloudinaryConfigured,
+} from "../utils/cloudinary.js";
 
 const VALID_CATEGORIES = ["alphabet", "vocabulary", "sentences", "conversation"];
 const VALID_ROLE_CATEGORIES = ["learner", "support-circle", "accessibility-needs"];
@@ -75,7 +79,7 @@ adminRoutes.get("/modules", async (_request, response) => {
 			.sort({ orderIndex: 1, createdAt: 1 })
 			.populate({
 				path: "lessons",
-				select: "title description duration order difficultyLevel isActive createdAt",
+				select: "title description contentUrl duration order difficultyLevel isActive createdAt",
 				options: { sort: { order: 1 } },
 			})
 			.lean();
@@ -89,6 +93,35 @@ adminRoutes.get("/modules", async (_request, response) => {
 	} catch (error) {
 		console.error("Admin list modules error:", error);
 		return response.status(500).json({ success: false, message: "Failed to fetch modules." });
+	}
+});
+
+adminRoutes.post("/cloudinary/sign-upload", async (request, response) => {
+	try {
+		if (!isCloudinaryConfigured()) {
+			return response.status(503).json({
+				success: false,
+				message:
+					"Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in backend .env.",
+			});
+		}
+
+		const { folder, publicId, resourceType } = request.body ?? {};
+		const signedPayload = buildSignedUploadPayload({
+			folder,
+			publicId,
+			resourceType,
+		});
+
+		return response.json({
+			success: true,
+			data: signedPayload,
+		});
+	} catch (error) {
+		console.error("Admin cloudinary sign error:", error);
+		return response
+			.status(500)
+			.json({ success: false, message: "Failed to sign Cloudinary upload." });
 	}
 });
 
