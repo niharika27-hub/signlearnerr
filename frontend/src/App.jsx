@@ -9,6 +9,7 @@ import LearnPage from "@/pages/LearnPage";
 import LoginPage from "@/pages/LoginPage";
 import PracticePage from "@/pages/PracticePage";
 import ProgressPage from "@/pages/ProgressPage";
+import QuizPage from "@/pages/QuizPage";
 import ProfilePage from "@/pages/ProfilePage";
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/pages/ResetPasswordPage";
@@ -55,6 +56,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProgressPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/quiz"
+            element={
+              <ProtectedRoute>
+                <QuizPage />
               </ProtectedRoute>
             }
           />
