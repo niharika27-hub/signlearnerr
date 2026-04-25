@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { PencilLine } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import StickySectionLabel from "@/components/StickySectionLabel";
@@ -6,14 +7,18 @@ import {
   ROLE_CATEGORY_OPTIONS,
   getRolesForCategory,
 } from "@/lib/profileStorage";
-import { updateProfile, changePassword, deleteAccount, logoutUser } from "@/lib/authApi";
+import { updateProfile, changePassword, deleteAccount, uploadAvatarFile } from "@/lib/authApi";
+import { useAuth } from "@/lib/AuthContext";
 
 function ProfilePage() {
   const navigate = useNavigate();
+  const { user, setUser } = useAuth();
   const [profile, setProfile] = useState(null);
+  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const [savedMessage, setSavedMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAvatarUploading, setIsAvatarUploading] = useState(false);
   const [activeTab, setActiveTab] = useState("profile"); // profile, security, account
   
   // Change password form
@@ -25,19 +30,9 @@ function ProfilePage() {
   const [deletePassword, setDeletePassword] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/auth/me", {
-      credentials: "include", // 🔥 MOST IMPORTANT
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log("User from backend:", data);
-        setProfile(data);
-      })
-      .catch(err => {
-        console.error(err);
-        setProfile(null);
-      });
-  }, []);
+    setProfile(user ?? null);
+    setAvatarLoadFailed(false);
+  }, [user]);
 
   const roleOptions = useMemo(() => {
     if (!profile?.roleCategory) {
@@ -46,6 +41,10 @@ function ProfilePage() {
 
     return getRolesForCategory(profile.roleCategory);
   }, [profile?.roleCategory]);
+
+  const profileImageUrl = profile?.avatar || profile?.photoURL || user?.avatar || user?.photoURL || "";
+  const profileInitial = String(profile?.fullName || profile?.email || "U").charAt(0).toUpperCase();
+  const profileDisplayName = profile?.fullName || user?.fullName || "Your";
 
   function handleCategoryChange(nextCategory) {
     const nextRoles = getRolesForCategory(nextCategory);
@@ -68,6 +67,50 @@ function ProfilePage() {
     }));
   }
 
+  function handleAvatarLoadError() {
+    setAvatarLoadFailed(true);
+  }
+
+  async function handleAvatarFileChange(event) {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    setErrorMessage("");
+    setSavedMessage("");
+    setIsAvatarUploading(true);
+
+    try {
+      const uploadResult = await uploadAvatarFile(file);
+      const imageUrl = uploadResult.url;
+
+      const persisted = await updateProfile({
+        photoURL: imageUrl,
+        avatar: imageUrl,
+      });
+
+      const updatedUser = persisted.user;
+      setProfile((current) => ({
+        ...current,
+        photoURL: updatedUser.photoURL ?? imageUrl,
+        avatar: updatedUser.avatar ?? imageUrl,
+      }));
+      setUser((current) => ({
+        ...current,
+        photoURL: updatedUser.photoURL ?? imageUrl,
+        avatar: updatedUser.avatar ?? imageUrl,
+      }));
+      setSavedMessage("Avatar updated successfully!");
+      window.setTimeout(() => setSavedMessage(""), 2200);
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || error.message || "Failed to upload avatar.");
+    } finally {
+      setIsAvatarUploading(false);
+      event.target.value = "";
+    }
+  }
+
   async function handleSave(event) {
   event.preventDefault();
   setErrorMessage("");
@@ -80,16 +123,21 @@ function ProfilePage() {
       roleCategory: profile.roleCategory,
       role: profile.role,
       roleLabel: profile.roleLabel,
+      photoURL: profile.photoURL || null,
+      avatar: profile.avatar || null,
     });
     const user = res.user;
 
     const updatedProfile = {
       ...profile,
       fullName: user.fullName,
+      photoURL: user.photoURL ?? null,
+      avatar: user.avatar ?? null,
       roleLabel: user.roleLabel,
     };
 
-    setProfile(updatedProfile); // ✅ ONLY THIS
+    setProfile(updatedProfile);
+    setUser(updatedProfile);
 
     setSavedMessage("Profile updated successfully!");
     window.setTimeout(() => setSavedMessage(""), 2200);
@@ -145,8 +193,8 @@ function ProfilePage() {
     try {
       await deleteAccount({ password: deletePassword });
 
-      clearProfile();
-      clearSession();
+      setProfile(null);
+      setUser(null);
       navigate("/login");
       setSavedMessage("Account deleted successfully.");
     } catch (error) {
@@ -253,6 +301,53 @@ function ProfilePage() {
                   className="rounded-3xl border border-slate-200/80 bg-white/75 p-6 shadow-[0_20px_70px_-36px_rgba(15,23,42,0.55)] backdrop-blur sm:p-8"
                 >
                   <h2 className="text-lg font-bold text-slate-900 mb-4">📝 Update Your Profile</h2>
+
+                  <div className="mb-5 overflow-hidden rounded-[1.75rem] border border-slate-200 bg-gradient-to-br from-white via-white to-indigo-50/70 p-5">
+                    <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+                      <div className="flex items-start gap-4">
+                        <div className="flex shrink-0 flex-col items-center gap-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => document.getElementById("profile-avatar-input")?.click()}
+                            className="group relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-indigo-100 text-2xl font-bold text-indigo-800 ring-2 ring-indigo-200 transition hover:ring-indigo-300"
+                            aria-label="Change profile photo"
+                          >
+                            {profileImageUrl && !avatarLoadFailed ? (
+                              <img
+                                src={profileImageUrl}
+                                alt="Profile avatar"
+                                className="h-full w-full object-cover"
+                                onError={handleAvatarLoadError}
+                              />
+                            ) : (
+                              <span>{profileInitial}</span>
+                            )}
+                            <span className="absolute right-0 bottom-0 inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-indigo-600 text-white shadow-sm transition group-hover:bg-indigo-700">
+                              <PencilLine className="h-4 w-4" />
+                            </span>
+                          </button>
+                          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase leading-none text-indigo-700">Edit</span>
+                        </div>
+                        <div className="pt-1">
+                          <p className="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Avatar</p>
+                          <h3 className="mt-1 text-lg font-semibold text-slate-900">{profileDisplayName}</h3>
+                          <p className="mt-1 max-w-md text-sm text-slate-600">
+                            Tap the edit icon to change your profile photo.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <input
+                      id="profile-avatar-input"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarFileChange}
+                      disabled={isAvatarUploading}
+                      className="sr-only"
+                    />
+                  </div>
+
                   <div className="grid gap-4 md:grid-cols-2">
                     <label className="space-y-2 text-sm font-semibold text-slate-700">
                       Full name

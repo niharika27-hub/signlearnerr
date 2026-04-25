@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import { sanitizeUser, getUserByEmail, createUser, updateUser, deleteUser, emailExists } from "../services/userService.js";
 import { generateToken } from "../middleware/authMiddleware.js";
 import { sendPasswordResetOtpEmail } from "../utils/mailer.js";
+import { uploadBufferToCloudinary } from "../utils/cloudinary.js";
 
 const RESET_OTP_TTL_MS = 10 * 60 * 1000;
 
@@ -38,7 +39,7 @@ export async function getProfile(request, response) {
 
 export async function signup(request, response) {
 	try {
-		const { fullName, email, password, roleCategory, role, roleLabel } = request.body ?? {};
+		const { fullName, email, password, roleCategory, role, roleLabel, photoURL, avatar } = request.body ?? {};
 
 		if (!fullName || !email || !password || !roleCategory || !role) {
 			return response.status(400).json({
@@ -67,6 +68,8 @@ export async function signup(request, response) {
 			fullName: String(fullName).trim(),
 			email: normalizedEmail,
 			passwordHash: hashedPassword,
+			photoURL: photoURL || null,
+			avatar: avatar || null,
 			roleCategory,
 			role,
 			roleLabel: roleLabel || role,
@@ -93,6 +96,34 @@ export async function signup(request, response) {
 	} catch (error) {
 		console.error("Signup error:", error);
 		return response.status(500).json({ message: "Something went wrong while creating your account: " + error.message });
+	}
+}
+
+export async function uploadAvatar(request, response) {
+	try {
+		if (!request.file) {
+			return response.status(400).json({ message: "No image file uploaded." });
+		}
+
+		const uploadResult = await uploadBufferToCloudinary(request.file.buffer, {
+			folder: "signlearnerr/avatars",
+			resource_type: "image",
+			public_id: `avatar-${randomUUID()}`,
+		});
+
+		const imageUrl = uploadResult.secure_url || uploadResult.url;
+
+		if (!imageUrl) {
+			throw new Error("Cloudinary did not return an image URL.");
+		}
+
+		return response.status(201).json({
+			message: "Avatar uploaded successfully.",
+			url: imageUrl,
+		});
+	} catch (error) {
+		console.error("Avatar upload error:", error);
+		return response.status(500).json({ message: "Something went wrong while uploading avatar." });
 	}
 }
 export async function login(request, response) {
@@ -155,7 +186,7 @@ export async function logout(request, response) {
 }
 export async function updateProfile(request, response) {
 	try {
-		const { fullName, roleCategory, role, roleLabel } = request.body ?? {};
+		const { fullName, roleCategory, role, roleLabel, photoURL, avatar } = request.body ?? {};
 
 		if (!request.user) {
 			return response.status(401).json({ message: "Not authenticated." });
@@ -173,6 +204,8 @@ export async function updateProfile(request, response) {
 		if (roleCategory) updateData.roleCategory = roleCategory;
 		if (role) updateData.role = role;
 		if (roleLabel) updateData.roleLabel = roleLabel;
+		if (photoURL !== undefined) updateData.photoURL = photoURL || null;
+		if (avatar !== undefined) updateData.avatar = avatar || null;
 
 		const updatedUser = await updateUser(user.id, updateData);
 		const updatedProfile = sanitizeUser(updatedUser);

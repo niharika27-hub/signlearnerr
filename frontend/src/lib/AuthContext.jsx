@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { loginUser, signupUser, logoutUser, getProfile } from "./authApi";
+import { clearProfile, saveStoredProfile } from "./profileStorage";
 
 const AuthContext = createContext();
 
@@ -25,10 +26,12 @@ export const AuthProvider = ({ children }) => {
       // Token is automatically sent via cookie (withCredentials: true)
       const data = await getProfile();
       setUser(data.user);
+      saveStoredProfile(data.user);
       setIsAuthenticated(true);
     } catch (error) {
       // API failed - user not authenticated
       setIsAuthenticated(false);
+      clearProfile();
     } finally {
       setLoading(false);
     }
@@ -49,6 +52,7 @@ export const AuthProvider = ({ children }) => {
       // Token is automatically set as httpOnly cookie by backend.
 
       setUser(user);
+      saveStoredProfile(user);
       setIsAuthenticated(true);
       setLoading(false);
 
@@ -90,6 +94,7 @@ const loginWithGoogle = async (token) => {
     const user = data.user;
     
     setUser(user);
+    saveStoredProfile(user);
     setIsAuthenticated(true);
     setLoading(false);
 
@@ -110,6 +115,7 @@ const loginWithGoogle = async (token) => {
     // Clear state immediately so user sees "not authenticated" right away
     setUser(null);
     setIsAuthenticated(false);
+    clearProfile();
     // Token is in httpOnly cookie - only server can clear it
 
     // Try to notify backend to clear session (fire and forget)
