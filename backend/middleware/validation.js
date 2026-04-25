@@ -24,6 +24,14 @@ export const validateSignup = [
 	body("role")
 		.trim()
 		.notEmpty().withMessage("Role is required"),
+
+	body("photoURL")
+		.optional({ nullable: true, checkFalsy: true })
+		.isURL().withMessage("photoURL must be a valid URL"),
+
+	body("avatar")
+		.optional({ nullable: true, checkFalsy: true })
+		.isURL().withMessage("avatar must be a valid URL"),
 ];
 
 /**
@@ -98,6 +106,14 @@ export const validateProfileUpdate = [
 	body("roleCategory")
 		.optional()
 		.isIn(["learner", "support-circle", "accessibility-needs"]).withMessage("Invalid role category"),
+
+	body("photoURL")
+		.optional({ nullable: true, checkFalsy: true })
+		.isURL().withMessage("photoURL must be a valid URL"),
+
+	body("avatar")
+		.optional({ nullable: true, checkFalsy: true })
+		.isURL().withMessage("avatar must be a valid URL"),
 ];
 
 /**

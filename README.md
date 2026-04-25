@@ -20,3 +20,4 @@ This repository is now organized with a clear separation between frontend and ba
 - Frontend source lives in `frontend/src/`
 - Backend server entry point is `backend/server.js`
 - Auth data file is `backend/users.json`
+- Avatar uploads use Cloudinary; the client setup lives in `backend/config/cloudinary.js` and needs `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` from `backend/.env`.
