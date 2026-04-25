@@ -14,6 +14,8 @@ import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/pages/ResetPasswordPage";
 import SignUpPage from "@/pages/SignUpPage";
 import AdminModulesPage from "@/pages/AdminModulesPage";
+import TeacherLessonsPage from "@/pages/TeacherLessonsPage";
+import RoleRoute from "@/components/RoleRoute";
 
 function App() {
   const { pathname } = useLocation();
@@ -68,7 +70,19 @@ function App() {
             path="/admin/modules"
             element={
               <ProtectedRoute>
-                <AdminModulesPage />
+                <RoleRoute allowedRoles={["admin"]}>
+                  <AdminModulesPage />
+                </RoleRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/lessons"
+            element={
+              <ProtectedRoute>
+                <RoleRoute allowedRoles={["teacher"]}>
+                  <TeacherLessonsPage />
+                </RoleRoute>
               </ProtectedRoute>
             }
           />

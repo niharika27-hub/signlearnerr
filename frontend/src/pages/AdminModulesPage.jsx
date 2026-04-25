@@ -399,7 +399,7 @@ function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRef
 function AdminModulesPage() {
 	const { user } = useAuth();
 	const roleValue = String(user?.role || "").toLowerCase();
-	const isAdmin = roleValue === "admin";
+	const isAdmin = roleValue === "admin" || Boolean(user?.isAdminOverride);
 	const [modules, setModules] = useState([]);
 	const [users, setUsers] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -483,7 +483,7 @@ function AdminModulesPage() {
 				<div className="mx-auto max-w-3xl rounded-3xl border border-rose-200 bg-rose-50 p-8 text-center">
 					<h1 className="text-2xl font-bold text-rose-700">Admin Access Required</h1>
 					<p className="mt-2 text-sm font-medium text-rose-700">
-						Only admin/teacher accounts can manage learning modules.
+						Only admin accounts can manage learning modules.
 					</p>
 				</div>
 			</div>

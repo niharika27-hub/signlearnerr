@@ -1,11 +1,5 @@
 import { getUserByEmail } from "../services/userService.js";
-
-function getAdminEmailsFromEnv() {
-	return String(process.env.ADMIN_EMAILS || "")
-		.split(",")
-		.map((entry) => entry.trim().toLowerCase())
-		.filter(Boolean);
-}
+import { getAdminEmailsFromEnv } from "./accessControl.js";
 
 export async function adminMiddleware(request, response, next) {
 	try {
