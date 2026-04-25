@@ -190,6 +190,7 @@ export async function getUserProgress() {
 			modulesCompleted: payload.modulesCompleted ?? 0,
 			totalModules: payload.totalModules ?? 0,
 			lessonsCompleted: payload.lessonsCompleted ?? 0,
+			moduleProgress: payload.moduleProgress ?? [],
 			overallProgress:
 				payload.overallProgress ?? payload.overallProgressPercentage ?? 0,
 		},
