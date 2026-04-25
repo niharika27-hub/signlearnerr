@@ -1,55 +1,4 @@
 import { motion } from "framer-motion";
-<<<<<<< HEAD
-import {
-  BookText,
-  MessageCircle,
-  Signature,
-  Zap,
-  Eye,
-  Users,
-  Briefcase,
-  Globe,
-  Play,
-  Award,
-  Heart,
-  Accessibility,
-} from "lucide-react";
-import StickySectionLabel from "@/components/StickySectionLabel";
-import {
-  formatCategoryLabel,
-  normalizeModuleCategory,
-} from "@/lib/moduleCategories";
-
-const iconMap = {
-  Signature,
-  BookText,
-  MessageCircle,
-  Zap,
-  Eye,
-  Users,
-  Briefcase,
-  Globe,
-  Play,
-  Award,
-  Heart,
-  Accessibility,
-};
-
-const gradientMap = {
-  alphabet: "from-cyan-300/45 via-blue-300/25 to-transparent group-hover:from-cyan-300/55",
-  vocabulary: "from-violet-300/45 via-indigo-300/25 to-transparent group-hover:from-violet-300/55",
-  sentences: "from-emerald-300/45 via-teal-300/25 to-transparent group-hover:from-emerald-300/55",
-};
-
-function LearningCards({
-  modules = [],
-  loading = false,
-  error = null,
-  onSelectModule = () => {},
-}) {
-  const getGradient = (category) => gradientMap[normalizeModuleCategory(category)] || gradientMap.sentences;
-  const getIcon = (iconName) => iconMap[iconName] || BookText;
-=======
 import { useMemo, useState } from "react";
 import { ChevronDown, Clock3, Flame, Lock, PlayCircle } from "lucide-react";
 import StickySectionLabel from "@/components/StickySectionLabel";
@@ -116,7 +65,6 @@ function LearningCards({ modules = [], loading = false, error = null, userProgre
   const continueModule = moduleCards.find(
     (module) => !module.locked && module.progressPercentage > 0 && module.progressPercentage < 100
   );
->>>>>>> 408f45b7bb6a527d8d0ee055bc1ebc331495150e
 
   return (
     <section data-scene="Learning Modules" className="relative px-6 py-24 sm:py-28">
@@ -134,11 +82,7 @@ function LearningCards({ modules = [], loading = false, error = null, userProgre
             Interactive Learning
           </p>
           <h3 className="mt-2 font-display text-3xl leading-tight font-semibold sm:text-4xl">
-<<<<<<< HEAD
-            Learn in three focused tracks
-=======
             Structured learning roadmap
->>>>>>> 408f45b7bb6a527d8d0ee055bc1ebc331495150e
           </h3>
           <p className="mt-3 max-w-3xl text-sm text-slate-600 sm:text-base">
             Home → Learn Page → Module → Category → Lesson → Practice → Quiz → Progress Update
@@ -165,20 +109,11 @@ function LearningCards({ modules = [], loading = false, error = null, userProgre
         )}
 
         {loading ? (
-<<<<<<< HEAD
-          <div className="flex gap-5 overflow-x-auto pb-2">
-            {[1, 2, 3].map((i) => (
-              <motion.div
-                key={i}
-                className="glass relative w-[280px] shrink-0 overflow-hidden rounded-3xl bg-slate-100/40 p-6 shadow-soft animate-pulse sm:w-[320px]"
-                style={{ height: "280px" }}
-=======
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <motion.div
                 key={i}
                 className="relative min-h-72 overflow-hidden rounded-3xl border border-white/60 bg-slate-100/55 p-6 shadow-soft animate-pulse"
->>>>>>> 408f45b7bb6a527d8d0ee055bc1ebc331495150e
               />
             ))}
           </div>
@@ -192,62 +127,6 @@ function LearningCards({ modules = [], loading = false, error = null, userProgre
             <p className="text-sm mt-2">Check back soon for new learning content.</p>
           </motion.div>
         ) : (
-<<<<<<< HEAD
-          <div className="flex gap-5 overflow-x-auto pb-2">
-            {modules.map((module, index) => {
-              const Icon = getIcon(module.icon);
-              const gradient = getGradient(module.category);
-              const moduleKey = module.id || module._id || `${module.title || "module"}-${index}`;
-              const lessonsCount = Number(module.lessonsCount ?? module.lessons?.length ?? 0);
-              const progressPercentage = Number(module.progressPercentage ?? 0);
-
-              return (
-                <motion.article
-                  key={moduleKey}
-                  onClick={() => onSelectModule(module)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" || event.key === " ") {
-                      event.preventDefault();
-                      onSelectModule(module);
-                    }
-                  }}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.6, delay: index * 0.08 }}
-                  whileHover={{ scale: 1.02, y: -4 }}
-                  className="group glass relative w-[280px] shrink-0 cursor-pointer overflow-hidden rounded-3xl p-6 shadow-soft transition-all sm:w-[320px]"
-                >
-                  <div
-                    className={`pointer-events-none absolute inset-0 bg-gradient-to-br transition duration-300 ${gradient}`}
-                  />
-                  <div className="relative">
-                    <div className="mb-6 inline-flex rounded-2xl border border-white/35 bg-white/20 p-3 text-slate-900">
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <h5 className="font-display text-2xl font-semibold text-slate-950">{module.title}</h5>
-                    <p className="mt-2 inline-flex rounded-full border border-slate-200 bg-white/70 px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] text-slate-700 uppercase">
-                      {formatCategoryLabel(module.category)}
-                    </p>
-                    <p className="mt-3 text-sm leading-relaxed font-medium text-slate-800/85">
-                      {module.description}
-                    </p>
-
-                    <div className="mt-7">
-                      <div className="mb-2 flex items-center justify-between text-xs font-semibold tracking-wide text-slate-700/80 uppercase">
-                        <span>{lessonsCount} Lessons</span>
-                        <span>{Math.max(0, Math.min(progressPercentage, 100))}%</span>
-                      </div>
-                      <div className="h-2.5 overflow-hidden rounded-full bg-slate-300/55">
-                        <motion.div
-                          className="h-full rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-violet-500"
-                          initial={{ width: 0 }}
-                          whileInView={{ width: `${Math.max(0, Math.min(progressPercentage, 100))}%` }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.8, delay: 0.2 + index * 0.1 }}
-=======
           <div className="space-y-5">
             {moduleCards.map((module, index) => {
               const isExpanded = expandedModule === module.moduleKey;
@@ -302,7 +181,6 @@ function LearningCards({ modules = [], loading = false, error = null, userProgre
                           loop
                           autoPlay
                           className="h-28 w-full object-cover"
->>>>>>> 408f45b7bb6a527d8d0ee055bc1ebc331495150e
                         />
                       ) : (
                         <img

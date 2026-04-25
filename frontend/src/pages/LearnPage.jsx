@@ -3,13 +3,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LearningCards from "@/components/LearningCards";
 import StickySectionLabel from "@/components/StickySectionLabel";
-<<<<<<< HEAD
-import { getModules } from "@/lib/authApi";
-import {
-  CORE_MODULE_CATEGORIES,
-  normalizeModuleCategory,
-} from "@/lib/moduleCategories";
-=======
 import { getModules, getUserProgress } from "@/lib/authApi";
 
 const coreLearningSections = [
@@ -41,7 +34,6 @@ const coreLearningSections = [
     tone: "from-emerald-100/80 via-teal-100/55 to-green-50/70 border-emerald-200/70",
   },
 ];
->>>>>>> 408f45b7bb6a527d8d0ee055bc1ebc331495150e
 
 function LearnPage() {
   const navigate = useNavigate();
@@ -55,18 +47,6 @@ function LearnPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-<<<<<<< HEAD
-  async function fetchModules() {
-    const data = await getModules();
-    const modules = data.data || data.modules || [];
-    return modules
-      .map((module) => ({
-        ...module,
-        category: normalizeModuleCategory(module.category),
-      }))
-      .filter((module) => CORE_MODULE_CATEGORIES.includes(module.category));
-  }
-=======
   useEffect(() => {
     const fetchModules = async () => {
       try {
@@ -92,26 +72,8 @@ function LearnPage() {
         setLoading(false);
       }
     };
->>>>>>> 408f45b7bb6a527d8d0ee055bc1ebc331495150e
 
-  async function loadModules() {
-    try {
-      setLoading(true);
-      const nextModules = await fetchModules();
-      setModules(nextModules);
-      setError(null);
-    } catch (err) {
-      console.error("Failed to fetch modules:", err);
-      setError("Failed to load learning modules");
-      setModules([]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    loadModules();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchModules();
   }, []);
 
   function handleSelectModule(module) {
@@ -178,14 +140,6 @@ function LearnPage() {
         </div>
       </motion.section>
 
-<<<<<<< HEAD
-      <LearningCards
-        modules={modules}
-        loading={loading}
-        error={error}
-        onSelectModule={handleSelectModule}
-      />
-=======
       <motion.section
         data-scene="Core Learning Sections"
         className="relative px-6 pb-8"
@@ -245,7 +199,6 @@ function LearnPage() {
       </motion.section>
 
       <LearningCards modules={modules} loading={loading} error={error} userProgress={userProgress} />
->>>>>>> 408f45b7bb6a527d8d0ee055bc1ebc331495150e
     </div>
   );
 }

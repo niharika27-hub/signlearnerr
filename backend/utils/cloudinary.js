@@ -1,5 +1,9 @@
-<<<<<<< HEAD
 import { createHash } from "node:crypto";
+import cloudinary, { isCloudinaryConfigured } from "../config/cloudinary.js";
+import { Readable } from "node:stream";
+
+// Re-export for convenience
+export { isCloudinaryConfigured };
 
 const ALLOWED_RESOURCE_TYPES = new Set(["auto", "image", "video", "raw"]);
 
@@ -29,11 +33,6 @@ export function getCloudinaryConfig() {
 		apiSecret: process.env.CLOUDINARY_API_SECRET || "",
 		defaultFolder: process.env.CLOUDINARY_UPLOAD_FOLDER || "signlearn",
 	};
-}
-
-export function isCloudinaryConfigured() {
-	const { cloudName, apiKey, apiSecret } = getCloudinaryConfig();
-	return Boolean(cloudName && apiKey && apiSecret);
 }
 
 export function buildSignedUploadPayload(options = {}) {
@@ -68,9 +67,6 @@ export function buildSignedUploadPayload(options = {}) {
 		signature,
 	};
 }
-=======
-import cloudinary, { isCloudinaryConfigured } from "../config/cloudinary.js";
-import { Readable } from "node:stream";
 
 export function uploadBufferToCloudinary(buffer, options = {}) {
 	if (!isCloudinaryConfigured()) {
@@ -90,4 +86,3 @@ export function uploadBufferToCloudinary(buffer, options = {}) {
 		Readable.from([buffer]).pipe(uploadStream);
 	});
 }
->>>>>>> 408f45b7bb6a527d8d0ee055bc1ebc331495150e
