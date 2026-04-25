@@ -1,6 +1,14 @@
 export const PROFILE_STORAGE_KEY = "signlearn_profile";
 export const SESSION_STORAGE_KEY = "signlearn_session";
 
+import {
+  getStoredProfileFromCookie,
+  saveStoredProfileToCookie,
+  getSessionFromCookie,
+  saveSessionToCookie,
+  clearAuthCookies,
+} from "./cookieStorage";
+
 export const ROLE_CATEGORY_OPTIONS = [
   {
     value: "accessibility-needs",
@@ -46,8 +54,8 @@ export const ROLE_OPTIONS_BY_CATEGORY = {
   ],
 };
 
-function hasLocalStorage() {
-  return typeof window !== "undefined" && Boolean(window.localStorage);
+function hasBrowserWindow() {
+  return typeof window !== "undefined";
 }
 
 export function getRolesForCategory(category) {
@@ -55,24 +63,19 @@ export function getRolesForCategory(category) {
 }
 
 export function getStoredProfile() {
-  if (!hasLocalStorage()) {
+  if (!hasBrowserWindow()) {
     return null;
   }
 
-  try {
-    const rawProfile = window.localStorage.getItem(PROFILE_STORAGE_KEY);
-    return rawProfile ? JSON.parse(rawProfile) : null;
-  } catch {
-    return null;
-  }
+  return getStoredProfileFromCookie();
 }
 
 export function saveStoredProfile(profile) {
-  if (!hasLocalStorage()) {
+  if (!hasBrowserWindow()) {
     return;
   }
 
-  window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+  saveStoredProfileToCookie(profile);
   
   // Dispatch a custom event so components like AppNavbar can listen
   window.dispatchEvent(
@@ -81,19 +84,19 @@ export function saveStoredProfile(profile) {
 }
 
 export function saveSession(session) {
-  if (!hasLocalStorage()) {
+  if (!hasBrowserWindow()) {
     return;
   }
 
-  window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  saveSessionToCookie(session);
 }
 
 export function clearProfile() {
-  if (!hasLocalStorage()) {
+  if (!hasBrowserWindow()) {
     return;
   }
 
-  window.localStorage.removeItem(PROFILE_STORAGE_KEY);
+  clearAuthCookies();
   
   // Dispatch event when profile is cleared
   window.dispatchEvent(
@@ -102,11 +105,19 @@ export function clearProfile() {
 }
 
 export function clearSession() {
-  if (!hasLocalStorage()) {
+  if (!hasBrowserWindow()) {
     return;
   }
 
-  window.localStorage.removeItem(SESSION_STORAGE_KEY);
+  clearAuthCookies();
+}
+
+export function getStoredSession() {
+  if (!hasBrowserWindow()) {
+    return null;
+  }
+
+  return getSessionFromCookie();
 }
 
 export function createStarterRecommendations(roleValue) {

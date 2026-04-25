@@ -46,8 +46,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await loginUser({ email, password });
       const user = data.user;
-      // Token is automatically set as httpOnly cookie by backend
-      // No need to store in localStorage
+      // Token is automatically set as httpOnly cookie by backend.
 
       setUser(user);
       setIsAuthenticated(true);
@@ -84,8 +83,7 @@ const loginWithGoogle = async (token) => {
   setLoading(true);
   setError(null);
   try {
-    // Token is already set as httpOnly cookie by backend
-    // No need to store in localStorage
+    // Token is already set as httpOnly cookie by backend.
     
     // Fetch user profile (token sent automatically via cookie)
     const data = await getProfile();

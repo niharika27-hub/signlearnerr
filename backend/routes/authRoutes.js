@@ -12,7 +12,6 @@ import {
 	deleteAccount,
 } from "../controllers/authController.js";
 import { authMiddleware, generateToken } from "../middleware/authMiddleware.js";
-import { sanitizeUser } from "../services/userService.js";
 import {
 	validateSignup,
 	validateLogin,
@@ -44,24 +43,30 @@ authRoutes.get("/google", passport.authenticate("google", {
 }));
 
 // Google callback
-authRoutes.get("/google/callback",
-  passport.authenticate("google", { failureRedirect: "http://localhost:5173/login" }),
-  (req, res) => {
-    // Authentication successful
-    const token = generateToken(req.user._id, req.user.email);
-    
-    // Set JWT in httpOnly cookie (same as manual login/signup)
+authRoutes.get("/google/callback", (req, res, next) => {
+  passport.authenticate("google", (error, user) => {
+    if (error) {
+      const oauthDetails =
+        error?.oauthError?.data || error?.message || "Google OAuth authentication failed.";
+      console.error("Google OAuth callback error:", oauthDetails);
+      return res.redirect("http://localhost:5173/login?error=google_oauth");
+    }
+
+    if (!user) {
+      return res.redirect("http://localhost:5173/login?error=google_oauth");
+    }
+
+    const token = generateToken(user.id, user.email);
+
     res.cookie("authToken", token, {
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
       path: "/",
     });
-    
-    // Redirect to home - cookie will be sent automatically in subsequent requests
-    // User will be authenticated via the authToken cookie
-    res.redirect("http://localhost:5173/");
-  }
-);
+
+    return res.redirect("http://localhost:5173/");
+  })(req, res, next);
+});
 export default authRoutes;

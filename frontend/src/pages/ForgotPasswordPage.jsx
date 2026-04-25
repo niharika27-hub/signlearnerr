@@ -1,29 +1,25 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import StickySectionLabel from "@/components/StickySectionLabel";
 import { requestPasswordReset } from "@/lib/authApi";
 
 function ForgotPasswordPage() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [resetUrl, setResetUrl] = useState("");
 
   async function handleSubmit(event) {
     event.preventDefault();
     setIsSubmitting(true);
     setSuccessMessage("");
     setErrorMessage("");
-    setResetUrl("");
 
     try {
-      const data = await requestPasswordReset({ email });
-      setSuccessMessage(data.message || "If your email exists, reset instructions have been sent.");
-      if (data.resetUrl) {
-        setResetUrl(data.resetUrl);
-      }
+      await requestPasswordReset({ email });
+      navigate(`/reset-password?email=${encodeURIComponent(email.trim())}`);
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Unable to process your request right now.");
     } finally {
@@ -46,10 +42,10 @@ function ForgotPasswordPage() {
             Forgot password
           </p>
           <h1 className="mt-2 font-display text-4xl font-semibold text-slate-900 sm:text-5xl">
-            Reset your password
+            Get your reset code
           </h1>
           <p className="mt-4 text-slate-600">
-            Enter your account email and we will generate a secure reset link.
+            Enter your account email and we will generate a secure reset code.
           </p>
 
           <form
@@ -75,7 +71,7 @@ function ForgotPasswordPage() {
                   disabled={isSubmitting}
                   className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  {isSubmitting ? "Generating..." : "Send reset link"}
+                  {isSubmitting ? "Generating..." : "Send reset code"}
                 </button>
                 <Link
                   to="/login"
@@ -84,18 +80,6 @@ function ForgotPasswordPage() {
                   Back to login
                 </Link>
               </div>
-
-              {successMessage && (
-                <p className="text-sm font-medium text-emerald-700" role="status">
-                  {successMessage}
-                </p>
-              )}
-
-              {resetUrl && (
-                <p className="break-all text-xs text-slate-600">
-                  Dev reset link: {resetUrl}
-                </p>
-              )}
 
               {errorMessage && (
                 <p className="text-sm font-medium text-rose-700" role="alert">

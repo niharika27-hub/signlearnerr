@@ -53,9 +53,15 @@ export const validateForgotPassword = [
  * Validation rules for reset password
  */
 export const validateResetPassword = [
-	body("token")
+	body("email")
 		.trim()
-		.notEmpty().withMessage("Reset token is required"),
+		.isEmail().withMessage("Invalid email address")
+		.normalizeEmail(),
+
+	body("otp")
+		.trim()
+		.isLength({ min: 6, max: 6 }).withMessage("OTP must be a 6-digit code")
+		.isNumeric().withMessage("OTP must contain only numbers"),
 
 	body("newPassword")
 		.isLength({ min: 6 }).withMessage("New password must be at least 6 characters long")

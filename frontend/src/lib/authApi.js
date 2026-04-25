@@ -12,28 +12,10 @@ const apiClient = axios.create({
 	withCredentials: true, // Send cookies with requests
 });
 
-// Add token to requests automatically
-apiClient.interceptors.request.use((config) => {
-	const token = localStorage.getItem("authToken");
-	if (token) {
-		config.headers.Authorization = `Bearer ${token}`;
-	}
-	return config;
-});
-
-// Handle token errors
+// Handle auth errors using cookie-based sessions only.
 apiClient.interceptors.response.use(
 	(response) => response,
 	(error) => {
-		// Only redirect to login if we have a token but it's invalid
-		// (meaning the token expired or was revoked)
-		const token = localStorage.getItem("authToken");
-		if (error.response?.status === 401 && token) {
-			// Token expired or invalid - clear storage and redirect
-			localStorage.removeItem("authToken");
-			localStorage.removeItem("user");
-			window.location.href = "/login";
-		}
 		return Promise.reject(error);
 	}
 );
@@ -80,7 +62,7 @@ export async function requestPasswordReset(payload) {
 	return response.data;
 }
 
-export async function resetPasswordWithToken(payload) {
+export async function resetPasswordWithOtp(payload) {
 	const response = await apiClient.post("/auth/reset-password", payload);
 	return response.data;
 }

@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import { randomUUID } from "node:crypto";
+import mongoose from "mongoose";
 
 /**
  * Sanitize user object - remove sensitive fields
@@ -55,7 +56,13 @@ export async function getUserByEmail(email) {
  */
 export async function getUserById(id) {
 	try {
-		const user = await User.findOne({ id });
+		const filters = [{ id }];
+
+		if (mongoose.Types.ObjectId.isValid(id)) {
+			filters.push({ _id: id });
+		}
+
+		const user = await User.findOne({ $or: filters });
 		return user;
 	} catch (error) {
 		console.error("Error fetching user by ID:", error);

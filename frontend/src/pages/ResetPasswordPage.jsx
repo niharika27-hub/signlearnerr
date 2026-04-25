@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import StickySectionLabel from "@/components/StickySectionLabel";
-import { resetPasswordWithToken } from "@/lib/authApi";
+import { resetPasswordWithOtp } from "@/lib/authApi";
 
 const STRONG_PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
 
@@ -10,8 +10,9 @@ function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const urlToken = useMemo(() => searchParams.get("token") || "", [searchParams]);
-  const [token, setToken] = useState(urlToken);
+  const urlEmail = useMemo(() => searchParams.get("email") || "", [searchParams]);
+  const [email, setEmail] = useState(urlEmail);
+  const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,8 +25,8 @@ function ResetPasswordPage() {
     setSuccessMessage("");
     setErrorMessage("");
 
-    if (!token) {
-      setErrorMessage("Reset token is required.");
+    if (!email || !otp) {
+      setErrorMessage("Email and OTP are required.");
       setIsSubmitting(false);
       return;
     }
@@ -45,7 +46,7 @@ function ResetPasswordPage() {
     }
 
     try {
-      const data = await resetPasswordWithToken({ token, newPassword });
+      const data = await resetPasswordWithOtp({ email, otp, newPassword });
       setSuccessMessage(data.message || "Password updated successfully.");
       setTimeout(() => navigate("/login"), 1500);
     } catch (error) {
@@ -85,13 +86,25 @@ function ResetPasswordPage() {
           >
             <div className="grid gap-4">
               <label className="space-y-2 text-sm font-semibold text-slate-700">
-                Reset token
+                Account email
                 <input
                   required
-                  value={token}
-                  onChange={(event) => setToken(event.target.value)}
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
                   className="w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200"
-                  placeholder="Paste reset token"
+                  placeholder="you@example.com"
+                />
+              </label>
+
+              <label className="space-y-2 text-sm font-semibold text-slate-700">
+                OTP code
+                <input
+                  required
+                  value={otp}
+                  onChange={(event) => setOtp(event.target.value)}
+                  className="w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200"
+                  placeholder="Enter 6-digit code"
                 />
               </label>
 

@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { getUserByEmail, createUser, sanitizeUser } from "../services/userService.js";
+import { getUserByEmail, createUser, updateUser } from "../services/userService.js";
 
 // Google Strategy
 passport.use(
@@ -11,8 +11,6 @@ passport.use(
       callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback'
     },
     async (accessToken, refreshToken, profile, done) => {
-      console.log("✅ Google Strategy - Callback triggered");
-      console.log("Callback URL being used:", process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback');
       try {
         // Google se milne wali info
         const email = profile.emails[0]?.value;
@@ -22,6 +20,10 @@ passport.use(
         const googleId = profile.id;
         const photoURL = profile.photos[0]?.value;
 
+        if (!email) {
+          return done(new Error("Google account email is required."), null);
+        }
+
         // Check if user exists
         let user = await getUserByEmail(email);
 
@@ -30,12 +32,20 @@ passport.use(
           user = await createUser({
             fullName,
             email,
-            password: null, // Google OAuth users don't have password
+            passwordHash: null,
             googleId,
             photoURL,
             roleCategory: "support-circle", // Default role
             role: "family-member",
             roleLabel: "Family Member",
+            lastLogin: new Date(),
+          });
+        } else {
+          // Existing users should be linked to Google account and login time refreshed.
+          user = await updateUser(user.id, {
+            googleId,
+            photoURL,
+            lastLogin: new Date(),
           });
         }
 
@@ -49,7 +59,7 @@ passport.use(
 
 // Serialize user (session mein store karne ke liye)
 passport.serializeUser((user, done) => {
-  done(null, user._id);
+  done(null, user.id);
 });
 
 // Deserialize user

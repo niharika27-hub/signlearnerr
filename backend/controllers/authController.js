@@ -1,11 +1,19 @@
 import bcrypt from "bcryptjs";
-import { createHash, randomBytes, randomUUID } from "node:crypto";
+import { createHash, randomInt, randomUUID } from "node:crypto";
 import User from "../models/User.js";
 import { sanitizeUser, getUserByEmail, createUser, updateUser, deleteUser, emailExists } from "../services/userService.js";
 import { generateToken } from "../middleware/authMiddleware.js";
+import { sendPasswordResetOtpEmail } from "../utils/mailer.js";
 
-const RESET_TOKEN_TTL_MS = 15 * 60 * 1000;
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+const RESET_OTP_TTL_MS = 10 * 60 * 1000;
+
+function createOtp() {
+	return String(randomInt(100000, 1000000));
+}
+
+function hashOtp(otp) {
+	return createHash("sha256").update(String(otp)).digest("hex");
+}
 export async function getProfile(request, response) {
 	try {
 		// JWT middleware already validated token and set request.user
@@ -276,7 +284,7 @@ export async function deleteAccount(request, response) {
 
 /**
  * POST /api/auth/forgot-password
- * Request password reset token (generic response to avoid account enumeration)
+ * Request password reset OTP (generic response to avoid account enumeration)
  */
 export async function forgotPassword(request, response) {
 	try {
@@ -291,28 +299,33 @@ export async function forgotPassword(request, response) {
 		const user = await getUserByEmail(normalizedEmail);
 
 		if (user && user.isActive) {
-			const rawToken = randomBytes(32).toString("hex");
-			const tokenHash = createHash("sha256").update(rawToken).digest("hex");
+			const otp = createOtp();
+			const otpHash = hashOtp(otp);
 
 			await updateUser(user.id, {
-				resetPasswordTokenHash: tokenHash,
-				resetPasswordExpiresAt: new Date(Date.now() + RESET_TOKEN_TTL_MS),
+				resetPasswordOtpHash: otpHash,
+				resetPasswordOtpExpiresAt: new Date(Date.now() + RESET_OTP_TTL_MS),
+				resetPasswordOtpAttempts: 0,
 			});
 
-			const resetUrl = `${FRONTEND_URL}/reset-password?token=${rawToken}`;
-			console.log("Password reset URL:", resetUrl);
+			const deliveryResult = await sendPasswordResetOtpEmail({
+				to: user.email,
+				fullName: user.fullName,
+				otp,
+				expiresInMinutes: Math.round(RESET_OTP_TTL_MS / 60000),
+			});
 
-			if (process.env.NODE_ENV !== "production") {
+			if (process.env.NODE_ENV !== "production" && !deliveryResult.delivered) {
 				return response.json({
 					message:
-						"If this email exists, a password reset link has been generated.",
-					resetUrl,
+						"If this email exists, a password reset code has been generated.",
+					otp,
 				});
 			}
 		}
 
 		return response.json({
-			message: "If this email exists, a password reset link has been sent.",
+			message: "If this email exists, a password reset code has been sent.",
 		});
 	} catch (error) {
 		console.error("Forgot password error:", error);
@@ -324,15 +337,15 @@ export async function forgotPassword(request, response) {
 
 /**
  * POST /api/auth/reset-password
- * Reset password using token from forgot-password flow
+ * Reset password using OTP from forgot-password flow
  */
 export async function resetPassword(request, response) {
 	try {
-		const { token, newPassword } = request.body ?? {};
+		const { email, otp, newPassword } = request.body ?? {};
 
-		if (!token || !newPassword) {
+		if (!email || !otp || !newPassword) {
 			return response.status(400).json({
-				message: "Token and new password are required.",
+				message: "Email, OTP, and new password are required.",
 			});
 		}
 
@@ -342,24 +355,46 @@ export async function resetPassword(request, response) {
 			});
 		}
 
-		const tokenHash = createHash("sha256").update(String(token)).digest("hex");
+		const normalizedEmail = String(email).trim().toLowerCase();
+		const otpHash = hashOtp(otp);
 
 		const user = await User.findOne({
-			resetPasswordTokenHash: tokenHash,
-			resetPasswordExpiresAt: { $gt: new Date() },
+			email: normalizedEmail,
+			resetPasswordOtpHash: otpHash,
+			resetPasswordOtpExpiresAt: { $gt: new Date() },
 			isActive: true,
-		}).select("+passwordHash +resetPasswordTokenHash +resetPasswordExpiresAt");
+		}).select("+passwordHash +resetPasswordOtpHash +resetPasswordOtpExpiresAt +resetPasswordOtpAttempts");
 
 		if (!user) {
+			const pendingUser = await User.findOne({
+				email: normalizedEmail,
+				resetPasswordOtpExpiresAt: { $gt: new Date() },
+				isActive: true,
+			}).select("+resetPasswordOtpAttempts +resetPasswordOtpHash +resetPasswordOtpExpiresAt");
+
+			if (pendingUser) {
+				const nextAttempts = Number(pendingUser.resetPasswordOtpAttempts || 0) + 1;
+				if (nextAttempts >= 5) {
+					pendingUser.resetPasswordOtpHash = null;
+					pendingUser.resetPasswordOtpExpiresAt = null;
+					pendingUser.resetPasswordOtpAttempts = 0;
+				} else {
+					pendingUser.resetPasswordOtpAttempts = nextAttempts;
+				}
+
+				await pendingUser.save();
+			}
+
 			return response.status(400).json({
-				message: "Invalid or expired reset token.",
+				message: "Invalid or expired OTP.",
 			});
 		}
 
 		const hashedPassword = await bcrypt.hash(newPassword, 10);
 		user.passwordHash = hashedPassword;
-		user.resetPasswordTokenHash = null;
-		user.resetPasswordExpiresAt = null;
+		user.resetPasswordOtpHash = null;
+		user.resetPasswordOtpExpiresAt = null;
+		user.resetPasswordOtpAttempts = 0;
 		await user.save();
 
 		return response.json({
