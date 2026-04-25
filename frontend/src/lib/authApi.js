@@ -117,6 +117,26 @@ export async function deleteAdminLesson(lessonId) {
 	return response.data;
 }
 
+export async function getTeacherModules() {
+	const response = await apiClient.get("/teacher/modules");
+	return response.data;
+}
+
+export async function createTeacherLesson(moduleId, payload) {
+	const response = await apiClient.post(`/teacher/modules/${moduleId}/lessons`, payload);
+	return response.data;
+}
+
+export async function updateTeacherLesson(lessonId, payload) {
+	const response = await apiClient.patch(`/teacher/lessons/${lessonId}`, payload);
+	return response.data;
+}
+
+export async function deleteTeacherLesson(lessonId) {
+	const response = await apiClient.delete(`/teacher/lessons/${lessonId}`);
+	return response.data;
+}
+
 // ============================================================================
 // Learning Module APIs
 // ============================================================================

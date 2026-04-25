@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { getUserByEmail } from "../services/userService.js";
+import { isEmergencyAdminEmail } from "./accessControl.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_change_in_production";
 
@@ -64,6 +65,7 @@ export async function authMiddleware(request, response, next) {
       roleCategory: user.roleCategory,
       role: user.role,
       roleLabel: user.roleLabel,
+      isAdminOverride: isEmergencyAdminEmail(user.email),
     };
 
     next();

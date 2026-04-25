@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import { randomUUID } from "node:crypto";
 import mongoose from "mongoose";
+import { isEmergencyAdminEmail } from "../middleware/accessControl.js";
 
 /**
  * Sanitize user object - remove sensitive fields
@@ -21,6 +22,7 @@ export function sanitizeUser(user) {
 		role: userObj.role,
 		roleLabel: userObj.roleLabel,
 		joinedAt: userObj.joinedAt,
+		isAdminOverride: isEmergencyAdminEmail(userObj.email),
 	};
 }
 

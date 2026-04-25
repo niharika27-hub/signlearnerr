@@ -31,9 +31,12 @@ function AppNavbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const roleValue = String(user?.role || "").toLowerCase();
-  const isAdmin = roleValue === "admin";
+  const isAdmin = roleValue === "admin" || Boolean(user?.isAdminOverride);
+  const isTeacher = roleValue === "teacher";
   const computedNavItems = isAdmin
     ? [...navItems, { label: "Admin", to: "/admin/modules" }]
+    : isTeacher
+      ? [...navItems, { label: "Teacher", to: "/teacher/lessons" }]
     : navItems;
 
   async function handleLogout() {
