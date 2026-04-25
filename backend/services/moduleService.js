@@ -3,6 +3,7 @@ import { Lesson } from "../models/Lesson.js";
 import { LessonCompletion } from "../models/LessonCompletion.js";
 import { ModuleProgress } from "../models/ModuleProgress.js";
 import { UserProgress } from "../models/UserProgress.js";
+import { UserModuleAssignment } from "../models/UserModuleAssignment.js";
 
 /**
  * Get all modules filtered by user's role category
@@ -13,7 +14,7 @@ export async function getModulesByRole(roleCategory) {
 	try {
 		const modules = await Module.find({
 			roleCategories: roleCategory,
-			isActive: true,
+			$or: [{ isActive: true }, { isActive: { $exists: false } }],
 		})
 			.sort({ orderIndex: 1 })
 			.populate("lessons", "title order");
@@ -21,6 +22,38 @@ export async function getModulesByRole(roleCategory) {
 		return modules;
 	} catch (error) {
 		console.error("Error fetching modules by role:", error);
+		throw error;
+	}
+}
+
+/**
+ * Get modules visible to a user using both role-based and explicit per-user assignment.
+ * @param {string} userId - User ID
+ * @param {string} roleCategory - Role category
+ * @returns {Promise<Array>} Modules for this user
+ */
+export async function getModulesForUser(userId, roleCategory) {
+	try {
+		const assignments = await UserModuleAssignment.find({ userId }).select("moduleId").lean();
+		const assignedModuleIds = assignments.map((entry) => entry.moduleId);
+
+		const filters = [{ roleCategories: roleCategory }];
+		if (assignedModuleIds.length > 0) {
+			filters.push({ _id: { $in: assignedModuleIds } });
+		}
+
+		const modules = await Module.find({
+			$and: [
+				{ $or: filters },
+				{ $or: [{ isActive: true }, { isActive: { $exists: false } }] },
+			],
+		})
+			.sort({ orderIndex: 1 })
+			.populate("lessons", "title order");
+
+		return modules;
+	} catch (error) {
+		console.error("Error fetching modules for user:", error);
 		throw error;
 	}
 }

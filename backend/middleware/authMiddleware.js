@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { getUserByEmail } from "../services/userService.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_change_in_production";
 
@@ -27,7 +28,7 @@ export function verifyToken(token) {
 /**
  * ✅ Auth Middleware (you already wrote correctly)
  */
-export function authMiddleware(request, response, next) {
+export async function authMiddleware(request, response, next) {
   try {
     let token = null;
 
@@ -49,7 +50,22 @@ export function authMiddleware(request, response, next) {
       return response.status(401).json(null);
     }
 
-    request.user = decoded;
+    const user = await getUserByEmail(decoded.email);
+
+    if (!user || !user.isActive) {
+      return response.status(401).json({ message: "User not found or inactive." });
+    }
+
+    request.user = {
+      id: user.id,
+      userId: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      roleCategory: user.roleCategory,
+      role: user.role,
+      roleLabel: user.roleLabel,
+    };
+
     next();
   } catch (error) {
     console.error("Auth middleware error:", error);

@@ -67,6 +67,56 @@ export async function resetPasswordWithOtp(payload) {
 	return response.data;
 }
 
+export async function getAdminModules() {
+	const response = await apiClient.get("/admin/modules");
+	return response.data;
+}
+
+export async function getAdminUsers() {
+	const response = await apiClient.get("/admin/users");
+	return response.data;
+}
+
+export async function assignModuleToUser(moduleId, userId) {
+	const response = await apiClient.post(`/admin/modules/${moduleId}/assignments`, { userId });
+	return response.data;
+}
+
+export async function unassignModuleFromUser(moduleId, userId) {
+	const response = await apiClient.delete(`/admin/modules/${moduleId}/assignments/${userId}`);
+	return response.data;
+}
+
+export async function createAdminModule(payload) {
+	const response = await apiClient.post("/admin/modules", payload);
+	return response.data;
+}
+
+export async function updateAdminModule(moduleId, payload) {
+	const response = await apiClient.patch(`/admin/modules/${moduleId}`, payload);
+	return response.data;
+}
+
+export async function deleteAdminModule(moduleId) {
+	const response = await apiClient.delete(`/admin/modules/${moduleId}`);
+	return response.data;
+}
+
+export async function createAdminLesson(moduleId, payload) {
+	const response = await apiClient.post(`/admin/modules/${moduleId}/lessons`, payload);
+	return response.data;
+}
+
+export async function updateAdminLesson(lessonId, payload) {
+	const response = await apiClient.patch(`/admin/lessons/${lessonId}`, payload);
+	return response.data;
+}
+
+export async function deleteAdminLesson(lessonId) {
+	const response = await apiClient.delete(`/admin/lessons/${lessonId}`);
+	return response.data;
+}
+
 // ============================================================================
 // Learning Module APIs
 // ============================================================================

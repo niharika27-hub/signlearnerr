@@ -36,6 +36,11 @@ const moduleSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false, // If true, must complete lessons in order
 		},
+		isActive: {
+			type: Boolean,
+			default: true,
+			index: true,
+		},
 		lessons: [
 			{
 				type: mongoose.Schema.Types.ObjectId,

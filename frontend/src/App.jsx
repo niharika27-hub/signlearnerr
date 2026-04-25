@@ -13,6 +13,7 @@ import ProfilePage from "@/pages/ProfilePage";
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/pages/ResetPasswordPage";
 import SignUpPage from "@/pages/SignUpPage";
+import AdminModulesPage from "@/pages/AdminModulesPage";
 
 function App() {
   const { pathname } = useLocation();
@@ -60,6 +61,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/modules"
+            element={
+              <ProtectedRoute>
+                <AdminModulesPage />
               </ProtectedRoute>
             }
           />

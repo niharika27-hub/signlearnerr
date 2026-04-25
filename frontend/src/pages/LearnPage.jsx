@@ -14,7 +14,7 @@ function LearnPage() {
       try {
         setLoading(true);
         const data = await getModules();
-        setModules(data.modules || []);
+        setModules(data.data || data.modules || []);
         setError(null);
       } catch (err) {
         console.error("Failed to fetch modules:", err);

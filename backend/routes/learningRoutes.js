@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import {
-	getModulesByRole,
+	getModulesForUser,
 	getModuleWithLessons,
 	completeLesson,
 } from "../services/moduleService.js";
@@ -44,8 +44,8 @@ learningRoutes.use(authMiddleware);
  */
 learningRoutes.get("/modules", async (req, res) => {
 	try {
-		const { roleCategory } = req.user;
-		const modules = await getModulesByRole(roleCategory);
+		const { id: userId, roleCategory } = req.user;
+		const modules = await getModulesForUser(userId, roleCategory);
 
 		res.json({
 			success: true,

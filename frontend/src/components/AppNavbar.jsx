@@ -30,6 +30,12 @@ function AppNavbar() {
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
+  const roleValue = String(user?.role || "").toLowerCase();
+  const isAdmin = roleValue === "admin";
+  const computedNavItems = isAdmin
+    ? [...navItems, { label: "Admin", to: "/admin/modules" }]
+    : navItems;
+
   async function handleLogout() {
     try {
       await logout();
@@ -48,7 +54,7 @@ function AppNavbar() {
 
         <div className="hidden items-center gap-2 md:flex">
           <div className="flex items-center gap-2">
-            {navItems.map((item) => (
+            {computedNavItems.map((item) => (
               <NavLink key={item.to} to={item.to} className={linkClass}>
                 {item.label}
               </NavLink>
@@ -111,7 +117,7 @@ function AppNavbar() {
             exit={{ opacity: 0, y: -10 }}
             className="pointer-events-auto mx-auto mt-2 w-full max-w-6xl rounded-2xl border border-slate-200 bg-white/90 p-3 backdrop-blur-xl md:hidden"
           >
-            {navItems.map((item) => (
+            {computedNavItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
