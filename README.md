@@ -36,5 +36,9 @@ This repository is now organized with a clear separation between frontend and ba
 - Frontend source lives in `frontend/src/`
 - Backend server entry point is `backend/server.js`
 - Auth data file is `backend/users.json`
+<<<<<<< HEAD
 - Dataset shortlist for modules: `docs/module-datasets.md`
 - Manifest examples for bulk lesson import: `docs/examples/module-manifest.example.json` and `docs/examples/module-manifest.example.csv`
+=======
+- Avatar uploads use Cloudinary; the client setup lives in `backend/config/cloudinary.js` and needs `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` from `backend/.env`.
+>>>>>>> 408f45b7bb6a527d8d0ee055bc1ebc331495150e

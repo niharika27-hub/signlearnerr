@@ -30,6 +30,19 @@ export async function loginUser(payload) {
 	return response.data;
 }
 
+export async function uploadAvatarFile(file) {
+	const formData = new FormData();
+	formData.append("avatar", file);
+
+	const response = await apiClient.post("/auth/upload-avatar", formData, {
+		headers: {
+			"Content-Type": "multipart/form-data",
+		},
+	});
+
+	return response.data;
+}
+
 export async function getProfile() {
 	const response = await apiClient.get("/auth/me");
 	return response.data;
@@ -200,6 +213,7 @@ export async function getUserProgress() {
 			modulesCompleted: payload.modulesCompleted ?? 0,
 			totalModules: payload.totalModules ?? 0,
 			lessonsCompleted: payload.lessonsCompleted ?? 0,
+			moduleProgress: payload.moduleProgress ?? [],
 			overallProgress:
 				payload.overallProgress ?? payload.overallProgressPercentage ?? 0,
 		},

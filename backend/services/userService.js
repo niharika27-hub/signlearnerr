@@ -10,7 +10,6 @@ export function sanitizeUser(user) {
 	if (!user) {
 		return null;
 	}
-
 	// If it's a Mongoose document, convert to plain object first
 	const userObj = user.toObject ? user.toObject() : user;
 
@@ -18,6 +17,8 @@ export function sanitizeUser(user) {
 		id: userObj.id,
 		fullName: userObj.fullName,
 		email: userObj.email,
+		avatar: userObj.avatar ?? null,
+		photoURL: userObj.photoURL ?? null,
 		roleCategory: userObj.roleCategory,
 		role: userObj.role,
 		roleLabel: userObj.roleLabel,
