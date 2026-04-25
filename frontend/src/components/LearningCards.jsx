@@ -87,10 +87,11 @@ function LearningCards({ modules = [], loading = false, error = null }) {
             {modules.map((module, index) => {
               const Icon = getIcon(module.icon);
               const gradient = getGradient(module.category);
+              const moduleKey = module.id || module._id || `${module.title || "module"}-${index}`;
 
               return (
                 <motion.article
-                  key={module.id}
+                  key={moduleKey}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
