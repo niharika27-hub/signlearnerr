@@ -1,30 +1,34 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import ProgressSection from "@/components/ProgressSection";
 import StickySectionLabel from "@/components/StickySectionLabel";
-import { getUserProgress } from "@/lib/authApi";
+import { getApiErrorMessage, getUserProgress } from "@/lib/authApi";
 
 function ProgressPage() {
+  const navigate = useNavigate();
   const [progress, setProgress] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState(null);
+
+  async function fetchProgress() {
+    try {
+      setLoading(true);
+      const data = await getUserProgress();
+      setProgress(data.progress || {});
+      setError(null);
+      setLastUpdatedAt(new Date());
+    } catch (err) {
+      console.error("Failed to fetch progress:", err);
+      setError(getApiErrorMessage(err, "Failed to load progress data"));
+      setProgress(null);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    const fetchProgress = async () => {
-      try {
-        setLoading(true);
-        const data = await getUserProgress();
-        setProgress(data.progress || {});
-        setError(null);
-      } catch (err) {
-        console.error("Failed to fetch progress:", err);
-        setError("Failed to load progress data");
-        setProgress(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProgress();
   }, []);
 
@@ -65,9 +69,28 @@ function ProgressPage() {
               Completed modules: {modulesCompleted}/{totalModules}
             </div>
           </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={fetchProgress}
+              disabled={loading}
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {loading ? "Refreshing..." : "Refresh progress"}
+            </button>
+            <p className="text-xs font-semibold text-slate-500">
+              Last updated: {lastUpdatedAt ? lastUpdatedAt.toLocaleTimeString() : "Not synced yet"}
+            </p>
+          </div>
         </div>
       </motion.section>
-      <ProgressSection progress={progress} loading={loading} error={error} />
+      <ProgressSection
+        progress={progress}
+        loading={loading}
+        error={error}
+        onContinueLearning={() => navigate("/learn")}
+      />
     </div>
   );
 }

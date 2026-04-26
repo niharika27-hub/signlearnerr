@@ -126,6 +126,7 @@ export async function completeLesson(userId, lessonId, score = null) {
 			lessonCompletion = existingCompletion;
 			lessonCompletion.attempts += 1;
 			lessonCompletion.isRetake = true;
+			lessonCompletion.completedAt = new Date();
 			if (score !== null) {
 				lessonCompletion.score = score;
 			}

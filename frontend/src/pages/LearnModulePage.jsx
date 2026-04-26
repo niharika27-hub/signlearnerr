@@ -199,6 +199,7 @@ function LearnModulePage() {
   const [selectedModule, setSelectedModule] = useState(null);
   const [moduleLoading, setModuleLoading] = useState(true);
   const [moduleError, setModuleError] = useState("");
+  const [moduleSuccess, setModuleSuccess] = useState("");
   const [completingLessonId, setCompletingLessonId] = useState("");
   const [selectedLessonId, setSelectedLessonId] = useState("");
 
@@ -299,14 +300,30 @@ function LearnModulePage() {
 
     try {
       setCompletingLessonId(String(lessonId));
+      setModuleError("");
+      setModuleSuccess("");
       await completeLesson(lessonId);
       await loadModuleDetails();
+      setModuleSuccess("Lesson marked complete successfully.");
     } catch (error) {
       console.error("Failed to complete lesson:", error);
       setModuleError(error.response?.data?.message || "Failed to mark lesson complete.");
     } finally {
       setCompletingLessonId("");
     }
+  }
+
+  function handleStartQuiz(lesson) {
+    if (!lesson?._id) {
+      return;
+    }
+
+    const params = new URLSearchParams({
+      lessonId: String(lesson._id),
+      lessonTitle: String(lesson.title || ""),
+      moduleId: String(moduleId || ""),
+    });
+    navigate(`/quiz?${params.toString()}`);
   }
 
   return (
@@ -343,6 +360,7 @@ function LearnModulePage() {
 
         {moduleLoading ? <p className="mt-4 text-sm text-slate-600">Loading module lessons...</p> : null}
         {moduleError ? <p className="mt-4 text-sm font-semibold text-rose-700">{moduleError}</p> : null}
+        {moduleSuccess ? <p className="mt-4 text-sm font-semibold text-emerald-700">{moduleSuccess}</p> : null}
 
         {!moduleLoading && selectedModule?.lessons?.length ? (
           <div className="mt-4 grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
@@ -438,19 +456,31 @@ function LearnModulePage() {
 
                   <div className="mt-3 flex items-center justify-between gap-2">
                     <span className="text-xs font-semibold text-slate-500">{selectedLesson.duration || 0} min</span>
-                    <button
-                      type="button"
-                      onClick={() => handleCompleteLesson(selectedLesson._id)}
-                      disabled={selectedLesson.isCompleted || completingLessonId === String(selectedLesson._id)}
-                      className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
-                    >
-                      {selectedLesson.isCompleted
-                        ? "Completed"
-                        : completingLessonId === String(selectedLesson._id)
-                          ? "Saving..."
-                          : "Mark Complete"}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleStartQuiz(selectedLesson)}
+                        className="rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-800"
+                      >
+                        Take Quiz
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleCompleteLesson(selectedLesson._id)}
+                        disabled={selectedLesson.isCompleted || completingLessonId === String(selectedLesson._id)}
+                        className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+                      >
+                        {selectedLesson.isCompleted
+                          ? "Completed"
+                          : completingLessonId === String(selectedLesson._id)
+                            ? "Saving..."
+                            : "Mark Complete"}
+                      </button>
+                    </div>
                   </div>
+                  <p className="mt-2 text-xs text-slate-500">
+                    Tip: complete the quiz to save a score and update your learning progress.
+                  </p>
               </article>
             ) : null}
           </div>

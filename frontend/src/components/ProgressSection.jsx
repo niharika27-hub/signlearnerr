@@ -46,7 +46,12 @@ function CircleMeter({ percent }) {
   );
 }
 
-function ProgressSection({ progress = null, loading = false, error = null }) {
+function ProgressSection({
+  progress = null,
+  loading = false,
+  error = null,
+  onContinueLearning = null,
+}) {
   // Create stat objects with real data or defaults
   const stats = [
     {
@@ -104,7 +109,7 @@ function ProgressSection({ progress = null, loading = false, error = null }) {
 
         {error && (
           <motion.div
-            className="mb-6 rounded-xl bg-red-50 border border-red-200 p-4 text-red-700"
+            className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -212,7 +217,11 @@ function ProgressSection({ progress = null, loading = false, error = null }) {
                       style={{ width: `${module.progress}%` }}
                     />
                   </div>
-                  <button className="mt-5 inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
+                  <button
+                    type="button"
+                    onClick={onContinueLearning || undefined}
+                    className="mt-5 inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+                  >
                     Continue Learning
                     <ArrowRight className="h-4 w-4" />
                   </button>

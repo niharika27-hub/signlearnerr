@@ -20,6 +20,31 @@ apiClient.interceptors.response.use(
 	}
 );
 
+function isValidScore(value) {
+	return Number.isFinite(value) && value >= 0 && value <= 100;
+}
+
+export function getApiErrorMessage(error, fallbackMessage = "Something went wrong. Please try again.") {
+	if (!error) {
+		return fallbackMessage;
+	}
+
+	const payloadMessage =
+		error.response?.data?.message ||
+		error.response?.data?.error ||
+		error.response?.data?.details;
+
+	if (typeof payloadMessage === "string" && payloadMessage.trim()) {
+		return payloadMessage.trim();
+	}
+
+	if (typeof error.message === "string" && error.message.trim()) {
+		return error.message.trim();
+	}
+
+	return fallbackMessage;
+}
+
 export async function signupUser(payload) {
 	const response = await apiClient.post("/auth/signup", payload);
 	return response.data;
@@ -190,8 +215,12 @@ export async function getModule(moduleId) {
  * @returns {Promise} { success: boolean, data: Object }
  */
 export async function completeLesson(lessonId, score = null) {
+	if (score !== null && score !== undefined && !isValidScore(score)) {
+		throw new Error("Score must be between 0 and 100.");
+	}
+
 	const response = await apiClient.post(`/learning/lessons/${lessonId}/complete`, {
-		score,
+		score: score === null || score === undefined ? null : Math.round(score),
 	});
 	return response.data;
 }
