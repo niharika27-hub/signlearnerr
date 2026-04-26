@@ -19,8 +19,8 @@
       "orderIndex": 1,
       "estimatedCompletionMinutes": 90,
       "thumbnailPreview": {
-        "type": "video",
-        "url": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/beginner-basics.mp4"
+        "type": "image",
+        "url": "https://res.cloudinary.com/dxcwwdmxl/image/upload/v1777186757/signlearn/modules/beginner-basics.jpg"
       },
       "categories": [
         {
@@ -34,16 +34,22 @@
               "shortDescription": "Practice six foundational handshapes.",
               "difficulty": "Easy",
               "durationMinutes": 6,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/alphabet-a-f.mp4",
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186762/signlearn/lessons/alphabet-a-f.mp4",
               "practiceActivity": {
                 "type": "visual-match",
                 "prompt": "Match each handshape to the correct letter from A to F."
               },
               "quiz": {
                 "question": "Which handshape represents letter C?",
-                "options": ["Curved hand", "Closed fist", "Two-finger V", "Flat palm"],
+                "options": [
+                  "Curved hand",
+                  "Closed fist",
+                  "Two-finger V",
+                  "Flat palm"
+                ],
                 "correctOptionIndex": 0
-              }
+              },
+              "youtubeVideoId": "DBQINq0SsAw"
             },
             {
               "lessonKey": "alphabet-g-l",
@@ -51,16 +57,22 @@
               "shortDescription": "Recognize directional and finger-spelling signs.",
               "difficulty": "Easy",
               "durationMinutes": 7,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/alphabet-g-l.mp4",
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186763/signlearn/lessons/alphabet-g-l.mp4",
               "practiceActivity": {
                 "type": "mirror-practice",
                 "prompt": "Copy each sign in front of your camera and hold for 2 seconds."
               },
               "quiz": {
                 "question": "Which sign uses thumb and index finger sideways?",
-                "options": ["H", "G", "L", "K"],
+                "options": [
+                  "H",
+                  "G",
+                  "L",
+                  "K"
+                ],
                 "correctOptionIndex": 1
-              }
+              },
+              "youtubeVideoId": "cGavOVNDj1s"
             },
             {
               "lessonKey": "alphabet-m-r",
@@ -68,16 +80,22 @@
               "shortDescription": "Understand finger placement differences for M, N, and T.",
               "difficulty": "Easy",
               "durationMinutes": 7,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/alphabet-m-r.mp4",
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186765/signlearn/lessons/alphabet-m-r.mp4",
               "practiceActivity": {
                 "type": "spot-the-difference",
                 "prompt": "Identify subtle finger-position changes across signs."
               },
               "quiz": {
                 "question": "How many fingers wrap over thumb in letter M?",
-                "options": ["1", "2", "3", "4"],
+                "options": [
+                  "1",
+                  "2",
+                  "3",
+                  "4"
+                ],
                 "correctOptionIndex": 2
-              }
+              },
+              "youtubeVideoId": "6_gXiBe9y9A"
             },
             {
               "lessonKey": "alphabet-s-z",
@@ -85,16 +103,22 @@
               "shortDescription": "Finish the alphabet and learn motion for Z.",
               "difficulty": "Easy",
               "durationMinutes": 8,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/alphabet-s-z.mp4",
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186765/signlearn/lessons/alphabet-s-z.mp4",
               "practiceActivity": {
                 "type": "trace-motion",
                 "prompt": "Draw letter Z movement in air correctly with index finger."
               },
               "quiz": {
                 "question": "Which letter requires movement?",
-                "options": ["S", "X", "Y", "Z"],
+                "options": [
+                  "S",
+                  "X",
+                  "Y",
+                  "Z"
+                ],
                 "correctOptionIndex": 3
-              }
+              },
+              "youtubeVideoId": "DBQINq0SsAw"
             },
             {
               "lessonKey": "alphabet-recap",
@@ -102,16 +126,22 @@
               "shortDescription": "Speed round from A to Z with random prompts.",
               "difficulty": "Medium",
               "durationMinutes": 10,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/alphabet-recap.mp4",
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186766/signlearn/lessons/alphabet-recap.mp4",
               "practiceActivity": {
                 "type": "timed-drill",
                 "prompt": "Complete 20 random letter prompts under 90 seconds."
               },
               "quiz": {
                 "question": "What helps improve finger-spelling speed most?",
-                "options": ["Random drills", "Long text reading", "Audio only", "Skipping review"],
+                "options": [
+                  "Random drills",
+                  "Long text reading",
+                  "Audio only",
+                  "Skipping review"
+                ],
                 "correctOptionIndex": 0
-              }
+              },
+              "youtubeVideoId": "cGavOVNDj1s"
             }
           ]
         },
@@ -126,13 +156,22 @@
               "shortDescription": "Learn the most used number signs.",
               "difficulty": "Easy",
               "durationMinutes": 6,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/numbers-1-10.mp4",
-              "practiceActivity": { "type": "visual-match", "prompt": "Match signs to numbers 1–10." },
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186766/signlearn/lessons/numbers-1-10.mp4",
+              "practiceActivity": {
+                "type": "visual-match",
+                "prompt": "Match signs to numbers 1–10."
+              },
               "quiz": {
                 "question": "Which handshape is used for number 5?",
-                "options": ["Closed fist", "Open palm", "Index only", "Thumb up"],
+                "options": [
+                  "Closed fist",
+                  "Open palm",
+                  "Index only",
+                  "Thumb up"
+                ],
                 "correctOptionIndex": 1
-              }
+              },
+              "youtubeVideoId": "cJ6UFIP-Vt0"
             },
             {
               "lessonKey": "numbers-11-20",
@@ -140,13 +179,22 @@
               "shortDescription": "Understand teen number movements.",
               "difficulty": "Easy",
               "durationMinutes": 7,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/numbers-11-20.mp4",
-              "practiceActivity": { "type": "repeat-after-video", "prompt": "Repeat each teen sign with accurate movement." },
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186768/signlearn/lessons/numbers-11-20.mp4",
+              "practiceActivity": {
+                "type": "repeat-after-video",
+                "prompt": "Repeat each teen sign with accurate movement."
+              },
               "quiz": {
                 "question": "Teen number signs often include:",
-                "options": ["No movement", "Wrist flick", "Two hands", "Head tilt"],
+                "options": [
+                  "No movement",
+                  "Wrist flick",
+                  "Two hands",
+                  "Head tilt"
+                ],
                 "correctOptionIndex": 1
-              }
+              },
+              "youtubeVideoId": "mX_uS9v7U_k"
             },
             {
               "lessonKey": "age-and-time",
@@ -154,13 +202,22 @@
               "shortDescription": "Use numbers in age and time expressions.",
               "difficulty": "Medium",
               "durationMinutes": 8,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/age-time.mp4",
-              "practiceActivity": { "type": "scenario-practice", "prompt": "Sign your age and current time in 5 scenarios." },
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186768/signlearn/lessons/age-and-time.mp4",
+              "practiceActivity": {
+                "type": "scenario-practice",
+                "prompt": "Sign your age and current time in 5 scenarios."
+              },
               "quiz": {
                 "question": "Best context for number fluency practice is:",
-                "options": ["Real scenarios", "Only memorization", "No context", "Text typing"],
+                "options": [
+                  "Real scenarios",
+                  "Only memorization",
+                  "No context",
+                  "Text typing"
+                ],
                 "correctOptionIndex": 0
-              }
+              },
+              "youtubeVideoId": "cJ6UFIP-Vt0"
             },
             {
               "lessonKey": "counting-objects",
@@ -168,13 +225,22 @@
               "shortDescription": "Combine number signs with object nouns.",
               "difficulty": "Medium",
               "durationMinutes": 7,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/counting-objects.mp4",
-              "practiceActivity": { "type": "visual-count", "prompt": "Count displayed objects and sign total." },
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186769/signlearn/lessons/counting-objects.mp4",
+              "practiceActivity": {
+                "type": "visual-count",
+                "prompt": "Count displayed objects and sign total."
+              },
               "quiz": {
                 "question": "If there are 3 books, which comes first in sign order?",
-                "options": ["BOOK", "3", "Depends on sentence", "Both simultaneously"],
+                "options": [
+                  "BOOK",
+                  "3",
+                  "Depends on sentence",
+                  "Both simultaneously"
+                ],
                 "correctOptionIndex": 2
-              }
+              },
+              "youtubeVideoId": "mX_uS9v7U_k"
             },
             {
               "lessonKey": "number-recap",
@@ -182,13 +248,22 @@
               "shortDescription": "Mixed number prompts in quick practice mode.",
               "difficulty": "Medium",
               "durationMinutes": 9,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/number-recap.mp4",
-              "practiceActivity": { "type": "timed-drill", "prompt": "Complete 15 number prompts in 60 seconds." },
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186769/signlearn/lessons/number-recap.mp4",
+              "practiceActivity": {
+                "type": "timed-drill",
+                "prompt": "Complete 15 number prompts in 60 seconds."
+              },
               "quiz": {
                 "question": "Which is key for number clarity?",
-                "options": ["Consistent orientation", "Faster speed only", "Bigger gestures only", "Closing eyes"],
+                "options": [
+                  "Consistent orientation",
+                  "Faster speed only",
+                  "Bigger gestures only",
+                  "Closing eyes"
+                ],
                 "correctOptionIndex": 0
-              }
+              },
+              "youtubeVideoId": "cJ6UFIP-Vt0"
             }
           ]
         },
@@ -203,13 +278,22 @@
               "shortDescription": "Start conversations with simple greetings.",
               "difficulty": "Easy",
               "durationMinutes": 5,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/hello-hi.mp4",
-              "practiceActivity": { "type": "mirror-practice", "prompt": "Practice Hello/Hi with natural facial expression." },
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186771/signlearn/lessons/hello-hi.mp4",
+              "practiceActivity": {
+                "type": "mirror-practice",
+                "prompt": "Practice Hello/Hi with natural facial expression."
+              },
               "quiz": {
                 "question": "Greeting signs should be paired with:",
-                "options": ["Neutral face always", "Appropriate expression", "No eye contact", "Very fast movement"],
+                "options": [
+                  "Neutral face always",
+                  "Appropriate expression",
+                  "No eye contact",
+                  "Very fast movement"
+                ],
                 "correctOptionIndex": 1
-              }
+              },
+              "youtubeVideoId": "y9Rj_X0IsKY"
             },
             {
               "lessonKey": "good-morning-evening",
@@ -217,13 +301,22 @@
               "shortDescription": "Use time-based greetings correctly.",
               "difficulty": "Easy",
               "durationMinutes": 6,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/good-morning-evening.mp4",
-              "practiceActivity": { "type": "scenario-practice", "prompt": "Sign morning/evening greetings in context clips." },
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186770/signlearn/lessons/good-morning-evening.mp4",
+              "practiceActivity": {
+                "type": "scenario-practice",
+                "prompt": "Sign morning/evening greetings in context clips."
+              },
               "quiz": {
                 "question": "When should you switch from Morning to Evening greeting?",
-                "options": ["Based on context/time", "Never", "Only at noon", "Only in formal chats"],
+                "options": [
+                  "Based on context/time",
+                  "Never",
+                  "Only at noon",
+                  "Only in formal chats"
+                ],
                 "correctOptionIndex": 0
-              }
+              },
+              "youtubeVideoId": "OeQBnxRjCKg"
             },
             {
               "lessonKey": "introduce-yourself",
@@ -231,13 +324,22 @@
               "shortDescription": "Sign your name and simple intro line.",
               "difficulty": "Medium",
               "durationMinutes": 8,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/introduce-yourself.mp4",
-              "practiceActivity": { "type": "guided-video", "prompt": "Record and compare your self-introduction." },
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186772/signlearn/lessons/introduce-yourself.mp4",
+              "practiceActivity": {
+                "type": "guided-video",
+                "prompt": "Record and compare your self-introduction."
+              },
               "quiz": {
                 "question": "What is essential in introductions?",
-                "options": ["Name sign clarity", "Speed only", "No eye contact", "No pause"],
+                "options": [
+                  "Name sign clarity",
+                  "Speed only",
+                  "No eye contact",
+                  "No pause"
+                ],
                 "correctOptionIndex": 0
-              }
+              },
+              "youtubeVideoId": "y9Rj_X0IsKY"
             },
             {
               "lessonKey": "how-are-you",
@@ -245,13 +347,22 @@
               "shortDescription": "Ask and answer wellbeing questions.",
               "difficulty": "Medium",
               "durationMinutes": 7,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/how-are-you.mp4",
-              "practiceActivity": { "type": "pair-practice", "prompt": "Alternate asking and replying in two turns." },
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186772/signlearn/lessons/how-are-you.mp4",
+              "practiceActivity": {
+                "type": "pair-practice",
+                "prompt": "Alternate asking and replying in two turns."
+              },
               "quiz": {
                 "question": "Which response is most natural after 'How are you?'",
-                "options": ["Fine/Good", "Alphabet A", "Random number", "Silence"],
+                "options": [
+                  "Fine/Good",
+                  "Alphabet A",
+                  "Random number",
+                  "Silence"
+                ],
                 "correctOptionIndex": 0
-              }
+              },
+              "youtubeVideoId": "OeQBnxRjCKg"
             },
             {
               "lessonKey": "greeting-roleplay",
@@ -259,15 +370,36 @@
               "shortDescription": "Use all greeting signs in mini dialogues.",
               "difficulty": "Medium",
               "durationMinutes": 10,
-              "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/greeting-roleplay.mp4",
-              "practiceActivity": { "type": "roleplay", "prompt": "Complete 3 real-life greeting dialogues." },
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186774/signlearn/lessons/greeting-roleplay.mp4",
+              "practiceActivity": {
+                "type": "roleplay",
+                "prompt": "Complete 3 real-life greeting dialogues."
+              },
               "quiz": {
                 "question": "Best way to improve greeting fluency?",
-                "options": ["Roleplay repeatedly", "Only read notes", "Skip practice", "Avoid feedback"],
+                "options": [
+                  "Roleplay repeatedly",
+                  "Only read notes",
+                  "Skip practice",
+                  "Avoid feedback"
+                ],
                 "correctOptionIndex": 0
-              }
+              },
+              "youtubeVideoId": "y9Rj_X0IsKY"
             }
           ]
+        }
+      ],
+      "datasetSources": [
+        {
+          "name": "ASL Alphabet (Kaggle)",
+          "url": "https://www.kaggle.com/datasets/grassknoted/asl-alphabet",
+          "license": "GPL 2"
+        },
+        {
+          "name": "Sign Language MNIST",
+          "url": "https://www.kaggle.com/datasets/datamunge/sign-language-mnist/data",
+          "license": "CC0"
         }
       ]
     },
@@ -278,8 +410,8 @@
       "orderIndex": 2,
       "estimatedCompletionMinutes": 120,
       "thumbnailPreview": {
-        "type": "video",
-        "url": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/essential-vocabulary.mp4"
+        "type": "image",
+        "url": "https://res.cloudinary.com/dxcwwdmxl/image/upload/v1777186758/signlearn/modules/essential-vocabulary.jpg"
       },
       "categories": [
         {
@@ -287,11 +419,121 @@
           "title": "People & Family",
           "description": "Core signs for family members and relationships.",
           "lessons": [
-            { "lessonKey": "family-1", "title": "Family Core Signs", "shortDescription": "Mother, father, sister, brother", "difficulty": "Easy", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/family-core.mp4", "practiceActivity": { "type": "visual-match", "prompt": "Match family sign to relation." }, "quiz": { "question": "Which sign indicates mother?", "options": ["Chin-location sign", "Forehead sign", "Shoulder tap", "Palm wave"], "correctOptionIndex": 0 } },
-            { "lessonKey": "family-2", "title": "Extended Family", "shortDescription": "Grandparents, cousins, relatives", "difficulty": "Easy", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/extended-family.mp4", "practiceActivity": { "type": "repeat-after-video", "prompt": "Repeat each relationship sign." }, "quiz": { "question": "Which group is extended family?", "options": ["Cousin, aunt", "Only parents", "Only siblings", "Only self"], "correctOptionIndex": 0 } },
-            { "lessonKey": "family-3", "title": "People Around You", "shortDescription": "Friend, teacher, neighbor signs", "difficulty": "Easy", "durationMinutes": 7, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/people-around.mp4", "practiceActivity": { "type": "scenario-practice", "prompt": "Describe your social circle." }, "quiz": { "question": "Best context for 'teacher' sign?", "options": ["School intro", "Weather update", "Number drill", "Time sign"], "correctOptionIndex": 0 } },
-            { "lessonKey": "family-4", "title": "Pronouns in Context", "shortDescription": "I, you, we, they in short phrases", "difficulty": "Medium", "durationMinutes": 9, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/pronouns-context.mp4", "practiceActivity": { "type": "mirror-practice", "prompt": "Practice pronouns in 6 phrases." }, "quiz": { "question": "Which pronoun points to self?", "options": ["I", "They", "You all", "He"], "correctOptionIndex": 0 } },
-            { "lessonKey": "family-5", "title": "Family Conversation Drill", "shortDescription": "Talk about your family with complete signed phrases", "difficulty": "Medium", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/family-drill.mp4", "practiceActivity": { "type": "roleplay", "prompt": "Introduce your family in 5 lines." }, "quiz": { "question": "Best skill for this drill?", "options": ["Fluent transitions", "Random speed", "No expression", "Skipping context"], "correctOptionIndex": 0 } }
+            {
+              "lessonKey": "family-1",
+              "title": "Family Core Signs",
+              "shortDescription": "Mother, father, sister, brother",
+              "difficulty": "Easy",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186774/signlearn/lessons/family-1.mp4",
+              "practiceActivity": {
+                "type": "visual-match",
+                "prompt": "Match family sign to relation."
+              },
+              "quiz": {
+                "question": "Which sign indicates mother?",
+                "options": [
+                  "Chin-location sign",
+                  "Forehead sign",
+                  "Shoulder tap",
+                  "Palm wave"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "VOnHnaNiVSM"
+            },
+            {
+              "lessonKey": "family-2",
+              "title": "Extended Family",
+              "shortDescription": "Grandparents, cousins, relatives",
+              "difficulty": "Easy",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186775/signlearn/lessons/family-2.mp4",
+              "practiceActivity": {
+                "type": "repeat-after-video",
+                "prompt": "Repeat each relationship sign."
+              },
+              "quiz": {
+                "question": "Which group is extended family?",
+                "options": [
+                  "Cousin, aunt",
+                  "Only parents",
+                  "Only siblings",
+                  "Only self"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "N45u5W3rOBc"
+            },
+            {
+              "lessonKey": "family-3",
+              "title": "People Around You",
+              "shortDescription": "Friend, teacher, neighbor signs",
+              "difficulty": "Easy",
+              "durationMinutes": 7,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186775/signlearn/lessons/family-3.mp4",
+              "practiceActivity": {
+                "type": "scenario-practice",
+                "prompt": "Describe your social circle."
+              },
+              "quiz": {
+                "question": "Best context for 'teacher' sign?",
+                "options": [
+                  "School intro",
+                  "Weather update",
+                  "Number drill",
+                  "Time sign"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "VOnHnaNiVSM"
+            },
+            {
+              "lessonKey": "family-4",
+              "title": "Pronouns in Context",
+              "shortDescription": "I, you, we, they in short phrases",
+              "difficulty": "Medium",
+              "durationMinutes": 9,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186777/signlearn/lessons/family-4.mp4",
+              "practiceActivity": {
+                "type": "mirror-practice",
+                "prompt": "Practice pronouns in 6 phrases."
+              },
+              "quiz": {
+                "question": "Which pronoun points to self?",
+                "options": [
+                  "I",
+                  "They",
+                  "You all",
+                  "He"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "N45u5W3rOBc"
+            },
+            {
+              "lessonKey": "family-5",
+              "title": "Family Conversation Drill",
+              "shortDescription": "Talk about your family with complete signed phrases",
+              "difficulty": "Medium",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186776/signlearn/lessons/family-5.mp4",
+              "practiceActivity": {
+                "type": "roleplay",
+                "prompt": "Introduce your family in 5 lines."
+              },
+              "quiz": {
+                "question": "Best skill for this drill?",
+                "options": [
+                  "Fluent transitions",
+                  "Random speed",
+                  "No expression",
+                  "Skipping context"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "VOnHnaNiVSM"
+            }
           ]
         },
         {
@@ -299,11 +541,121 @@
           "title": "Daily Objects",
           "description": "Common object signs for home, school, and work.",
           "lessons": [
-            { "lessonKey": "objects-1", "title": "Home Objects", "shortDescription": "Table, chair, door, bed", "difficulty": "Easy", "durationMinutes": 7, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/home-objects.mp4", "practiceActivity": { "type": "visual-label", "prompt": "Label objects shown in room scenes." }, "quiz": { "question": "Which sign corresponds to 'door'?", "options": ["Hinge motion", "Circular motion", "Palm tap", "Point down"], "correctOptionIndex": 0 } },
-            { "lessonKey": "objects-2", "title": "School Objects", "shortDescription": "Book, pen, board, bag", "difficulty": "Easy", "durationMinutes": 7, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/school-objects.mp4", "practiceActivity": { "type": "match-pairs", "prompt": "Pair each school object sign." }, "quiz": { "question": "Book sign usually imitates:", "options": ["Opening pages", "Writing", "Standing", "Pointing"], "correctOptionIndex": 0 } },
-            { "lessonKey": "objects-3", "title": "Food Items", "shortDescription": "Water, rice, fruit, tea", "difficulty": "Easy", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/food-items.mp4", "practiceActivity": { "type": "menu-practice", "prompt": "Sign 8 menu items from prompt cards." }, "quiz": { "question": "What helps food sign clarity?", "options": ["Specific hand location", "Fast random movement", "Looking away", "Muted expression"], "correctOptionIndex": 0 } },
-            { "lessonKey": "objects-4", "title": "Technology Words", "shortDescription": "Phone, laptop, message, internet", "difficulty": "Medium", "durationMinutes": 9, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/tech-words.mp4", "practiceActivity": { "type": "scenario-practice", "prompt": "Sign a short 'send message' workflow." }, "quiz": { "question": "Which context matches 'internet' sign?", "options": ["Online class", "Family tree", "Weather only", "Number count"], "correctOptionIndex": 0 } },
-            { "lessonKey": "objects-5", "title": "Object Vocabulary Challenge", "shortDescription": "Mixed home, school, and tech objects", "difficulty": "Medium", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/object-challenge.mp4", "practiceActivity": { "type": "timed-drill", "prompt": "Complete 20 object sign prompts quickly." }, "quiz": { "question": "Best way to retain object vocabulary?", "options": ["Use in sentences", "Memorize once", "Skip review", "Avoid quizzes"], "correctOptionIndex": 0 } }
+            {
+              "lessonKey": "objects-1",
+              "title": "Home Objects",
+              "shortDescription": "Table, chair, door, bed",
+              "difficulty": "Easy",
+              "durationMinutes": 7,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186778/signlearn/lessons/objects-1.mp4",
+              "practiceActivity": {
+                "type": "visual-label",
+                "prompt": "Label objects shown in room scenes."
+              },
+              "quiz": {
+                "question": "Which sign corresponds to 'door'?",
+                "options": [
+                  "Hinge motion",
+                  "Circular motion",
+                  "Palm tap",
+                  "Point down"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "0FcwzMq4iWg"
+            },
+            {
+              "lessonKey": "objects-2",
+              "title": "School Objects",
+              "shortDescription": "Book, pen, board, bag",
+              "difficulty": "Easy",
+              "durationMinutes": 7,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186778/signlearn/lessons/objects-2.mp4",
+              "practiceActivity": {
+                "type": "match-pairs",
+                "prompt": "Pair each school object sign."
+              },
+              "quiz": {
+                "question": "Book sign usually imitates:",
+                "options": [
+                  "Opening pages",
+                  "Writing",
+                  "Standing",
+                  "Pointing"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "ianCxd71xIo"
+            },
+            {
+              "lessonKey": "objects-3",
+              "title": "Food Items",
+              "shortDescription": "Water, rice, fruit, tea",
+              "difficulty": "Easy",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186779/signlearn/lessons/objects-3.mp4",
+              "practiceActivity": {
+                "type": "menu-practice",
+                "prompt": "Sign 8 menu items from prompt cards."
+              },
+              "quiz": {
+                "question": "What helps food sign clarity?",
+                "options": [
+                  "Specific hand location",
+                  "Fast random movement",
+                  "Looking away",
+                  "Muted expression"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "0FcwzMq4iWg"
+            },
+            {
+              "lessonKey": "objects-4",
+              "title": "Technology Words",
+              "shortDescription": "Phone, laptop, message, internet",
+              "difficulty": "Medium",
+              "durationMinutes": 9,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186779/signlearn/lessons/objects-4.mp4",
+              "practiceActivity": {
+                "type": "scenario-practice",
+                "prompt": "Sign a short 'send message' workflow."
+              },
+              "quiz": {
+                "question": "Which context matches 'internet' sign?",
+                "options": [
+                  "Online class",
+                  "Family tree",
+                  "Weather only",
+                  "Number count"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "ianCxd71xIo"
+            },
+            {
+              "lessonKey": "objects-5",
+              "title": "Object Vocabulary Challenge",
+              "shortDescription": "Mixed home, school, and tech objects",
+              "difficulty": "Medium",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186780/signlearn/lessons/objects-5.mp4",
+              "practiceActivity": {
+                "type": "timed-drill",
+                "prompt": "Complete 20 object sign prompts quickly."
+              },
+              "quiz": {
+                "question": "Best way to retain object vocabulary?",
+                "options": [
+                  "Use in sentences",
+                  "Memorize once",
+                  "Skip review",
+                  "Avoid quizzes"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "0FcwzMq4iWg"
+            }
           ]
         },
         {
@@ -311,12 +663,139 @@
           "title": "Actions & Verbs",
           "description": "High-frequency verb signs for everyday communication.",
           "lessons": [
-            { "lessonKey": "verbs-1", "title": "Daily Action Verbs", "shortDescription": "Eat, drink, sleep, work", "difficulty": "Easy", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/daily-verbs.mp4", "practiceActivity": { "type": "visual-match", "prompt": "Match actions to signs." }, "quiz": { "question": "Which is an action verb sign?", "options": ["Eat", "Book", "Morning", "Blue"], "correctOptionIndex": 0 } },
-            { "lessonKey": "verbs-2", "title": "Movement Verbs", "shortDescription": "Go, come, walk, stop", "difficulty": "Easy", "durationMinutes": 7, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/movement-verbs.mp4", "practiceActivity": { "type": "repeat-after-video", "prompt": "Repeat directional movement signs." }, "quiz": { "question": "Which sign uses forward directional cue?", "options": ["Go", "Sleep", "Happy", "Family"], "correctOptionIndex": 0 } },
-            { "lessonKey": "verbs-3", "title": "Learning Verbs", "shortDescription": "Read, write, learn, teach", "difficulty": "Medium", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/learning-verbs.mp4", "practiceActivity": { "type": "scenario-practice", "prompt": "Sign your study routine in 4 steps." }, "quiz": { "question": "Which pair belongs to education verbs?", "options": ["Read/Teach", "Run/Eat", "Sleep/Hello", "Tea/Book"], "correctOptionIndex": 0 } },
-            { "lessonKey": "verbs-4", "title": "Emotion Verbs", "shortDescription": "Like, love, enjoy, dislike", "difficulty": "Medium", "durationMinutes": 9, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/emotion-verbs.mp4", "practiceActivity": { "type": "mirror-practice", "prompt": "Use matching facial expression with each emotion verb." }, "quiz": { "question": "Why are expressions important for emotion verbs?", "options": ["They carry meaning", "Only style", "Not needed", "For speed only"], "correctOptionIndex": 0 } },
-            { "lessonKey": "verbs-5", "title": "Verb Fluency Drill", "shortDescription": "Build short action-based signed statements", "difficulty": "Medium", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/verb-fluency.mp4", "practiceActivity": { "type": "timed-drill", "prompt": "Create 10 verb statements from random prompts." }, "quiz": { "question": "Best progression after learning verbs?", "options": ["Sentence building", "Skip ahead randomly", "Stop practice", "Only watch videos"], "correctOptionIndex": 0 } }
+            {
+              "lessonKey": "verbs-1",
+              "title": "Daily Action Verbs",
+              "shortDescription": "Eat, drink, sleep, work",
+              "difficulty": "Easy",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186780/signlearn/lessons/verbs-1.mp4",
+              "practiceActivity": {
+                "type": "visual-match",
+                "prompt": "Match actions to signs."
+              },
+              "quiz": {
+                "question": "Which is an action verb sign?",
+                "options": [
+                  "Eat",
+                  "Book",
+                  "Morning",
+                  "Blue"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "NXNq_ER2jT4"
+            },
+            {
+              "lessonKey": "verbs-2",
+              "title": "Movement Verbs",
+              "shortDescription": "Go, come, walk, stop",
+              "difficulty": "Easy",
+              "durationMinutes": 7,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186781/signlearn/lessons/verbs-2.mp4",
+              "practiceActivity": {
+                "type": "repeat-after-video",
+                "prompt": "Repeat directional movement signs."
+              },
+              "quiz": {
+                "question": "Which sign uses forward directional cue?",
+                "options": [
+                  "Go",
+                  "Sleep",
+                  "Happy",
+                  "Family"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "A_H-MYti3LQ"
+            },
+            {
+              "lessonKey": "verbs-3",
+              "title": "Learning Verbs",
+              "shortDescription": "Read, write, learn, teach",
+              "difficulty": "Medium",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186781/signlearn/lessons/verbs-3.mp4",
+              "practiceActivity": {
+                "type": "scenario-practice",
+                "prompt": "Sign your study routine in 4 steps."
+              },
+              "quiz": {
+                "question": "Which pair belongs to education verbs?",
+                "options": [
+                  "Read/Teach",
+                  "Run/Eat",
+                  "Sleep/Hello",
+                  "Tea/Book"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "NXNq_ER2jT4"
+            },
+            {
+              "lessonKey": "verbs-4",
+              "title": "Emotion Verbs",
+              "shortDescription": "Like, love, enjoy, dislike",
+              "difficulty": "Medium",
+              "durationMinutes": 9,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186782/signlearn/lessons/verbs-4.mp4",
+              "practiceActivity": {
+                "type": "mirror-practice",
+                "prompt": "Use matching facial expression with each emotion verb."
+              },
+              "quiz": {
+                "question": "Why are expressions important for emotion verbs?",
+                "options": [
+                  "They carry meaning",
+                  "Only style",
+                  "Not needed",
+                  "For speed only"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "A_H-MYti3LQ"
+            },
+            {
+              "lessonKey": "verbs-5",
+              "title": "Verb Fluency Drill",
+              "shortDescription": "Build short action-based signed statements",
+              "difficulty": "Medium",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186783/signlearn/lessons/verbs-5.mp4",
+              "practiceActivity": {
+                "type": "timed-drill",
+                "prompt": "Create 10 verb statements from random prompts."
+              },
+              "quiz": {
+                "question": "Best progression after learning verbs?",
+                "options": [
+                  "Sentence building",
+                  "Skip ahead randomly",
+                  "Stop practice",
+                  "Only watch videos"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "NXNq_ER2jT4"
+            }
           ]
+        }
+      ],
+      "datasetSources": [
+        {
+          "name": "WLASL",
+          "url": "https://dxli94.github.io/WLASL/",
+          "license": "C-UDA"
+        },
+        {
+          "name": "MS-ASL (Microsoft Research)",
+          "url": "https://www.microsoft.com/en-us/research/publication/ms-asl-a-large-scale-data-set-and-benchmark-for-understanding-american-sign-language/",
+          "license": "Microsoft Research"
+        },
+        {
+          "name": "ASL Citizen",
+          "url": "https://www.microsoft.com/en-us/research/project/asl-citizen/dataset-description/",
+          "license": "Microsoft Research"
         }
       ]
     },
@@ -327,8 +806,8 @@
       "orderIndex": 3,
       "estimatedCompletionMinutes": 135,
       "thumbnailPreview": {
-        "type": "video",
-        "url": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/sentence-building.mp4"
+        "type": "image",
+        "url": "https://res.cloudinary.com/dxcwwdmxl/image/upload/v1777186758/signlearn/modules/sentence-building.jpg"
       },
       "categories": [
         {
@@ -336,11 +815,121 @@
           "title": "Basic Sentence Patterns",
           "description": "Start with simple subject-action-object structure.",
           "lessons": [
-            { "lessonKey": "sb-1", "title": "Subject + Action", "shortDescription": "Build two-part sentence forms", "difficulty": "Easy", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/sb-subject-action.mp4", "practiceActivity": { "type": "pattern-practice", "prompt": "Create 8 subject+action combinations." }, "quiz": { "question": "Which is a valid simple pattern?", "options": ["I STUDY", "STUDY I I", "BOOK BLUE", "MORNING EAT RUN"], "correctOptionIndex": 0 } },
-            { "lessonKey": "sb-2", "title": "Subject + Action + Object", "shortDescription": "Add object clarity to your sentence", "difficulty": "Easy", "durationMinutes": 9, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/sb-sao.mp4", "practiceActivity": { "type": "visual-arrange", "prompt": "Arrange signed sentence order from cards." }, "quiz": { "question": "What does object add to sentence?", "options": ["Context", "Noise", "No value", "Only speed"], "correctOptionIndex": 0 } },
-            { "lessonKey": "sb-3", "title": "Negation in Sentences", "shortDescription": "Use NOT and no-expression naturally", "difficulty": "Medium", "durationMinutes": 9, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/sb-negation.mp4", "practiceActivity": { "type": "contrast-drill", "prompt": "Sign positive vs negative versions." }, "quiz": { "question": "Negation should include:", "options": ["Facial cue", "No expression", "Random pause", "Head down only"], "correctOptionIndex": 0 } },
-            { "lessonKey": "sb-4", "title": "Descriptive Sentences", "shortDescription": "Add color, size, and quality words", "difficulty": "Medium", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/sb-descriptive.mp4", "practiceActivity": { "type": "image-description", "prompt": "Describe 5 images with 3-word minimum." }, "quiz": { "question": "Which phrase is descriptive?", "options": ["BOOK RED", "BOOK", "RED", "HI"], "correctOptionIndex": 0 } },
-            { "lessonKey": "sb-5", "title": "Pattern Review", "shortDescription": "Mixed sentence pattern fluency drill", "difficulty": "Medium", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/sb-pattern-review.mp4", "practiceActivity": { "type": "timed-drill", "prompt": "Create 12 sentences in 2 minutes." }, "quiz": { "question": "Best way to improve sentence flow?", "options": ["Frequent short practice", "Only reading theory", "Skip correction", "Avoid repetition"], "correctOptionIndex": 0 } }
+            {
+              "lessonKey": "sb-1",
+              "title": "Subject + Action",
+              "shortDescription": "Build two-part sentence forms",
+              "difficulty": "Easy",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186784/signlearn/lessons/sb-1.mp4",
+              "practiceActivity": {
+                "type": "pattern-practice",
+                "prompt": "Create 8 subject+action combinations."
+              },
+              "quiz": {
+                "question": "Which is a valid simple pattern?",
+                "options": [
+                  "I STUDY",
+                  "STUDY I I",
+                  "BOOK BLUE",
+                  "MORNING EAT RUN"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "fDV9Al8Fgjk"
+            },
+            {
+              "lessonKey": "sb-2",
+              "title": "Subject + Action + Object",
+              "shortDescription": "Add object clarity to your sentence",
+              "difficulty": "Easy",
+              "durationMinutes": 9,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186783/signlearn/lessons/sb-2.mp4",
+              "practiceActivity": {
+                "type": "visual-arrange",
+                "prompt": "Arrange signed sentence order from cards."
+              },
+              "quiz": {
+                "question": "What does object add to sentence?",
+                "options": [
+                  "Context",
+                  "Noise",
+                  "No value",
+                  "Only speed"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "rDR3TCT-gzY"
+            },
+            {
+              "lessonKey": "sb-3",
+              "title": "Negation in Sentences",
+              "shortDescription": "Use NOT and no-expression naturally",
+              "difficulty": "Medium",
+              "durationMinutes": 9,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186785/signlearn/lessons/sb-3.mp4",
+              "practiceActivity": {
+                "type": "contrast-drill",
+                "prompt": "Sign positive vs negative versions."
+              },
+              "quiz": {
+                "question": "Negation should include:",
+                "options": [
+                  "Facial cue",
+                  "No expression",
+                  "Random pause",
+                  "Head down only"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "fDV9Al8Fgjk"
+            },
+            {
+              "lessonKey": "sb-4",
+              "title": "Descriptive Sentences",
+              "shortDescription": "Add color, size, and quality words",
+              "difficulty": "Medium",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186785/signlearn/lessons/sb-4.mp4",
+              "practiceActivity": {
+                "type": "image-description",
+                "prompt": "Describe 5 images with 3-word minimum."
+              },
+              "quiz": {
+                "question": "Which phrase is descriptive?",
+                "options": [
+                  "BOOK RED",
+                  "BOOK",
+                  "RED",
+                  "HI"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "rDR3TCT-gzY"
+            },
+            {
+              "lessonKey": "sb-5",
+              "title": "Pattern Review",
+              "shortDescription": "Mixed sentence pattern fluency drill",
+              "difficulty": "Medium",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186786/signlearn/lessons/sb-5.mp4",
+              "practiceActivity": {
+                "type": "timed-drill",
+                "prompt": "Create 12 sentences in 2 minutes."
+              },
+              "quiz": {
+                "question": "Best way to improve sentence flow?",
+                "options": [
+                  "Frequent short practice",
+                  "Only reading theory",
+                  "Skip correction",
+                  "Avoid repetition"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "fDV9Al8Fgjk"
+            }
           ]
         },
         {
@@ -348,11 +937,121 @@
           "title": "Questions & Answers",
           "description": "Ask and answer natural daily questions.",
           "lessons": [
-            { "lessonKey": "qa-1", "title": "WH Questions", "shortDescription": "Who, what, where, when, why", "difficulty": "Easy", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/qa-wh.mp4", "practiceActivity": { "type": "prompt-response", "prompt": "Respond to 10 WH prompts." }, "quiz": { "question": "Which is a WH-question sign type?", "options": ["Where", "Blue", "Run", "Book"], "correctOptionIndex": 0 } },
-            { "lessonKey": "qa-2", "title": "Yes/No Questions", "shortDescription": "Use facial cue for yes/no format", "difficulty": "Easy", "durationMinutes": 7, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/qa-yesno.mp4", "practiceActivity": { "type": "facial-cue", "prompt": "Practice eyebrows up for yes/no questions." }, "quiz": { "question": "Key marker of yes/no question?", "options": ["Eyebrow raise", "Foot tap", "No eye contact", "Random pause"], "correctOptionIndex": 0 } },
-            { "lessonKey": "qa-3", "title": "Short Answers", "shortDescription": "Answer naturally with concise signs", "difficulty": "Medium", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/qa-short-answers.mp4", "practiceActivity": { "type": "dialogue", "prompt": "Complete 6 short Q&A exchanges." }, "quiz": { "question": "Good short answer is:", "options": ["Clear and concise", "Very long always", "Off-topic", "No expression"], "correctOptionIndex": 0 } },
-            { "lessonKey": "qa-4", "title": "Follow-up Questions", "shortDescription": "Keep conversation moving smoothly", "difficulty": "Medium", "durationMinutes": 9, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/qa-followup.mp4", "practiceActivity": { "type": "roleplay", "prompt": "Add one follow-up to each answer." }, "quiz": { "question": "Purpose of follow-up question?", "options": ["Deeper clarity", "Stop conversation", "Confuse listener", "Avoid response"], "correctOptionIndex": 0 } },
-            { "lessonKey": "qa-5", "title": "Q&A Speed Practice", "shortDescription": "Fast response drill for confidence", "difficulty": "Hard", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/qa-speed.mp4", "practiceActivity": { "type": "timed-drill", "prompt": "Answer 15 questions in 90 seconds." }, "quiz": { "question": "Best for speed with accuracy?", "options": ["Practice + review", "Guessing only", "No correction", "Skipping basics"], "correctOptionIndex": 0 } }
+            {
+              "lessonKey": "qa-1",
+              "title": "WH Questions",
+              "shortDescription": "Who, what, where, when, why",
+              "difficulty": "Easy",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186786/signlearn/lessons/qa-1.mp4",
+              "practiceActivity": {
+                "type": "prompt-response",
+                "prompt": "Respond to 10 WH prompts."
+              },
+              "quiz": {
+                "question": "Which is a WH-question sign type?",
+                "options": [
+                  "Where",
+                  "Blue",
+                  "Run",
+                  "Book"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "BopX7gr1BJ8"
+            },
+            {
+              "lessonKey": "qa-2",
+              "title": "Yes/No Questions",
+              "shortDescription": "Use facial cue for yes/no format",
+              "difficulty": "Easy",
+              "durationMinutes": 7,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186787/signlearn/lessons/qa-2.mp4",
+              "practiceActivity": {
+                "type": "facial-cue",
+                "prompt": "Practice eyebrows up for yes/no questions."
+              },
+              "quiz": {
+                "question": "Key marker of yes/no question?",
+                "options": [
+                  "Eyebrow raise",
+                  "Foot tap",
+                  "No eye contact",
+                  "Random pause"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "TLGGDWCSe2Q"
+            },
+            {
+              "lessonKey": "qa-3",
+              "title": "Short Answers",
+              "shortDescription": "Answer naturally with concise signs",
+              "difficulty": "Medium",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186787/signlearn/lessons/qa-3.mp4",
+              "practiceActivity": {
+                "type": "dialogue",
+                "prompt": "Complete 6 short Q&A exchanges."
+              },
+              "quiz": {
+                "question": "Good short answer is:",
+                "options": [
+                  "Clear and concise",
+                  "Very long always",
+                  "Off-topic",
+                  "No expression"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "gYcW0LUGlCM"
+            },
+            {
+              "lessonKey": "qa-4",
+              "title": "Follow-up Questions",
+              "shortDescription": "Keep conversation moving smoothly",
+              "difficulty": "Medium",
+              "durationMinutes": 9,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186788/signlearn/lessons/qa-4.mp4",
+              "practiceActivity": {
+                "type": "roleplay",
+                "prompt": "Add one follow-up to each answer."
+              },
+              "quiz": {
+                "question": "Purpose of follow-up question?",
+                "options": [
+                  "Deeper clarity",
+                  "Stop conversation",
+                  "Confuse listener",
+                  "Avoid response"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "BopX7gr1BJ8"
+            },
+            {
+              "lessonKey": "qa-5",
+              "title": "Q&A Speed Practice",
+              "shortDescription": "Fast response drill for confidence",
+              "difficulty": "Hard",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186788/signlearn/lessons/qa-5.mp4",
+              "practiceActivity": {
+                "type": "timed-drill",
+                "prompt": "Answer 15 questions in 90 seconds."
+              },
+              "quiz": {
+                "question": "Best for speed with accuracy?",
+                "options": [
+                  "Practice + review",
+                  "Guessing only",
+                  "No correction",
+                  "Skipping basics"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "TLGGDWCSe2Q"
+            }
           ]
         },
         {
@@ -360,12 +1059,134 @@
           "title": "Time & Place",
           "description": "Construct sentences with time and location context.",
           "lessons": [
-            { "lessonKey": "tp-1", "title": "Time Markers", "shortDescription": "Today, yesterday, tomorrow", "difficulty": "Easy", "durationMinutes": 7, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/tp-time-markers.mp4", "practiceActivity": { "type": "timeline-practice", "prompt": "Sign same sentence in past/present/future." }, "quiz": { "question": "Which is a future marker?", "options": ["Tomorrow", "Yesterday", "Now", "Always"], "correctOptionIndex": 0 } },
-            { "lessonKey": "tp-2", "title": "Location Signs", "shortDescription": "Home, school, office, market", "difficulty": "Easy", "durationMinutes": 7, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/tp-location-signs.mp4", "practiceActivity": { "type": "map-signing", "prompt": "Sign route with 4 location points." }, "quiz": { "question": "Location signs are used to add:", "options": ["Context", "Color", "No meaning", "Only speed"], "correctOptionIndex": 0 } },
-            { "lessonKey": "tp-3", "title": "Time + Action Sentences", "shortDescription": "Combine time marker with action", "difficulty": "Medium", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/tp-time-action.mp4", "practiceActivity": { "type": "pattern-practice", "prompt": "Create 10 time+action sentences." }, "quiz": { "question": "Best sequence generally starts with:", "options": ["Time marker", "Object", "Color", "Random"], "correctOptionIndex": 0 } },
-            { "lessonKey": "tp-4", "title": "Place + Action Sentences", "shortDescription": "Use location naturally with actions", "difficulty": "Medium", "durationMinutes": 9, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/tp-place-action.mp4", "practiceActivity": { "type": "scenario-practice", "prompt": "Sign 6 daily routine location lines." }, "quiz": { "question": "Why include place in sentence?", "options": ["Situational clarity", "Only decoration", "No need", "To slow down"], "correctOptionIndex": 0 } },
-            { "lessonKey": "tp-5", "title": "Time-Place Review", "shortDescription": "Mixed sentences with time and place", "difficulty": "Hard", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/tp-review.mp4", "practiceActivity": { "type": "timed-drill", "prompt": "Complete 12 mixed prompts quickly." }, "quiz": { "question": "Strong sentence needs:", "options": ["Clear context", "No structure", "No facial cue", "Only speed"], "correctOptionIndex": 0 } }
+            {
+              "lessonKey": "tp-1",
+              "title": "Time Markers",
+              "shortDescription": "Today, yesterday, tomorrow",
+              "difficulty": "Easy",
+              "durationMinutes": 7,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186789/signlearn/lessons/tp-1.mp4",
+              "practiceActivity": {
+                "type": "timeline-practice",
+                "prompt": "Sign same sentence in past/present/future."
+              },
+              "quiz": {
+                "question": "Which is a future marker?",
+                "options": [
+                  "Tomorrow",
+                  "Yesterday",
+                  "Now",
+                  "Always"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "gYcW0LUGlCM"
+            },
+            {
+              "lessonKey": "tp-2",
+              "title": "Location Signs",
+              "shortDescription": "Home, school, office, market",
+              "difficulty": "Easy",
+              "durationMinutes": 7,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186789/signlearn/lessons/tp-2.mp4",
+              "practiceActivity": {
+                "type": "map-signing",
+                "prompt": "Sign route with 4 location points."
+              },
+              "quiz": {
+                "question": "Location signs are used to add:",
+                "options": [
+                  "Context",
+                  "Color",
+                  "No meaning",
+                  "Only speed"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "BopX7gr1BJ8"
+            },
+            {
+              "lessonKey": "tp-3",
+              "title": "Time + Action Sentences",
+              "shortDescription": "Combine time marker with action",
+              "difficulty": "Medium",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186790/signlearn/lessons/tp-3.mp4",
+              "practiceActivity": {
+                "type": "pattern-practice",
+                "prompt": "Create 10 time+action sentences."
+              },
+              "quiz": {
+                "question": "Best sequence generally starts with:",
+                "options": [
+                  "Time marker",
+                  "Object",
+                  "Color",
+                  "Random"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "TLGGDWCSe2Q"
+            },
+            {
+              "lessonKey": "tp-4",
+              "title": "Place + Action Sentences",
+              "shortDescription": "Use location naturally with actions",
+              "difficulty": "Medium",
+              "durationMinutes": 9,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186790/signlearn/lessons/tp-4.mp4",
+              "practiceActivity": {
+                "type": "scenario-practice",
+                "prompt": "Sign 6 daily routine location lines."
+              },
+              "quiz": {
+                "question": "Why include place in sentence?",
+                "options": [
+                  "Situational clarity",
+                  "Only decoration",
+                  "No need",
+                  "To slow down"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "gYcW0LUGlCM"
+            },
+            {
+              "lessonKey": "tp-5",
+              "title": "Time-Place Review",
+              "shortDescription": "Mixed sentences with time and place",
+              "difficulty": "Hard",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186791/signlearn/lessons/tp-5.mp4",
+              "practiceActivity": {
+                "type": "timed-drill",
+                "prompt": "Complete 12 mixed prompts quickly."
+              },
+              "quiz": {
+                "question": "Strong sentence needs:",
+                "options": [
+                  "Clear context",
+                  "No structure",
+                  "No facial cue",
+                  "Only speed"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "BopX7gr1BJ8"
+            }
           ]
+        }
+      ],
+      "datasetSources": [
+        {
+          "name": "How2Sign",
+          "url": "https://how2sign.github.io/",
+          "license": "Research use"
+        },
+        {
+          "name": "OpenASL",
+          "url": "https://github.com/chevalierNoir/OpenASL",
+          "license": "CC BY-NC-ND 4.0"
         }
       ]
     },
@@ -376,8 +1197,8 @@
       "orderIndex": 4,
       "estimatedCompletionMinutes": 140,
       "thumbnailPreview": {
-        "type": "video",
-        "url": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/social-communication.mp4"
+        "type": "image",
+        "url": "https://res.cloudinary.com/dxcwwdmxl/image/upload/v1777186760/signlearn/modules/social-communication.jpg"
       },
       "categories": [
         {
@@ -385,11 +1206,121 @@
           "title": "Polite Expressions",
           "description": "Respectful communication in daily interactions.",
           "lessons": [
-            { "lessonKey": "pe-1", "title": "Please / Thank You", "shortDescription": "Polite basics with proper expression", "difficulty": "Easy", "durationMinutes": 6, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/please-thankyou.mp4", "practiceActivity": { "type": "mirror-practice", "prompt": "Practice polite signs with facial tone." }, "quiz": { "question": "Politeness signs require:", "options": ["Expression and pace", "No expression", "High speed only", "No eye contact"], "correctOptionIndex": 0 } },
-            { "lessonKey": "pe-2", "title": "Sorry / Excuse Me", "shortDescription": "Apology and interruption etiquette", "difficulty": "Easy", "durationMinutes": 6, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/sorry-excuse.mp4", "practiceActivity": { "type": "scenario-practice", "prompt": "Use apology signs in 4 mini scenes." }, "quiz": { "question": "Best use of 'Excuse me' sign is:", "options": ["Gaining attention politely", "Ending conversation rudely", "Random movement", "As greeting"], "correctOptionIndex": 0 } },
-            { "lessonKey": "pe-3", "title": "Requesting Help", "shortDescription": "Ask for assistance politely", "difficulty": "Medium", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/request-help.mp4", "practiceActivity": { "type": "dialogue", "prompt": "Practice 5 help-request dialogues." }, "quiz": { "question": "Helpful request should include:", "options": ["Context + politeness", "No context", "Only speed", "No eye contact"], "correctOptionIndex": 0 } },
-            { "lessonKey": "pe-4", "title": "Agree / Disagree Respectfully", "shortDescription": "Respond with social balance", "difficulty": "Medium", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/agree-disagree.mp4", "practiceActivity": { "type": "roleplay", "prompt": "Respond to 6 statements respectfully." }, "quiz": { "question": "Disagreement should be:", "options": ["Clear but respectful", "Aggressive", "Silent only", "Unrelated"], "correctOptionIndex": 0 } },
-            { "lessonKey": "pe-5", "title": "Polite Conversation Drill", "shortDescription": "Blend polite expressions in one conversation", "difficulty": "Hard", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/polite-drill.mp4", "practiceActivity": { "type": "timed-roleplay", "prompt": "Complete two polite dialogues under time." }, "quiz": { "question": "What improves social confidence?", "options": ["Repeated contextual practice", "Skipping scenarios", "Only theory", "No feedback"], "correctOptionIndex": 0 } }
+            {
+              "lessonKey": "pe-1",
+              "title": "Please / Thank You",
+              "shortDescription": "Polite basics with proper expression",
+              "difficulty": "Easy",
+              "durationMinutes": 6,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186791/signlearn/lessons/pe-1.mp4",
+              "practiceActivity": {
+                "type": "mirror-practice",
+                "prompt": "Practice polite signs with facial tone."
+              },
+              "quiz": {
+                "question": "Politeness signs require:",
+                "options": [
+                  "Expression and pace",
+                  "No expression",
+                  "High speed only",
+                  "No eye contact"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "zu11AO8HiyI"
+            },
+            {
+              "lessonKey": "pe-2",
+              "title": "Sorry / Excuse Me",
+              "shortDescription": "Apology and interruption etiquette",
+              "difficulty": "Easy",
+              "durationMinutes": 6,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186792/signlearn/lessons/pe-2.mp4",
+              "practiceActivity": {
+                "type": "scenario-practice",
+                "prompt": "Use apology signs in 4 mini scenes."
+              },
+              "quiz": {
+                "question": "Best use of 'Excuse me' sign is:",
+                "options": [
+                  "Gaining attention politely",
+                  "Ending conversation rudely",
+                  "Random movement",
+                  "As greeting"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "o5LtCgRpEOk"
+            },
+            {
+              "lessonKey": "pe-3",
+              "title": "Requesting Help",
+              "shortDescription": "Ask for assistance politely",
+              "difficulty": "Medium",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186792/signlearn/lessons/pe-3.mp4",
+              "practiceActivity": {
+                "type": "dialogue",
+                "prompt": "Practice 5 help-request dialogues."
+              },
+              "quiz": {
+                "question": "Helpful request should include:",
+                "options": [
+                  "Context + politeness",
+                  "No context",
+                  "Only speed",
+                  "No eye contact"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "zu11AO8HiyI"
+            },
+            {
+              "lessonKey": "pe-4",
+              "title": "Agree / Disagree Respectfully",
+              "shortDescription": "Respond with social balance",
+              "difficulty": "Medium",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186793/signlearn/lessons/pe-4.mp4",
+              "practiceActivity": {
+                "type": "roleplay",
+                "prompt": "Respond to 6 statements respectfully."
+              },
+              "quiz": {
+                "question": "Disagreement should be:",
+                "options": [
+                  "Clear but respectful",
+                  "Aggressive",
+                  "Silent only",
+                  "Unrelated"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "o5LtCgRpEOk"
+            },
+            {
+              "lessonKey": "pe-5",
+              "title": "Polite Conversation Drill",
+              "shortDescription": "Blend polite expressions in one conversation",
+              "difficulty": "Hard",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186793/signlearn/lessons/pe-5.mp4",
+              "practiceActivity": {
+                "type": "timed-roleplay",
+                "prompt": "Complete two polite dialogues under time."
+              },
+              "quiz": {
+                "question": "What improves social confidence?",
+                "options": [
+                  "Repeated contextual practice",
+                  "Skipping scenarios",
+                  "Only theory",
+                  "No feedback"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "zu11AO8HiyI"
+            }
           ]
         },
         {
@@ -397,11 +1328,121 @@
           "title": "Conversations",
           "description": "Real-life two-way communication skills.",
           "lessons": [
-            { "lessonKey": "cs-1", "title": "Starting a Conversation", "shortDescription": "Open naturally with context", "difficulty": "Easy", "durationMinutes": 7, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/start-conversation.mp4", "practiceActivity": { "type": "roleplay", "prompt": "Start 5 conversations from topic cards." }, "quiz": { "question": "Conversation openers should be:", "options": ["Clear and friendly", "Abrupt and random", "Silent", "Overly long"], "correctOptionIndex": 0 } },
-            { "lessonKey": "cs-2", "title": "Turn Taking", "shortDescription": "Respect conversational rhythm", "difficulty": "Medium", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/turn-taking.mp4", "practiceActivity": { "type": "pair-practice", "prompt": "Practice proper turn-taking with partner." }, "quiz": { "question": "Turn-taking helps with:", "options": ["Mutual clarity", "Confusion", "Interruptions", "Silence only"], "correctOptionIndex": 0 } },
-            { "lessonKey": "cs-3", "title": "Clarification Strategies", "shortDescription": "Ask to repeat or clarify politely", "difficulty": "Medium", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/clarification.mp4", "practiceActivity": { "type": "prompt-response", "prompt": "Use clarification signs in 6 examples." }, "quiz": { "question": "Clarification request should be:", "options": ["Polite and specific", "Dismissive", "Ignored", "Too fast"], "correctOptionIndex": 0 } },
-            { "lessonKey": "cs-4", "title": "Topic Shifting", "shortDescription": "Move between topics naturally", "difficulty": "Medium", "durationMinutes": 9, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/topic-shift.mp4", "practiceActivity": { "type": "scenario-practice", "prompt": "Shift topics in ongoing dialogue." }, "quiz": { "question": "Topic shifts are smoother with:", "options": ["Transition signs", "No transition", "Interruptions", "Random words"], "correctOptionIndex": 0 } },
-            { "lessonKey": "cs-5", "title": "Conversation Fluency", "shortDescription": "Sustain a full 2-minute conversation", "difficulty": "Hard", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/conversation-fluency.mp4", "practiceActivity": { "type": "timed-roleplay", "prompt": "Hold conversation for 2 minutes." }, "quiz": { "question": "Fluency means:", "options": ["Smooth, understandable flow", "Fast with errors", "Silent pauses only", "No expressions"], "correctOptionIndex": 0 } }
+            {
+              "lessonKey": "cs-1",
+              "title": "Starting a Conversation",
+              "shortDescription": "Open naturally with context",
+              "difficulty": "Easy",
+              "durationMinutes": 7,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186794/signlearn/lessons/cs-1.mp4",
+              "practiceActivity": {
+                "type": "roleplay",
+                "prompt": "Start 5 conversations from topic cards."
+              },
+              "quiz": {
+                "question": "Conversation openers should be:",
+                "options": [
+                  "Clear and friendly",
+                  "Abrupt and random",
+                  "Silent",
+                  "Overly long"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "_c--P6VRTUo"
+            },
+            {
+              "lessonKey": "cs-2",
+              "title": "Turn Taking",
+              "shortDescription": "Respect conversational rhythm",
+              "difficulty": "Medium",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186794/signlearn/lessons/cs-2.mp4",
+              "practiceActivity": {
+                "type": "pair-practice",
+                "prompt": "Practice proper turn-taking with partner."
+              },
+              "quiz": {
+                "question": "Turn-taking helps with:",
+                "options": [
+                  "Mutual clarity",
+                  "Confusion",
+                  "Interruptions",
+                  "Silence only"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "RhQvlq-mZtA"
+            },
+            {
+              "lessonKey": "cs-3",
+              "title": "Clarification Strategies",
+              "shortDescription": "Ask to repeat or clarify politely",
+              "difficulty": "Medium",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186795/signlearn/lessons/cs-3.mp4",
+              "practiceActivity": {
+                "type": "prompt-response",
+                "prompt": "Use clarification signs in 6 examples."
+              },
+              "quiz": {
+                "question": "Clarification request should be:",
+                "options": [
+                  "Polite and specific",
+                  "Dismissive",
+                  "Ignored",
+                  "Too fast"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "_c--P6VRTUo"
+            },
+            {
+              "lessonKey": "cs-4",
+              "title": "Topic Shifting",
+              "shortDescription": "Move between topics naturally",
+              "difficulty": "Medium",
+              "durationMinutes": 9,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186795/signlearn/lessons/cs-4.mp4",
+              "practiceActivity": {
+                "type": "scenario-practice",
+                "prompt": "Shift topics in ongoing dialogue."
+              },
+              "quiz": {
+                "question": "Topic shifts are smoother with:",
+                "options": [
+                  "Transition signs",
+                  "No transition",
+                  "Interruptions",
+                  "Random words"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "RhQvlq-mZtA"
+            },
+            {
+              "lessonKey": "cs-5",
+              "title": "Conversation Fluency",
+              "shortDescription": "Sustain a full 2-minute conversation",
+              "difficulty": "Hard",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186797/signlearn/lessons/cs-5.mp4",
+              "practiceActivity": {
+                "type": "timed-roleplay",
+                "prompt": "Hold conversation for 2 minutes."
+              },
+              "quiz": {
+                "question": "Fluency means:",
+                "options": [
+                  "Smooth, understandable flow",
+                  "Fast with errors",
+                  "Silent pauses only",
+                  "No expressions"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "_c--P6VRTUo"
+            }
           ]
         },
         {
@@ -409,12 +1450,134 @@
           "title": "Emotions",
           "description": "Express feelings accurately in social context.",
           "lessons": [
-            { "lessonKey": "em-1", "title": "Basic Emotions", "shortDescription": "Happy, sad, angry, excited", "difficulty": "Easy", "durationMinutes": 7, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/basic-emotions.mp4", "practiceActivity": { "type": "expression-match", "prompt": "Pair facial expression with emotion sign." }, "quiz": { "question": "Emotion signs need strong:", "options": ["Facial grammar", "Finger speed only", "No eye contact", "No context"], "correctOptionIndex": 0 } },
-            { "lessonKey": "em-2", "title": "Intensity Levels", "shortDescription": "Mild vs strong emotional expressions", "difficulty": "Medium", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/emotion-intensity.mp4", "practiceActivity": { "type": "contrast-drill", "prompt": "Sign mild and strong versions." }, "quiz": { "question": "Intensity is shown through:", "options": ["Expression + movement", "Same sign always", "No variation", "Random pause"], "correctOptionIndex": 0 } },
-            { "lessonKey": "em-3", "title": "Responding with Empathy", "shortDescription": "Use supportive social responses", "difficulty": "Medium", "durationMinutes": 9, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/empathy-response.mp4", "practiceActivity": { "type": "scenario-practice", "prompt": "Respond empathically in 5 scenarios." }, "quiz": { "question": "Empathetic response should be:", "options": ["Context-aware", "Dismissive", "Off-topic", "No expression"], "correctOptionIndex": 0 } },
-            { "lessonKey": "em-4", "title": "Emotion in Stories", "shortDescription": "Blend emotion signs into narratives", "difficulty": "Hard", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/emotion-stories.mp4", "practiceActivity": { "type": "story-practice", "prompt": "Narrate one short emotional story." }, "quiz": { "question": "What makes emotional storytelling strong?", "options": ["Consistent emotional cues", "Flat expression", "No context", "Only speed"], "correctOptionIndex": 0 } },
-            { "lessonKey": "em-5", "title": "Emotion Mastery Drill", "shortDescription": "Rapid context-to-emotion matching", "difficulty": "Hard", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/emotion-mastery.mp4", "practiceActivity": { "type": "timed-drill", "prompt": "Match 15 scenarios to correct emotion signs." }, "quiz": { "question": "Best way to retain emotion signs?", "options": ["Use in context", "Rote only", "Skip practice", "Ignore feedback"], "correctOptionIndex": 0 } }
+            {
+              "lessonKey": "em-1",
+              "title": "Basic Emotions",
+              "shortDescription": "Happy, sad, angry, excited",
+              "difficulty": "Easy",
+              "durationMinutes": 7,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186797/signlearn/lessons/em-1.mp4",
+              "practiceActivity": {
+                "type": "expression-match",
+                "prompt": "Pair facial expression with emotion sign."
+              },
+              "quiz": {
+                "question": "Emotion signs need strong:",
+                "options": [
+                  "Facial grammar",
+                  "Finger speed only",
+                  "No eye contact",
+                  "No context"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "YuX7-UvZy-8"
+            },
+            {
+              "lessonKey": "em-2",
+              "title": "Intensity Levels",
+              "shortDescription": "Mild vs strong emotional expressions",
+              "difficulty": "Medium",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186798/signlearn/lessons/em-2.mp4",
+              "practiceActivity": {
+                "type": "contrast-drill",
+                "prompt": "Sign mild and strong versions."
+              },
+              "quiz": {
+                "question": "Intensity is shown through:",
+                "options": [
+                  "Expression + movement",
+                  "Same sign always",
+                  "No variation",
+                  "Random pause"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "QYYMBAEs6Vg"
+            },
+            {
+              "lessonKey": "em-3",
+              "title": "Responding with Empathy",
+              "shortDescription": "Use supportive social responses",
+              "difficulty": "Medium",
+              "durationMinutes": 9,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186798/signlearn/lessons/em-3.mp4",
+              "practiceActivity": {
+                "type": "scenario-practice",
+                "prompt": "Respond empathically in 5 scenarios."
+              },
+              "quiz": {
+                "question": "Empathetic response should be:",
+                "options": [
+                  "Context-aware",
+                  "Dismissive",
+                  "Off-topic",
+                  "No expression"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "YuX7-UvZy-8"
+            },
+            {
+              "lessonKey": "em-4",
+              "title": "Emotion in Stories",
+              "shortDescription": "Blend emotion signs into narratives",
+              "difficulty": "Hard",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186799/signlearn/lessons/em-4.mp4",
+              "practiceActivity": {
+                "type": "story-practice",
+                "prompt": "Narrate one short emotional story."
+              },
+              "quiz": {
+                "question": "What makes emotional storytelling strong?",
+                "options": [
+                  "Consistent emotional cues",
+                  "Flat expression",
+                  "No context",
+                  "Only speed"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "QYYMBAEs6Vg"
+            },
+            {
+              "lessonKey": "em-5",
+              "title": "Emotion Mastery Drill",
+              "shortDescription": "Rapid context-to-emotion matching",
+              "difficulty": "Hard",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186799/signlearn/lessons/em-5.mp4",
+              "practiceActivity": {
+                "type": "timed-drill",
+                "prompt": "Match 15 scenarios to correct emotion signs."
+              },
+              "quiz": {
+                "question": "Best way to retain emotion signs?",
+                "options": [
+                  "Use in context",
+                  "Rote only",
+                  "Skip practice",
+                  "Ignore feedback"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "YuX7-UvZy-8"
+            }
           ]
+        }
+      ],
+      "datasetSources": [
+        {
+          "name": "WLASL",
+          "url": "https://dxli94.github.io/WLASL/",
+          "license": "C-UDA"
+        },
+        {
+          "name": "How2Sign",
+          "url": "https://how2sign.github.io/",
+          "license": "Research use"
         }
       ]
     },
@@ -425,8 +1588,8 @@
       "orderIndex": 5,
       "estimatedCompletionMinutes": 150,
       "thumbnailPreview": {
-        "type": "video",
-        "url": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/advanced-practice.mp4"
+        "type": "image",
+        "url": "https://res.cloudinary.com/dxcwwdmxl/image/upload/v1777186761/signlearn/modules/advanced-practice.jpg"
       },
       "categories": [
         {
@@ -434,11 +1597,121 @@
           "title": "Storytelling",
           "description": "Narrative sequencing with expressions and transitions.",
           "lessons": [
-            { "lessonKey": "st-1", "title": "Story Structure Basics", "shortDescription": "Beginning, middle, end in sign flow", "difficulty": "Medium", "durationMinutes": 9, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/story-structure.mp4", "practiceActivity": { "type": "story-map", "prompt": "Map and sign a 3-part mini story." }, "quiz": { "question": "A complete story needs:", "options": ["Clear sequence", "Random events", "No transitions", "Single word only"], "correctOptionIndex": 0 } },
-            { "lessonKey": "st-2", "title": "Visual Scene Setting", "shortDescription": "Set place and people before action", "difficulty": "Medium", "durationMinutes": 9, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/scene-setting.mp4", "practiceActivity": { "type": "scene-practice", "prompt": "Set 3 scenes with clear references." }, "quiz": { "question": "Scene setting helps audience:", "options": ["Understand context", "Get confused", "Ignore details", "Only watch speed"], "correctOptionIndex": 0 } },
-            { "lessonKey": "st-3", "title": "Character Perspective", "shortDescription": "Shift role naturally while signing", "difficulty": "Hard", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/character-perspective.mp4", "practiceActivity": { "type": "role-shift", "prompt": "Narrate from two character viewpoints." }, "quiz": { "question": "Role shift requires:", "options": ["Body orientation change", "No movement", "Faster hands only", "No expression"], "correctOptionIndex": 0 } },
-            { "lessonKey": "st-4", "title": "Story Emotion Layering", "shortDescription": "Combine narrative + emotions", "difficulty": "Hard", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/story-emotions.mp4", "practiceActivity": { "type": "emotion-story", "prompt": "Retell one event with emotional cues." }, "quiz": { "question": "Emotion layering improves:", "options": ["Engagement", "Confusion", "Silence", "Randomness"], "correctOptionIndex": 0 } },
-            { "lessonKey": "st-5", "title": "Storytelling Performance", "shortDescription": "Deliver one complete 2-minute signed story", "difficulty": "Hard", "durationMinutes": 12, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/story-performance.mp4", "practiceActivity": { "type": "record-and-review", "prompt": "Record full story and self-review checkpoints." }, "quiz": { "question": "Best storytelling improvement method?", "options": ["Record and review", "One-time attempt", "No feedback", "Skip structure"], "correctOptionIndex": 0 } }
+            {
+              "lessonKey": "st-1",
+              "title": "Story Structure Basics",
+              "shortDescription": "Beginning, middle, end in sign flow",
+              "difficulty": "Medium",
+              "durationMinutes": 9,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186800/signlearn/lessons/st-1.mp4",
+              "practiceActivity": {
+                "type": "story-map",
+                "prompt": "Map and sign a 3-part mini story."
+              },
+              "quiz": {
+                "question": "A complete story needs:",
+                "options": [
+                  "Clear sequence",
+                  "Random events",
+                  "No transitions",
+                  "Single word only"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "oenKmcAkfO4"
+            },
+            {
+              "lessonKey": "st-2",
+              "title": "Visual Scene Setting",
+              "shortDescription": "Set place and people before action",
+              "difficulty": "Medium",
+              "durationMinutes": 9,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186800/signlearn/lessons/st-2.mp4",
+              "practiceActivity": {
+                "type": "scene-practice",
+                "prompt": "Set 3 scenes with clear references."
+              },
+              "quiz": {
+                "question": "Scene setting helps audience:",
+                "options": [
+                  "Understand context",
+                  "Get confused",
+                  "Ignore details",
+                  "Only watch speed"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "PHUdu7q3Mo0"
+            },
+            {
+              "lessonKey": "st-3",
+              "title": "Character Perspective",
+              "shortDescription": "Shift role naturally while signing",
+              "difficulty": "Hard",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186801/signlearn/lessons/st-3.mp4",
+              "practiceActivity": {
+                "type": "role-shift",
+                "prompt": "Narrate from two character viewpoints."
+              },
+              "quiz": {
+                "question": "Role shift requires:",
+                "options": [
+                  "Body orientation change",
+                  "No movement",
+                  "Faster hands only",
+                  "No expression"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "oenKmcAkfO4"
+            },
+            {
+              "lessonKey": "st-4",
+              "title": "Story Emotion Layering",
+              "shortDescription": "Combine narrative + emotions",
+              "difficulty": "Hard",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186801/signlearn/lessons/st-4.mp4",
+              "practiceActivity": {
+                "type": "emotion-story",
+                "prompt": "Retell one event with emotional cues."
+              },
+              "quiz": {
+                "question": "Emotion layering improves:",
+                "options": [
+                  "Engagement",
+                  "Confusion",
+                  "Silence",
+                  "Randomness"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "PHUdu7q3Mo0"
+            },
+            {
+              "lessonKey": "st-5",
+              "title": "Storytelling Performance",
+              "shortDescription": "Deliver one complete 2-minute signed story",
+              "difficulty": "Hard",
+              "durationMinutes": 12,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186802/signlearn/lessons/st-5.mp4",
+              "practiceActivity": {
+                "type": "record-and-review",
+                "prompt": "Record full story and self-review checkpoints."
+              },
+              "quiz": {
+                "question": "Best storytelling improvement method?",
+                "options": [
+                  "Record and review",
+                  "One-time attempt",
+                  "No feedback",
+                  "Skip structure"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "oenKmcAkfO4"
+            }
           ]
         },
         {
@@ -446,11 +1719,121 @@
           "title": "Real-life Scenarios",
           "description": "Apply advanced signing in practical situations.",
           "lessons": [
-            { "lessonKey": "rl-1", "title": "Travel Scenario", "shortDescription": "Directions, transport, timing", "difficulty": "Medium", "durationMinutes": 9, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/travel-scenario.mp4", "practiceActivity": { "type": "scenario-practice", "prompt": "Handle 5 travel communication prompts." }, "quiz": { "question": "Travel communication needs:", "options": ["Clear place + time signs", "No context", "Only gestures", "Skipping questions"], "correctOptionIndex": 0 } },
-            { "lessonKey": "rl-2", "title": "Healthcare Scenario", "shortDescription": "Pain, symptoms, appointments", "difficulty": "Hard", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/healthcare-scenario.mp4", "practiceActivity": { "type": "roleplay", "prompt": "Sign patient-provider dialogue snippets." }, "quiz": { "question": "Critical in healthcare signing is:", "options": ["Accuracy", "Speed only", "Humor", "Skipping details"], "correctOptionIndex": 0 } },
-            { "lessonKey": "rl-3", "title": "Workplace Scenario", "shortDescription": "Meetings, tasks, deadlines", "difficulty": "Hard", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/workplace-scenario.mp4", "practiceActivity": { "type": "dialogue", "prompt": "Practice workplace updates in 6 prompts." }, "quiz": { "question": "Workplace clarity depends on:", "options": ["Structured updates", "Random signs", "No sequencing", "Only speed"], "correctOptionIndex": 0 } },
-            { "lessonKey": "rl-4", "title": "Emergency Basics", "shortDescription": "Urgent communication essentials", "difficulty": "Hard", "durationMinutes": 11, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/emergency-basics.mp4", "practiceActivity": { "type": "rapid-response", "prompt": "Respond to urgent communication cues." }, "quiz": { "question": "Emergency signing should be:", "options": ["Fast and clear", "Vague", "Slow and unclear", "Silent"], "correctOptionIndex": 0 } },
-            { "lessonKey": "rl-5", "title": "Scenario Master Drill", "shortDescription": "Mixed practical situations under timer", "difficulty": "Hard", "durationMinutes": 12, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/scenario-master.mp4", "practiceActivity": { "type": "timed-drill", "prompt": "Complete 10 mixed scenario responses." }, "quiz": { "question": "Best advanced practice style?", "options": ["Mixed scenario drills", "Single repeated sign", "No review", "Theory only"], "correctOptionIndex": 0 } }
+            {
+              "lessonKey": "rl-1",
+              "title": "Travel Scenario",
+              "shortDescription": "Directions, transport, timing",
+              "difficulty": "Medium",
+              "durationMinutes": 9,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186802/signlearn/lessons/rl-1.mp4",
+              "practiceActivity": {
+                "type": "scenario-practice",
+                "prompt": "Handle 5 travel communication prompts."
+              },
+              "quiz": {
+                "question": "Travel communication needs:",
+                "options": [
+                  "Clear place + time signs",
+                  "No context",
+                  "Only gestures",
+                  "Skipping questions"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "_c--P6VRTUo"
+            },
+            {
+              "lessonKey": "rl-2",
+              "title": "Healthcare Scenario",
+              "shortDescription": "Pain, symptoms, appointments",
+              "difficulty": "Hard",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186803/signlearn/lessons/rl-2.mp4",
+              "practiceActivity": {
+                "type": "roleplay",
+                "prompt": "Sign patient-provider dialogue snippets."
+              },
+              "quiz": {
+                "question": "Critical in healthcare signing is:",
+                "options": [
+                  "Accuracy",
+                  "Speed only",
+                  "Humor",
+                  "Skipping details"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "RhQvlq-mZtA"
+            },
+            {
+              "lessonKey": "rl-3",
+              "title": "Workplace Scenario",
+              "shortDescription": "Meetings, tasks, deadlines",
+              "difficulty": "Hard",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186803/signlearn/lessons/rl-3.mp4",
+              "practiceActivity": {
+                "type": "dialogue",
+                "prompt": "Practice workplace updates in 6 prompts."
+              },
+              "quiz": {
+                "question": "Workplace clarity depends on:",
+                "options": [
+                  "Structured updates",
+                  "Random signs",
+                  "No sequencing",
+                  "Only speed"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "0FcwzMq4iWg"
+            },
+            {
+              "lessonKey": "rl-4",
+              "title": "Emergency Basics",
+              "shortDescription": "Urgent communication essentials",
+              "difficulty": "Hard",
+              "durationMinutes": 11,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186804/signlearn/lessons/rl-4.mp4",
+              "practiceActivity": {
+                "type": "rapid-response",
+                "prompt": "Respond to urgent communication cues."
+              },
+              "quiz": {
+                "question": "Emergency signing should be:",
+                "options": [
+                  "Fast and clear",
+                  "Vague",
+                  "Slow and unclear",
+                  "Silent"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "ianCxd71xIo"
+            },
+            {
+              "lessonKey": "rl-5",
+              "title": "Scenario Master Drill",
+              "shortDescription": "Mixed practical situations under timer",
+              "difficulty": "Hard",
+              "durationMinutes": 12,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186804/signlearn/lessons/rl-5.mp4",
+              "practiceActivity": {
+                "type": "timed-drill",
+                "prompt": "Complete 10 mixed scenario responses."
+              },
+              "quiz": {
+                "question": "Best advanced practice style?",
+                "options": [
+                  "Mixed scenario drills",
+                  "Single repeated sign",
+                  "No review",
+                  "Theory only"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "_c--P6VRTUo"
+            }
           ]
         },
         {
@@ -458,12 +1841,139 @@
           "title": "Speed & Fluency",
           "description": "Improve pace without losing clarity and expression.",
           "lessons": [
-            { "lessonKey": "sf-1", "title": "Controlled Speed", "shortDescription": "Increase pace while keeping form", "difficulty": "Medium", "durationMinutes": 8, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/controlled-speed.mp4", "practiceActivity": { "type": "metronome-drill", "prompt": "Practice signing at 3 controlled speeds." }, "quiz": { "question": "Speed should never reduce:", "options": ["Clarity", "Confidence", "Practice", "Progress"], "correctOptionIndex": 0 } },
-            { "lessonKey": "sf-2", "title": "Transition Smoothness", "shortDescription": "Reduce choppy movement between signs", "difficulty": "Medium", "durationMinutes": 9, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/transition-smoothness.mp4", "practiceActivity": { "type": "flow-drill", "prompt": "Practice smooth transitions across 10 phrases." }, "quiz": { "question": "Smooth transitions improve:", "options": ["Comprehension", "Confusion", "Fatigue", "Silence"], "correctOptionIndex": 0 } },
-            { "lessonKey": "sf-3", "title": "Expression Under Speed", "shortDescription": "Maintain facial grammar while faster signing", "difficulty": "Hard", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/expression-speed.mp4", "practiceActivity": { "type": "mirror-practice", "prompt": "Run speed drills while preserving expression." }, "quiz": { "question": "At higher speed, keep:", "options": ["Facial clarity", "Blank face", "Random motion", "No pauses"], "correctOptionIndex": 0 } },
-            { "lessonKey": "sf-4", "title": "Conversation Pace", "shortDescription": "Handle real conversational tempo", "difficulty": "Hard", "durationMinutes": 10, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/conversation-pace.mp4", "practiceActivity": { "type": "roleplay", "prompt": "Sign at natural pace with partner clips." }, "quiz": { "question": "Natural pace means:", "options": ["Balanced speed + understanding", "Maximum speed only", "Very slow always", "No eye contact"], "correctOptionIndex": 0 } },
-            { "lessonKey": "sf-5", "title": "Fluency Benchmark", "shortDescription": "Final fluency benchmark with scored review", "difficulty": "Hard", "durationMinutes": 12, "mediaUrl": "https://res.cloudinary.com/demo/video/upload/v1/signlearn/fluency-benchmark.mp4", "practiceActivity": { "type": "assessment", "prompt": "Complete benchmark and review performance report." }, "quiz": { "question": "Fluency benchmark evaluates:", "options": ["Clarity, pace, expression", "Only speed", "Only memory", "Only quiz"], "correctOptionIndex": 0 } }
+            {
+              "lessonKey": "sf-1",
+              "title": "Controlled Speed",
+              "shortDescription": "Increase pace while keeping form",
+              "difficulty": "Medium",
+              "durationMinutes": 8,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186806/signlearn/lessons/sf-1.mp4",
+              "practiceActivity": {
+                "type": "metronome-drill",
+                "prompt": "Practice signing at 3 controlled speeds."
+              },
+              "quiz": {
+                "question": "Speed should never reduce:",
+                "options": [
+                  "Clarity",
+                  "Confidence",
+                  "Practice",
+                  "Progress"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "DBQINq0SsAw"
+            },
+            {
+              "lessonKey": "sf-2",
+              "title": "Transition Smoothness",
+              "shortDescription": "Reduce choppy movement between signs",
+              "difficulty": "Medium",
+              "durationMinutes": 9,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186806/signlearn/lessons/sf-2.mp4",
+              "practiceActivity": {
+                "type": "flow-drill",
+                "prompt": "Practice smooth transitions across 10 phrases."
+              },
+              "quiz": {
+                "question": "Smooth transitions improve:",
+                "options": [
+                  "Comprehension",
+                  "Confusion",
+                  "Fatigue",
+                  "Silence"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "NXNq_ER2jT4"
+            },
+            {
+              "lessonKey": "sf-3",
+              "title": "Expression Under Speed",
+              "shortDescription": "Maintain facial grammar while faster signing",
+              "difficulty": "Hard",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186807/signlearn/lessons/sf-3.mp4",
+              "practiceActivity": {
+                "type": "mirror-practice",
+                "prompt": "Run speed drills while preserving expression."
+              },
+              "quiz": {
+                "question": "At higher speed, keep:",
+                "options": [
+                  "Facial clarity",
+                  "Blank face",
+                  "Random motion",
+                  "No pauses"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "fDV9Al8Fgjk"
+            },
+            {
+              "lessonKey": "sf-4",
+              "title": "Conversation Pace",
+              "shortDescription": "Handle real conversational tempo",
+              "difficulty": "Hard",
+              "durationMinutes": 10,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186807/signlearn/lessons/sf-4.mp4",
+              "practiceActivity": {
+                "type": "roleplay",
+                "prompt": "Sign at natural pace with partner clips."
+              },
+              "quiz": {
+                "question": "Natural pace means:",
+                "options": [
+                  "Balanced speed + understanding",
+                  "Maximum speed only",
+                  "Very slow always",
+                  "No eye contact"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "_c--P6VRTUo"
+            },
+            {
+              "lessonKey": "sf-5",
+              "title": "Fluency Benchmark",
+              "shortDescription": "Final fluency benchmark with scored review",
+              "difficulty": "Hard",
+              "durationMinutes": 12,
+              "mediaUrl": "https://res.cloudinary.com/dxcwwdmxl/video/upload/v1777186808/signlearn/lessons/sf-5.mp4",
+              "practiceActivity": {
+                "type": "assessment",
+                "prompt": "Complete benchmark and review performance report."
+              },
+              "quiz": {
+                "question": "Fluency benchmark evaluates:",
+                "options": [
+                  "Clarity, pace, expression",
+                  "Only speed",
+                  "Only memory",
+                  "Only quiz"
+                ],
+                "correctOptionIndex": 0
+              },
+              "youtubeVideoId": "ianCxd71xIo"
+            }
           ]
+        }
+      ],
+      "datasetSources": [
+        {
+          "name": "How2Sign",
+          "url": "https://how2sign.github.io/",
+          "license": "Research use"
+        },
+        {
+          "name": "OpenASL",
+          "url": "https://github.com/chevalierNoir/OpenASL",
+          "license": "CC BY-NC-ND 4.0"
+        },
+        {
+          "name": "WLASL",
+          "url": "https://dxli94.github.io/WLASL/",
+          "license": "C-UDA"
         }
       ]
     }
