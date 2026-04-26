@@ -242,6 +242,7 @@ export async function getUserProgress() {
 			modulesCompleted: payload.modulesCompleted ?? 0,
 			totalModules: payload.totalModules ?? 0,
 			lessonsCompleted: payload.lessonsCompleted ?? 0,
+			totalLessons: payload.totalLessons ?? 0,
 			moduleProgress: payload.moduleProgress ?? [],
 			overallProgress:
 				payload.overallProgress ?? payload.overallProgressPercentage ?? 0,
@@ -260,5 +261,26 @@ export async function getUserModuleProgress() {
 		success: response.data?.success ?? true,
 		modules,
 	};
+}
+
+/**
+ * Save a quiz attempt for current user
+ * @param {Object} payload
+ * @returns {Promise} { success: boolean, data: Object }
+ */
+export async function saveQuizAttempt(payload) {
+	const response = await apiClient.post("/learning/quiz/attempts", payload);
+	return response.data;
+}
+
+/**
+ * Get recent quiz attempts for current user
+ * @param {number} limit - max attempts to fetch (1-20)
+ * @returns {Promise} { success: boolean, data: { attempts: Array } }
+ */
+export async function getQuizAttempts(limit = 5) {
+	const safeLimit = Math.max(1, Math.min(Number(limit) || 5, 20));
+	const response = await apiClient.get(`/learning/quiz/attempts?limit=${safeLimit}`);
+	return response.data;
 }
 

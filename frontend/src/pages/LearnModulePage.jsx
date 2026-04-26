@@ -6,9 +6,10 @@ import {
   getLessonCoveragePoints,
   getLessonResourceImages,
 } from "@/lib/lessonResources";
+import { getCuratedLessonMedia } from "@/lib/curatedLessonMedia";
 import { getLessonVideoSources } from "@/lib/lessonVideoSources";
 
-const VIDEO_EXTENSIONS = new Set(["mp4", "webm", "mov", "ogg", "m3u8", "m4v", "avi", "mkv"]);
+const VIDEO_EXTENSIONS = new Set(["mp4", "webm", "mov", "ogg", "ogv", "m3u8", "m4v", "avi", "mkv"]);
 
 function normalizeMediaUrl(url) {
   const value = String(url || "").trim();
@@ -64,6 +65,44 @@ function isYouTubeSearchUrl(url) {
   }
 }
 
+function toYouTubeEmbedUrl(url) {
+  if (!url) {
+    return "";
+  }
+
+  try {
+    const parsedUrl = new URL(url, "https://example.com");
+    const host = parsedUrl.hostname.toLowerCase();
+
+    if (!host.includes("youtube.com") && !host.includes("youtube-nocookie.com") && !host.includes("youtu.be")) {
+      return "";
+    }
+
+    if (host.includes("youtu.be")) {
+      const id = parsedUrl.pathname.replace(/^\//, "");
+      return id ? `https://www.youtube.com/embed/${id}` : "";
+    }
+
+    if (parsedUrl.pathname.startsWith("/embed/")) {
+      return url;
+    }
+
+    if (parsedUrl.pathname.startsWith("/shorts/")) {
+      const id = parsedUrl.pathname.split("/")[2] || "";
+      return id ? `https://www.youtube.com/embed/${id}` : "";
+    }
+
+    const id = parsedUrl.searchParams.get("v");
+    return id ? `https://www.youtube.com/embed/${id}` : "";
+  } catch (_error) {
+    return "";
+  }
+}
+
+function isYouTubeEmbedUrl(url) {
+  return Boolean(toYouTubeEmbedUrl(url));
+}
+
 function isLikelyVideoUrl(url) {
   if (!url) {
     return false;
@@ -93,7 +132,10 @@ function buildLessonVideoSources(moduleData, lesson) {
       return;
     }
 
-    const sourceKey = normalized.toLowerCase();
+    const embeddedYoutube = toYouTubeEmbedUrl(normalized);
+    const sourceCandidate = embeddedYoutube || normalized;
+
+    const sourceKey = sourceCandidate.toLowerCase();
     if (seen.has(sourceKey)) {
       return;
     }
@@ -102,12 +144,18 @@ function buildLessonVideoSources(moduleData, lesson) {
       return;
     }
 
-    if (!isLikelyVideoUrl(normalized)) {
+    if (embeddedYoutube) {
+      seen.add(sourceKey);
+      sources.push(sourceCandidate);
+      return;
+    }
+
+    if (!isLikelyVideoUrl(sourceCandidate)) {
       return;
     }
 
     seen.add(sourceKey);
-    sources.push(normalized);
+    sources.push(sourceCandidate);
   }
 
   addSource(getPrimaryLessonMediaUrl(lesson));
@@ -118,6 +166,8 @@ function buildLessonVideoSources(moduleData, lesson) {
     moduleData?.category
   );
   fallbackSources.forEach((entry) => addSource(entry));
+
+  addSource(getCuratedLessonMedia(moduleData?.title, lesson?.title, moduleData?.category));
 
   return sources;
 }
@@ -141,6 +191,7 @@ function LessonVideoPlayer({ title, videoSources }) {
 
   const safeIndex = Math.min(activeVideoIndex, videoSources.length - 1);
   const activeSource = videoSources[safeIndex];
+  const activeEmbedSource = isYouTubeEmbedUrl(activeSource) ? toYouTubeEmbedUrl(activeSource) : "";
 
   function handleVideoError() {
     if (safeIndex < videoSources.length - 1) {
@@ -153,16 +204,27 @@ function LessonVideoPlayer({ title, videoSources }) {
 
   return (
     <div className="mt-3">
-      <video
-        key={activeSource}
-        controls
-        preload="metadata"
-        onError={handleVideoError}
-        className="h-56 w-full rounded-xl border border-slate-200 bg-black object-contain"
-      >
-        <source src={activeSource} />
-        Your browser does not support this video format.
-      </video>
+      {activeEmbedSource ? (
+        <iframe
+          key={activeSource}
+          src={activeEmbedSource}
+          title={title}
+          className="h-56 w-full rounded-xl border border-slate-200 bg-black"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        />
+      ) : (
+        <video
+          key={activeSource}
+          controls
+          preload="metadata"
+          onError={handleVideoError}
+          className="h-56 w-full rounded-xl border border-slate-200 bg-black object-contain"
+        >
+          <source src={activeSource} />
+          Your browser does not support this video format.
+        </video>
+      )}
 
       {videoSources.length > 1 ? (
         <div className="mt-2 flex flex-wrap gap-2">
@@ -284,6 +346,20 @@ function LearnModulePage() {
 
     return getLessonResourceImages(selectedModule?.title, selectedLesson.title);
   }, [selectedLesson, selectedModule]);
+
+  const lessonPreviewImages = useMemo(() => selectedLessonImages.slice(0, 3), [selectedLessonImages]);
+
+  const lessonPreviewGridClass = useMemo(() => {
+    if (lessonPreviewImages.length <= 1) {
+      return "grid-cols-1";
+    }
+
+    if (lessonPreviewImages.length === 2) {
+      return "grid-cols-2";
+    }
+
+    return "grid-cols-1 sm:grid-cols-3";
+  }, [lessonPreviewImages.length]);
 
   const selectedLessonVideoSources = useMemo(() => {
     if (!selectedLesson) {
@@ -428,14 +504,14 @@ function LearnModulePage() {
 
                   <p className="mt-2 text-sm text-slate-600">{selectedLesson.description || "No description yet."}</p>
 
-                  <div className="mt-3 grid grid-cols-3 gap-2">
-                    {selectedLessonImages.slice(0, 3).map((imageUrl, index) => (
+                  <div className={`mt-3 grid gap-2 ${lessonPreviewGridClass}`}>
+                    {lessonPreviewImages.map((imageUrl, index) => (
                       <img
                         key={`${selectedLesson._id}-img-${index}`}
                         src={imageUrl}
                         alt={`${selectedLesson.title} sign reference ${index + 1}`}
                         loading="lazy"
-                        className="h-20 w-full rounded-lg border border-slate-200 bg-white object-cover"
+                        className="h-32 w-full rounded-lg border border-slate-200 bg-slate-100 object-contain p-1 sm:h-28"
                       />
                     ))}
                   </div>

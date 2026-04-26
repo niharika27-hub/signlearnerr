@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import StickySectionLabel from "@/components/StickySectionLabel";
 import { Particles } from "@/components/ui/particles";
 import learningContent from "@/data/learning-content.json";
-import { completeLesson, getApiErrorMessage, getModules } from "@/lib/authApi";
+import { completeLesson, getApiErrorMessage, getQuizAttempts, saveQuizAttempt } from "@/lib/authApi";
 
 const modes = [
   {
@@ -49,6 +49,7 @@ function toQuestionBank() {
           question: lesson.quiz.question,
           options: lesson.quiz.options,
           correctOptionIndex: Number(lesson.quiz.correctOptionIndex ?? -1),
+          explanation: lesson.quiz.explanation || "",
         }))
         .filter((entry) => entry.correctOptionIndex >= 0 && entry.correctOptionIndex < entry.options.length);
     });
@@ -68,37 +69,25 @@ function normalizeKey(value) {
   return String(value || "").trim().toLowerCase();
 }
 
-function resolveLessonIdFromQuestions(questions, lessonIdByTitle) {
-  const matchCounts = new Map();
+function normalizeAttempt(input = {}) {
+  const completedAt = input?.completedAt ? new Date(input.completedAt).toISOString() : new Date().toISOString();
+  const stableId =
+    input?._id ||
+    input?.id ||
+    `${input?.modeId || "quiz"}-${completedAt}-${input?.score ?? 0}-${input?.correctCount ?? 0}`;
 
-  questions.forEach((question) => {
-    const key = normalizeKey(question?.lessonTitle);
-    const matchedLessonId = lessonIdByTitle[key];
-    if (!matchedLessonId) {
-      return;
-    }
-
-    const existing = matchCounts.get(matchedLessonId) || {
-      count: 0,
-      lessonTitle: question.lessonTitle,
-    };
-
-    existing.count += 1;
-    matchCounts.set(matchedLessonId, existing);
-  });
-
-  let bestMatch = null;
-  for (const [matchedLessonId, metadata] of matchCounts.entries()) {
-    if (!bestMatch || metadata.count > bestMatch.count) {
-      bestMatch = {
-        lessonId: matchedLessonId,
-        lessonTitle: metadata.lessonTitle,
-        count: metadata.count,
-      };
-    }
-  }
-
-  return bestMatch;
+  return {
+    id: String(stableId),
+    modeId: String(input?.modeId || "unknown"),
+    modeTitle: String(input?.modeTitle || "Quiz"),
+    score: Number(input?.score ?? 0),
+    correctCount: Number(input?.correctCount ?? 0),
+    totalQuestions: Number(input?.totalQuestions ?? 0),
+    syncedToProgress: Boolean(input?.syncedToProgress),
+    lessonId: input?.lessonId ? String(input.lessonId) : null,
+    lessonTitle: input?.lessonTitle ? String(input.lessonTitle) : null,
+    completedAt,
+  };
 }
 
 function QuizPage() {
@@ -114,7 +103,8 @@ function QuizPage() {
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState(null);
-  const [lessonIdByTitle, setLessonIdByTitle] = useState({});
+  const [recentAttempts, setRecentAttempts] = useState([]);
+  const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
 
   const questionBank = useMemo(() => toQuestionBank(), []);
 
@@ -139,35 +129,30 @@ function QuizPage() {
   const activeQuestion = questions[currentQuestionIndex] || null;
 
   useEffect(() => {
-    async function fetchLessonMap() {
+    let isDisposed = false;
+
+    async function loadAttempts() {
       try {
-        const response = await getModules();
-        const modules = Array.isArray(response?.data)
-          ? response.data
-          : Array.isArray(response?.modules)
-            ? response.modules
-            : [];
+        const response = await getQuizAttempts(5);
+        const attempts = Array.isArray(response?.data?.attempts)
+          ? response.data.attempts.map(normalizeAttempt)
+          : [];
 
-        const nextMap = {};
-        modules.forEach((module) => {
-          const lessons = Array.isArray(module?.lessons) ? module.lessons : [];
-          lessons.forEach((entry) => {
-            const titleKey = normalizeKey(entry?.title);
-            const id = entry?._id || entry?.id;
-            if (!titleKey || !id || nextMap[titleKey]) {
-              return;
-            }
-            nextMap[titleKey] = String(id);
-          });
-        });
-
-        setLessonIdByTitle(nextMap);
-      } catch (error) {
-        console.error("Failed to resolve lessons for quiz auto-link:", error);
+        if (!isDisposed) {
+          setRecentAttempts(attempts);
+        }
+      } catch (_error) {
+        if (!isDisposed) {
+          setRecentAttempts([]);
+        }
       }
     }
 
-    fetchLessonMap();
+    loadAttempts();
+
+    return () => {
+      isDisposed = true;
+    };
   }, []);
 
   function resetQuizState() {
@@ -176,6 +161,7 @@ function QuizPage() {
     setFeedbackMessage("");
     setSubmitting(false);
     setResult(null);
+    setShowSubmitConfirm(false);
   }
 
   function startMode(mode) {
@@ -207,24 +193,32 @@ function QuizPage() {
     );
     const score = Math.round((correctCount / questions.length) * 100);
 
-    let syncMessage = "Quiz completed, but no matching lesson was found for progress sync.";
+    const questionReview = questions.map((question, index) => {
+      const selectedOptionIndex = Number(answers[index]);
+      const isCorrect = selectedOptionIndex === question.correctOptionIndex;
+
+      return {
+        id: question.id,
+        question: question.question,
+        selectedOptionIndex,
+        selectedOption: question.options[selectedOptionIndex] || "Not answered",
+        correctOptionIndex: question.correctOptionIndex,
+        correctOption: question.options[question.correctOptionIndex] || "",
+        explanation: question.explanation || "",
+        isCorrect,
+      };
+    });
+
+    let syncMessage = "Quiz completed in practice mode. Open a lesson quiz to sync score with progress.";
     let syncedToProgress = false;
-    let matchedLessonTitle = "";
 
-    const resolvedLessonMatch = lessonId
-      ? { lessonId, lessonTitle: lessonTitle || "this lesson" }
-      : resolveLessonIdFromQuestions(questions, lessonIdByTitle);
-
-    const resolvedLessonId = resolvedLessonMatch?.lessonId || "";
-    matchedLessonTitle = resolvedLessonMatch?.lessonTitle || "";
-
-    if (resolvedLessonId) {
+    if (lessonId) {
       try {
         setSubmitting(true);
-        await completeLesson(resolvedLessonId, score);
+        await completeLesson(lessonId, score);
         syncedToProgress = true;
-        syncMessage = matchedLessonTitle
-          ? `Score saved and progress updated for ${matchedLessonTitle}.`
+        syncMessage = lessonTitle
+          ? `Score saved and progress updated for ${lessonTitle}.`
           : "Score saved and progress updated successfully.";
       } catch (error) {
         syncMessage = getApiErrorMessage(error, "Quiz submitted, but progress sync failed.");
@@ -233,13 +227,41 @@ function QuizPage() {
       }
     }
 
+    const attemptRecord = normalizeAttempt({
+      id: `attempt-${Date.now()}`,
+      modeId: selectedMode?.id || "unknown",
+      modeTitle: selectedMode?.title || "Quiz",
+      score,
+      correctCount,
+      totalQuestions: questions.length,
+      syncedToProgress,
+      lessonId: lessonId || null,
+      lessonTitle: lessonTitle || null,
+      completedAt: new Date().toISOString(),
+    });
+
+    try {
+      const saveResponse = await saveQuizAttempt(attemptRecord);
+      const savedAttempt = saveResponse?.data?.attempt
+        ? normalizeAttempt(saveResponse.data.attempt)
+        : attemptRecord;
+      const serverAttempts = Array.isArray(saveResponse?.data?.recentAttempts)
+        ? saveResponse.data.recentAttempts.map(normalizeAttempt)
+        : [];
+
+      setRecentAttempts(serverAttempts.length > 0 ? serverAttempts.slice(0, 5) : [savedAttempt]);
+    } catch (_error) {
+      setRecentAttempts((current) => [attemptRecord, ...current].slice(0, 5));
+    }
+
     setResult({
+      attemptId: attemptRecord.id,
       correctCount,
       totalQuestions: questions.length,
       score,
       syncedToProgress,
-      matchedLessonTitle,
       syncMessage,
+      questionReview,
     });
     setFeedbackMessage("");
   }
@@ -268,13 +290,13 @@ function QuizPage() {
             {lessonTitle ? `Checkpoint: ${lessonTitle}` : "Test what you retain"}
           </h1>
           <p className="mt-4 max-w-2xl text-slate-600">
-            Measure your understanding with adaptive quizzes designed to improve
+            Measure your understanding with mode-based quizzes designed to improve
             recognition speed and signing confidence.
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-sm font-semibold text-slate-700">
-              Quiz Bank: 200+ items
+              Quiz Bank: {scopedQuestionBank.length} item{scopedQuestionBank.length === 1 ? "" : "s"}
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-sm font-semibold text-slate-700">
               Target Accuracy: 90%
@@ -286,7 +308,7 @@ function QuizPage() {
 
           {!lessonId ? (
             <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">
-              Quick mode active: progress is auto-linked when a quiz question matches a backend lesson title.
+              Quick mode active: scores are saved as practice attempts. Open a lesson quiz to sync with progress.
             </div>
           ) : null}
         </div>
@@ -353,6 +375,9 @@ function QuizPage() {
 
             {activeQuestion ? (
               <div className="mt-5">
+                <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
+                  Answered {Object.keys(answers).length}/{questions.length}
+                </p>
                 <p className="text-sm font-semibold text-indigo-700">
                   {activeQuestion.moduleTitle} - {activeQuestion.lessonTitle}
                 </p>
@@ -370,6 +395,7 @@ function QuizPage() {
                             ...current,
                             [currentQuestionIndex]: optionIndex,
                           }));
+                          setShowSubmitConfirm(false);
                           setFeedbackMessage("");
                         }}
                         className={`rounded-xl border px-4 py-3 text-left text-sm font-medium transition ${
@@ -387,7 +413,10 @@ function QuizPage() {
                 <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
                   <button
                     type="button"
-                    onClick={() => setCurrentQuestionIndex((current) => Math.max(current - 1, 0))}
+                    onClick={() => {
+                      setShowSubmitConfirm(false);
+                      setCurrentQuestionIndex((current) => Math.max(current - 1, 0));
+                    }}
                     disabled={currentQuestionIndex === 0}
                     className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
@@ -397,7 +426,10 @@ function QuizPage() {
                   {currentQuestionIndex < questions.length - 1 ? (
                     <button
                       type="button"
-                      onClick={() => setCurrentQuestionIndex((current) => Math.min(current + 1, questions.length - 1))}
+                      onClick={() => {
+                        setShowSubmitConfirm(false);
+                        setCurrentQuestionIndex((current) => Math.min(current + 1, questions.length - 1));
+                      }}
                       className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white"
                     >
                       Next question
@@ -405,14 +437,42 @@ function QuizPage() {
                   ) : (
                     <button
                       type="button"
-                      onClick={handleSubmitQuiz}
-                      disabled={submitting}
+                      onClick={() => setShowSubmitConfirm(true)}
+                      disabled={submitting || Object.keys(answers).length < questions.length}
                       className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
                     >
-                      {submitting ? "Saving score..." : "Submit quiz"}
+                      Review & submit
                     </button>
                   )}
                 </div>
+
+                {showSubmitConfirm ? (
+                  <div className="mt-4 rounded-xl border border-indigo-200 bg-indigo-50 p-3">
+                    <p className="text-sm font-semibold text-indigo-900">
+                      Ready to submit this quiz?
+                    </p>
+                    <p className="mt-1 text-xs font-medium text-indigo-800/90">
+                      Answers and explanations will be shown only after you submit.
+                    </p>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleSubmitQuiz}
+                        disabled={submitting}
+                        className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+                      >
+                        {submitting ? "Saving score..." : "Submit quiz"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowSubmitConfirm(false)}
+                        className="rounded-lg border border-indigo-200 bg-white px-3 py-2 text-xs font-semibold text-indigo-800"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
 
                 {feedbackMessage ? (
                   <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800">
@@ -436,6 +496,7 @@ function QuizPage() {
                   You scored <span className="font-semibold">{result.score}%</span> ({result.correctCount}/{result.totalQuestions} correct).
                 </p>
                 <p className="mt-1 text-sm text-emerald-900">{result.syncMessage}</p>
+                <p className="mt-1 text-xs font-semibold text-emerald-800/90">Attempt ID: {result.attemptId}</p>
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button
@@ -453,6 +514,44 @@ function QuizPage() {
                     Continue learning
                   </button>
                 </div>
+
+                <div className="mt-5 rounded-xl border border-emerald-200/80 bg-white/75 p-3">
+                  <p className="text-xs font-semibold tracking-[0.14em] text-emerald-800 uppercase">Answer Review</p>
+                  <div className="mt-2 space-y-2">
+                    {result.questionReview.map((entry, index) => (
+                      <div
+                        key={`${entry.id}-${index}`}
+                        className={`rounded-lg border px-3 py-2 text-sm ${
+                          entry.isCorrect
+                            ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+                            : "border-rose-200 bg-rose-50 text-rose-900"
+                        }`}
+                      >
+                        <p className="font-semibold">Q{index + 1}. {entry.question}</p>
+                        <p className="mt-1">Your answer: {entry.selectedOption}</p>
+                        {!entry.isCorrect ? (
+                          <p className="mt-1">Correct answer: {entry.correctOption}</p>
+                        ) : null}
+                        {entry.explanation ? (
+                          <p className="mt-1 text-xs font-medium opacity-85">Why: {entry.explanation}</p>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {recentAttempts.length > 0 ? (
+                  <div className="mt-4 rounded-xl border border-emerald-200/80 bg-white/75 p-3">
+                    <p className="text-xs font-semibold tracking-[0.14em] text-emerald-800 uppercase">Recent Attempts</p>
+                    <ul className="mt-2 space-y-1 text-sm text-emerald-900">
+					  {recentAttempts.map((attempt, index) => (
+						<li key={`${attempt.id}-${attempt.completedAt}-${index}`}>
+                          {attempt.modeTitle}: {attempt.score}% ({attempt.correctCount}/{attempt.totalQuestions})
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
               </div>
             ) : null}
           </div>

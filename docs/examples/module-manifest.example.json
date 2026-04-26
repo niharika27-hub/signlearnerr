@@ -12,7 +12,7 @@
         {
           "title": "A-I Hand Shapes",
           "description": "Letters A-I with recognition practice.",
-          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20alphabet%20A%20through%20I%20lesson%20Bill%20Vicars",
+          "contentUrl": "https://www.youtube.com/watch?v=M7lc1UVf-VE",
           "duration": 10,
           "order": 1,
           "difficultyLevel": "beginner"
@@ -20,7 +20,7 @@
         {
           "title": "J-R Finger-spelling Flow",
           "description": "Letters J-R transitions and flow.",
-          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20alphabet%20J%20through%20R%20lesson%20Bill%20Vicars",
+          "contentUrl": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
           "duration": 10,
           "order": 2,
           "difficultyLevel": "intermediate"
@@ -28,7 +28,7 @@
         {
           "title": "S-Z + Recall Quiz",
           "description": "Letters S-Z recall and fluency practice.",
-          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20alphabet%20S%20through%20Z%20practice%20Bill%20Vicars",
+          "contentUrl": "https://www.youtube.com/watch?v=ysz5S6PUM-U",
           "duration": 10,
           "order": 3,
           "difficultyLevel": "advanced"
@@ -47,7 +47,7 @@
         {
           "title": "Common Daily Words",
           "description": "Greetings, people, common actions.",
-          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20common%20daily%20words%20for%20beginners%20Bill%20Vicars",
+          "contentUrl": "https://www.youtube.com/watch?v=M7lc1UVf-VE",
           "duration": 12,
           "order": 1,
           "difficultyLevel": "beginner"
@@ -55,7 +55,7 @@
         {
           "title": "People, Places, Actions",
           "description": "Vocabulary groups for people, places, and actions.",
-          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20signs%20people%20places%20actions%20lesson",
+          "contentUrl": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
           "duration": 12,
           "order": 2,
           "difficultyLevel": "intermediate"
@@ -63,7 +63,7 @@
         {
           "title": "Word Recognition Challenge",
           "description": "Receptive practice with varied signers.",
-          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20receptive%20practice%20common%20words%20beginner",
+          "contentUrl": "https://www.youtube.com/watch?v=ysz5S6PUM-U",
           "duration": 12,
           "order": 3,
           "difficultyLevel": "advanced"
@@ -82,7 +82,7 @@
         {
           "title": "Simple Sentence Patterns",
           "description": "Continuous signing intro clips.",
-          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20simple%20sentence%20patterns%20for%20beginners",
+          "contentUrl": "https://www.youtube.com/watch?v=M7lc1UVf-VE",
           "duration": 15,
           "order": 1,
           "difficultyLevel": "beginner"
@@ -90,7 +90,7 @@
         {
           "title": "Questions and Responses",
           "description": "Practice ASL questions and answers.",
-          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20question%20and%20answer%20sentence%20practice",
+          "contentUrl": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
           "duration": 15,
           "order": 2,
           "difficultyLevel": "intermediate"
@@ -98,7 +98,7 @@
         {
           "title": "Context Conversation Drill",
           "description": "Beginner conversation patterns in context.",
-          "contentUrl": "https://www.youtube.com/embed?listType=search&list=ASL%20beginner%20conversation%20practice%20dialogues",
+          "contentUrl": "https://www.youtube.com/watch?v=ysz5S6PUM-U",
           "duration": 15,
           "order": 3,
           "difficultyLevel": "advanced"
