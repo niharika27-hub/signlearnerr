@@ -32,6 +32,7 @@ function AppNavbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileUserMenuOpen, setIsMobileUserMenuOpen] = useState(false);
+  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const [storedUser, setStoredUser] = useState(() => getStoredProfile());
   const userMenuRef = useRef(null);
 
@@ -92,8 +93,16 @@ function AppNavbar() {
     }
   }
 
+  const rawAvatarUrl = activeUser?.photoURL ?? activeUser?.avatar ?? "";
+  const normalizedAvatarUrl = String(rawAvatarUrl || "").trim();
+  const invalidAvatarTokens = new Set(["null", "undefined", "nan", "false"]);
+  const userAvatarUrl = invalidAvatarTokens.has(normalizedAvatarUrl.toLowerCase()) ? "" : normalizedAvatarUrl;
+  const shouldShowAvatarImage = Boolean(userAvatarUrl) && !avatarLoadFailed;
   const userInitial = String(activeUser?.fullName || activeUser?.email || "U").charAt(0).toUpperCase();
-  const userAvatarUrl = activeUser?.photoURL || activeUser?.avatar || "";
+
+  useEffect(() => {
+    setAvatarLoadFailed(false);
+  }, [userAvatarUrl]);
 
   return (
     <header className="pointer-events-none fixed top-0 right-0 left-0 z-50 p-4">
@@ -121,11 +130,12 @@ function AppNavbar() {
                   }}
                   className="inline-flex items-center gap-2 rounded-xl border border-slate-200/80 bg-white/75 px-3 py-2 text-sm font-semibold text-slate-700 backdrop-blur transition hover:bg-white"
                 >
-                  {userAvatarUrl ? (
+                  {shouldShowAvatarImage ? (
                     <img
                       src={userAvatarUrl}
                       alt="User avatar"
                       className="h-7 w-7 rounded-full object-cover ring-1 ring-indigo-200/70"
+                      onError={() => setAvatarLoadFailed(true)}
                     />
                   ) : (
                     <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-indigo-100/90 text-indigo-900 text-xs font-bold ring-1 ring-indigo-200/70">
@@ -245,11 +255,12 @@ function AppNavbar() {
                     className="flex w-full items-center justify-between rounded-2xl border border-slate-200/80 bg-white/80 px-4 py-3 text-sm font-semibold text-slate-700 backdrop-blur"
                   >
                     <span className="inline-flex items-center gap-2">
-                      {userAvatarUrl ? (
+                      {shouldShowAvatarImage ? (
                         <img
                           src={userAvatarUrl}
                           alt="User avatar"
                           className="h-7 w-7 rounded-full object-cover ring-1 ring-indigo-200/70"
+                          onError={() => setAvatarLoadFailed(true)}
                         />
                       ) : (
                         <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-indigo-100/90 text-indigo-900 text-xs font-bold ring-1 ring-indigo-200/70">

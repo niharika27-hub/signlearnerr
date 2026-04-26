@@ -16,19 +16,7 @@ import {
 } from "lucide-react";
 import LearningCards from "@/components/LearningCards";
 import StickySectionLabel from "@/components/StickySectionLabel";
-import { getModules } from "@/lib/authApi";
-
-// Stub - returns default progress until backend endpoint is ready
-async function getUserProgress() {
-  return {
-    progress: {
-      streak: 3,
-      overallProgress: 15,
-      modulesCompleted: 0,
-      totalModules: 5,
-    },
-  };
-}
+import { getModules, getUserProgress } from "@/lib/authApi";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -120,7 +108,7 @@ function LearnPage() {
     streak: 0,
     overallProgress: 0,
     modulesCompleted: 0,
-    totalModules: 5,
+    totalModules: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -140,7 +128,7 @@ function LearnPage() {
             streak: 0,
             overallProgress: 0,
             modulesCompleted: 0,
-            totalModules: 5,
+            totalModules: 0,
           }
         );
         setError(null);

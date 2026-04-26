@@ -104,7 +104,6 @@ function QuizPage() {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState(null);
   const [recentAttempts, setRecentAttempts] = useState([]);
-  const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
 
   const questionBank = useMemo(() => toQuestionBank(), []);
 
@@ -125,6 +124,9 @@ function QuizPage() {
     () => modes.find((entry) => entry.id === selectedModeId) || null,
     [selectedModeId]
   );
+
+  const answeredCount = Object.keys(answers).length;
+  const unansweredCount = Math.max(questions.length - answeredCount, 0);
 
   const activeQuestion = questions[currentQuestionIndex] || null;
 
@@ -161,7 +163,6 @@ function QuizPage() {
     setFeedbackMessage("");
     setSubmitting(false);
     setResult(null);
-    setShowSubmitConfirm(false);
   }
 
   function startMode(mode) {
@@ -177,13 +178,13 @@ function QuizPage() {
       return;
     }
 
-    const unansweredCount = questions.reduce(
+    const unansweredQuestionCount = questions.reduce(
       (count, _question, index) => (answers[index] === undefined ? count + 1 : count),
       0
     );
 
-    if (unansweredCount > 0) {
-      setFeedbackMessage(`Please answer all questions before submitting (${unansweredCount} left).`);
+    if (unansweredQuestionCount > 0) {
+      setFeedbackMessage(`Please answer all questions before submitting (${unansweredQuestionCount} left).`);
       return;
     }
 
@@ -395,7 +396,6 @@ function QuizPage() {
                             ...current,
                             [currentQuestionIndex]: optionIndex,
                           }));
-                          setShowSubmitConfirm(false);
                           setFeedbackMessage("");
                         }}
                         className={`rounded-xl border px-4 py-3 text-left text-sm font-medium transition ${
@@ -414,7 +414,6 @@ function QuizPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      setShowSubmitConfirm(false);
                       setCurrentQuestionIndex((current) => Math.max(current - 1, 0));
                     }}
                     disabled={currentQuestionIndex === 0}
@@ -423,56 +422,28 @@ function QuizPage() {
                     Previous
                   </button>
 
-                  {currentQuestionIndex < questions.length - 1 ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    {currentQuestionIndex < questions.length - 1 ? (
                     <button
                       type="button"
                       onClick={() => {
-                        setShowSubmitConfirm(false);
                         setCurrentQuestionIndex((current) => Math.min(current + 1, questions.length - 1));
                       }}
-                      className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white"
+                      className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
                     >
                       Next question
                     </button>
-                  ) : (
+                    ) : null}
                     <button
                       type="button"
-                      onClick={() => setShowSubmitConfirm(true)}
-                      disabled={submitting || Object.keys(answers).length < questions.length}
+                      onClick={handleSubmitQuiz}
+                      disabled={submitting || unansweredCount > 0}
                       className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
                     >
-                      Review & submit
+                      {submitting ? "Saving score..." : "Submit quiz"}
                     </button>
-                  )}
-                </div>
-
-                {showSubmitConfirm ? (
-                  <div className="mt-4 rounded-xl border border-indigo-200 bg-indigo-50 p-3">
-                    <p className="text-sm font-semibold text-indigo-900">
-                      Ready to submit this quiz?
-                    </p>
-                    <p className="mt-1 text-xs font-medium text-indigo-800/90">
-                      Answers and explanations will be shown only after you submit.
-                    </p>
-                    <div className="mt-3 flex flex-wrap items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={handleSubmitQuiz}
-                        disabled={submitting}
-                        className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-300"
-                      >
-                        {submitting ? "Saving score..." : "Submit quiz"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setShowSubmitConfirm(false)}
-                        className="rounded-lg border border-indigo-200 bg-white px-3 py-2 text-xs font-semibold text-indigo-800"
-                      >
-                        Cancel
-                      </button>
-                    </div>
                   </div>
-                ) : null}
+                </div>
 
                 {feedbackMessage ? (
                   <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800">

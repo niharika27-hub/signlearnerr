@@ -1,13 +1,15 @@
 import { motion } from "framer-motion";
-import { PencilLine } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Camera, Images, PencilLine, Trash2, UserCircle2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import StickySectionLabel from "@/components/StickySectionLabel";
+import { AVATAR_PRESETS } from "@/lib/avatarPresets";
 import {
   ROLE_CATEGORY_OPTIONS,
   getRolesForCategory,
 } from "@/lib/profileStorage";
 import { updateProfile, changePassword, deleteAccount, uploadAvatarFile } from "@/lib/authApi";
+import { prepareAvatarImageFile } from "@/lib/imageProcessing";
 import { useAuth } from "@/lib/AuthContext";
 
 function ProfilePage() {
@@ -19,7 +21,12 @@ function ProfilePage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAvatarUploading, setIsAvatarUploading] = useState(false);
+  const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
+  const [isAvatarPresetOpen, setIsAvatarPresetOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("profile"); // profile, security, account
+  const avatarPhotosInputRef = useRef(null);
+  const avatarCameraInputRef = useRef(null);
+  const avatarMenuRef = useRef(null);
   
   // Change password form
   const [currentPassword, setCurrentPassword] = useState("");
@@ -33,6 +40,22 @@ function ProfilePage() {
     setProfile(user ?? null);
     setAvatarLoadFailed(false);
   }, [user]);
+
+  useEffect(() => {
+    if (!isAvatarMenuOpen) {
+      return;
+    }
+
+    function handleOutsideClick(event) {
+      if (avatarMenuRef.current && !avatarMenuRef.current.contains(event.target)) {
+        setIsAvatarMenuOpen(false);
+        setIsAvatarPresetOpen(false);
+      }
+    }
+
+    window.addEventListener("mousedown", handleOutsideClick);
+    return () => window.removeEventListener("mousedown", handleOutsideClick);
+  }, [isAvatarMenuOpen]);
 
   const roleOptions = useMemo(() => {
     if (!profile?.roleCategory) {
@@ -71,8 +94,90 @@ function ProfilePage() {
     setAvatarLoadFailed(true);
   }
 
-  async function handleAvatarFileChange(event) {
+  function openInputPicker(inputRef) {
+    const input = inputRef.current;
+    if (!input) {
+      return;
+    }
+
+    if (typeof input.showPicker === "function") {
+      input.showPicker();
+      return;
+    }
+
+    input.click();
+  }
+
+  async function persistAvatar(nextAvatarUrl) {
+    const persisted = await updateProfile({
+      photoURL: nextAvatarUrl,
+      avatar: nextAvatarUrl,
+    });
+
+    const updatedUser = persisted.user;
+    const resolvedAvatar = nextAvatarUrl || null;
+
+    setProfile((current) => ({
+      ...current,
+      photoURL: updatedUser.photoURL ?? resolvedAvatar,
+      avatar: updatedUser.avatar ?? resolvedAvatar,
+    }));
+    setUser((current) => ({
+      ...current,
+      photoURL: updatedUser.photoURL ?? resolvedAvatar,
+      avatar: updatedUser.avatar ?? resolvedAvatar,
+    }));
+    setAvatarLoadFailed(false);
+  }
+
+  async function handleAvatarRemoval() {
+    const shouldRemove = window.confirm("Remove your current profile photo?");
+    if (!shouldRemove) {
+      return;
+    }
+
+    setErrorMessage("");
+    setSavedMessage("");
+    setIsAvatarUploading(true);
+
+    try {
+      await persistAvatar(null);
+      setSavedMessage("Avatar removed successfully.");
+      window.setTimeout(() => setSavedMessage(""), 2200);
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || error.message || "Failed to remove avatar.");
+    } finally {
+      setIsAvatarUploading(false);
+      setIsAvatarMenuOpen(false);
+      setIsAvatarPresetOpen(false);
+    }
+  }
+
+  async function selectPresetAvatar(url) {
+    if (!url) {
+      return;
+    }
+
+    setErrorMessage("");
+    setSavedMessage("");
+    setIsAvatarUploading(true);
+
+    try {
+      await persistAvatar(url);
+      setSavedMessage("Avatar updated successfully!");
+      window.setTimeout(() => setSavedMessage(""), 2200);
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || error.message || "Failed to update avatar.");
+    } finally {
+      setIsAvatarUploading(false);
+      setIsAvatarMenuOpen(false);
+      setIsAvatarPresetOpen(false);
+    }
+  }
+
+  async function handleAvatarInputChange(event) {
     const file = event.target.files?.[0];
+    event.target.value = "";
     if (!file) {
       return;
     }
@@ -82,32 +187,23 @@ function ProfilePage() {
     setIsAvatarUploading(true);
 
     try {
-      const uploadResult = await uploadAvatarFile(file);
-      const imageUrl = uploadResult.url;
-
-      const persisted = await updateProfile({
-        photoURL: imageUrl,
-        avatar: imageUrl,
+      const processedFile = await prepareAvatarImageFile(file, {
+        size: 512,
+        quality: 0.9,
       });
 
-      const updatedUser = persisted.user;
-      setProfile((current) => ({
-        ...current,
-        photoURL: updatedUser.photoURL ?? imageUrl,
-        avatar: updatedUser.avatar ?? imageUrl,
-      }));
-      setUser((current) => ({
-        ...current,
-        photoURL: updatedUser.photoURL ?? imageUrl,
-        avatar: updatedUser.avatar ?? imageUrl,
-      }));
+      const uploadResult = await uploadAvatarFile(processedFile);
+      const imageUrl = uploadResult.url;
+
+      await persistAvatar(imageUrl);
       setSavedMessage("Avatar updated successfully!");
       window.setTimeout(() => setSavedMessage(""), 2200);
     } catch (error) {
       setErrorMessage(error.response?.data?.message || error.message || "Failed to upload avatar.");
     } finally {
       setIsAvatarUploading(false);
-      event.target.value = "";
+      setIsAvatarMenuOpen(false);
+      setIsAvatarPresetOpen(false);
     }
   }
 
@@ -308,7 +404,7 @@ function ProfilePage() {
                         <div className="flex shrink-0 flex-col items-center gap-2 pt-1">
                           <button
                             type="button"
-                            onClick={() => document.getElementById("profile-avatar-input")?.click()}
+                            onClick={() => setIsAvatarMenuOpen((open) => !open)}
                             className="group relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-indigo-100 text-2xl font-bold text-indigo-800 ring-2 ring-indigo-200 transition hover:ring-indigo-300"
                             aria-label="Change profile photo"
                           >
@@ -338,11 +434,166 @@ function ProfilePage() {
                       </div>
                     </div>
 
+                    <div className="mt-4" ref={avatarMenuRef}>
+                      {isAvatarMenuOpen ? (
+                        <>
+                          <div className="hidden w-64 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg sm:block">
+                            {!isAvatarPresetOpen ? (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => openInputPicker(avatarCameraInputRef)}
+                                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                                >
+                                  <Camera className="h-4 w-4 text-indigo-700" />
+                                  Camera
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => openInputPicker(avatarPhotosInputRef)}
+                                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                                >
+                                  <Images className="h-4 w-4 text-indigo-700" />
+                                  Photos
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsAvatarPresetOpen(true)}
+                                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                                >
+                                  <UserCircle2 className="h-4 w-4 text-indigo-700" />
+                                  Avatar
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={handleAvatarRemoval}
+                                  disabled={isAvatarUploading}
+                                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-medium text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                  Remove photo
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsAvatarPresetOpen(false)}
+                                  className="mb-2 w-full rounded-xl px-3 py-2 text-left text-xs font-semibold tracking-wide text-slate-500 uppercase transition hover:bg-slate-100"
+                                >
+                                  Back
+                                </button>
+                                <div className="grid grid-cols-4 gap-2 px-1 pb-1">
+                                  {AVATAR_PRESETS.map((presetUrl) => (
+                                    <button
+                                      key={presetUrl}
+                                      type="button"
+                                      onClick={() => selectPresetAvatar(presetUrl)}
+                                      className="h-11 w-11 overflow-hidden rounded-full ring-2 ring-transparent transition hover:ring-indigo-300"
+                                    >
+                                      <img src={presetUrl} alt="Preset avatar" className="h-full w-full object-cover" />
+                                    </button>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                          </div>
+
+                          <div
+                            className="fixed inset-0 z-40 bg-slate-900/30 sm:hidden"
+                            onClick={() => {
+                              setIsAvatarMenuOpen(false);
+                              setIsAvatarPresetOpen(false);
+                            }}
+                          />
+                          <div className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl border border-slate-200 bg-white px-5 pb-6 pt-4 shadow-2xl sm:hidden">
+                            <div className="mx-auto mb-4 h-1.5 w-14 rounded-full bg-slate-300" />
+                            {!isAvatarPresetOpen ? (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => openInputPicker(avatarCameraInputRef)}
+                                  className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-base font-semibold text-slate-800 transition hover:bg-slate-100"
+                                >
+                                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-700">
+                                    <Camera className="h-5 w-5" />
+                                  </span>
+                                  Camera
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => openInputPicker(avatarPhotosInputRef)}
+                                  className="mt-1 flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-base font-semibold text-slate-800 transition hover:bg-slate-100"
+                                >
+                                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-700">
+                                    <Images className="h-5 w-5" />
+                                  </span>
+                                  Photos
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsAvatarPresetOpen(true)}
+                                  className="mt-1 flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-base font-semibold text-slate-800 transition hover:bg-slate-100"
+                                >
+                                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-700">
+                                    <UserCircle2 className="h-5 w-5" />
+                                  </span>
+                                  Avatar
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={handleAvatarRemoval}
+                                  disabled={isAvatarUploading}
+                                  className="mt-1 flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-base font-semibold text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                >
+                                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-700">
+                                    <Trash2 className="h-5 w-5" />
+                                  </span>
+                                  Remove photo
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsAvatarPresetOpen(false)}
+                                  className="mb-3 w-full rounded-2xl px-3 py-2 text-left text-xs font-semibold tracking-wide text-slate-500 uppercase transition hover:bg-slate-100"
+                                >
+                                  Back
+                                </button>
+                                <div className="grid grid-cols-4 gap-3 px-1">
+                                  {AVATAR_PRESETS.map((presetUrl) => (
+                                    <button
+                                      key={`mobile-${presetUrl}`}
+                                      type="button"
+                                      onClick={() => selectPresetAvatar(presetUrl)}
+                                      className="h-14 w-14 overflow-hidden rounded-full ring-2 ring-transparent transition hover:ring-indigo-300"
+                                    >
+                                      <img src={presetUrl} alt="Preset avatar" className="h-full w-full object-cover" />
+                                    </button>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </>
+                      ) : null}
+                    </div>
+
                     <input
-                      id="profile-avatar-input"
+                      ref={avatarPhotosInputRef}
                       type="file"
                       accept="image/*"
-                      onChange={handleAvatarFileChange}
+                      onChange={handleAvatarInputChange}
+                      disabled={isAvatarUploading}
+                      className="sr-only"
+                    />
+                    <input
+                      ref={avatarCameraInputRef}
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={handleAvatarInputChange}
                       disabled={isAvatarUploading}
                       className="sr-only"
                     />

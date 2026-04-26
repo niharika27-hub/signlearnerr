@@ -6,11 +6,65 @@ function getMongoUri() {
   return process.env.MONGODB_URI || process.env.MONGO_URI || "mongodb://localhost:27017/signlearn";
 }
 
+function parseArgs(argv = []) {
+  const tokens = Array.isArray(argv) ? argv : [];
+  const options = {
+    apply: false,
+    userId: "",
+    limitGroups: 0,
+  };
+
+  for (let index = 0; index < tokens.length; index += 1) {
+    const token = String(tokens[index] || "").trim();
+
+    if (token === "--apply") {
+      options.apply = true;
+      continue;
+    }
+
+    if (token === "--preview") {
+      options.apply = false;
+      continue;
+    }
+
+    if (token === "--user" || token === "--user-id") {
+      const value = String(tokens[index + 1] || "").trim();
+      if (value) {
+        options.userId = value;
+        index += 1;
+      }
+      continue;
+    }
+
+    if (token === "--limit") {
+      const value = Number(tokens[index + 1]);
+      if (Number.isFinite(value) && value > 0) {
+        options.limitGroups = Math.floor(value);
+        index += 1;
+      }
+    }
+  }
+
+  return options;
+}
+
 async function main() {
+  const options = parseArgs(process.argv.slice(2));
   await mongoose.connect(getMongoUri());
 
-  // Keep the newest row when duplicate attempts share same user + mode + score + counts + completedAt.
+  // Duplicate key: same payload for the same user, completed within the same second.
+  // This targets accidental double-submits while keeping legitimate separate attempts.
+  const matchStage = options.userId ? { userId: options.userId } : {};
   const duplicateGroups = await QuizAttempt.aggregate([
+    {
+      $match: matchStage,
+    },
+    {
+      $sort: {
+        createdAt: -1,
+        _id: -1,
+      },
+    },
     {
       $group: {
         _id: {
@@ -20,7 +74,14 @@ async function main() {
           score: "$score",
           correctCount: "$correctCount",
           totalQuestions: "$totalQuestions",
-          completedAt: "$completedAt",
+          syncedToProgress: "$syncedToProgress",
+          completedAtSecond: {
+            $dateToString: {
+              date: "$completedAt",
+              format: "%Y-%m-%dT%H:%M:%S",
+              timezone: "UTC",
+            },
+          },
         },
         ids: { $push: "$_id" },
         count: { $sum: 1 },
@@ -33,19 +94,23 @@ async function main() {
     },
   ]);
 
-  let deletedCount = 0;
+  const groupsToProcess =
+    options.limitGroups > 0 ? duplicateGroups.slice(0, options.limitGroups) : duplicateGroups;
 
-  for (const group of duplicateGroups) {
+  let deletedCount = 0;
+  let duplicateRowCount = 0;
+
+  for (const group of groupsToProcess) {
     const ids = Array.isArray(group.ids) ? group.ids.map((id) => String(id)) : [];
     if (ids.length < 2) {
       continue;
     }
 
-    // Sort ids lexicographically and keep the latest object id.
-    ids.sort();
-    const idsToDelete = ids.slice(0, -1);
+    // Pipeline sorted newest first, so keep the first id and remove older duplicates.
+    const idsToDelete = ids.slice(1);
+    duplicateRowCount += idsToDelete.length;
 
-    if (idsToDelete.length > 0) {
+    if (options.apply && idsToDelete.length > 0) {
       const result = await QuizAttempt.deleteMany({
         _id: { $in: idsToDelete },
       });
@@ -58,9 +123,21 @@ async function main() {
   console.log(
     JSON.stringify(
       {
-        duplicateGroups: duplicateGroups.length,
+        mode: options.apply ? "apply" : "preview",
+        filter: {
+          userId: options.userId || null,
+          groupLimit: options.limitGroups || null,
+        },
+        duplicateGroups: groupsToProcess.length,
+        duplicateRows: duplicateRowCount,
         deletedCount,
         totalAttempts,
+        samples: groupsToProcess.slice(0, 5).map((group) => ({
+          key: group._id,
+          rowCount: group.count,
+          keepId: String(group.ids?.[0] || ""),
+          deleteIds: (group.ids || []).slice(1).map((id) => String(id)),
+        })),
       },
       null,
       2
