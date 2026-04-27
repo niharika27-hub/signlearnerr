@@ -127,11 +127,12 @@ function ProgressPage() {
 
   // Use real data or fallback defaults
   const streak = progress?.streak ?? 0;
-  const xpThisWeek = progress?.xpThisWeek ?? 0;
   const modulesCompleted = progress?.modulesCompleted ?? 0;
   const totalModules = progress?.totalModules ?? 0;
   const lessonsCompleted = progress?.lessonsCompleted ?? 0;
   const totalLessons = progress?.totalLessons ?? 0;
+  const totalXp = Math.max(Number(progress?.totalXp ?? 0), Number(lessonsCompleted ?? 0));
+  const xpThisWeek = Math.min(Number(progress?.xpThisWeek ?? 0), totalXp);
   const isGettingStarted = modulesCompleted === 0 && lessonsCompleted === 0;
   const syncLabel = formatRelativeSyncTime(lastUpdatedAt, nowMs);
 
@@ -165,7 +166,7 @@ function ProgressPage() {
               Current streak: {streak} days
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-sm font-semibold text-slate-700">
-              XP this week: +{xpThisWeek}
+              Total XP: {totalXp} (week +{xpThisWeek})
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-sm font-semibold text-slate-700">
               Completed modules: {modulesCompleted}/{totalModules}

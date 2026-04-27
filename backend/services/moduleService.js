@@ -464,7 +464,9 @@ export async function calculateStreak(userId) {
 
 		// Count consecutive days
 		let streak = 0;
-		let currentDate = new Date(today);
+		// If the latest completion was yesterday, streak should start from yesterday
+		// (not from today), otherwise a valid 1-day streak incorrectly becomes 0.
+		let currentDate = new Date(lastActivity);
 
 		for (const completion of completions) {
 			const completionDate = new Date(completion._id);

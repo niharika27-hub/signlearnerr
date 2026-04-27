@@ -30,10 +30,6 @@ function isVideoUrl(url = "") {
   return /\.mp4($|\?)/i.test(url) || /\/video\//i.test(url);
 }
 
-function isPlaceholderMediaUrl(url = "") {
-  return /res\.cloudinary\.com\/demo\/video\/upload\/v1\/signlearn/i.test(String(url || ""));
-}
-
 function toYouTubeEmbedUrl(url = "") {
   const value = String(url || "").trim();
   if (!value) {
@@ -77,7 +73,7 @@ function normalizeBackendModules(modules = []) {
       ? module.lessons.map((lesson, lessonIndex) => ({
           lessonKey: String(lesson?._id || lesson?.id || lesson?.lessonKey || `${index}-${lessonIndex}`),
           title: String(lesson?.title || `Lesson ${lessonIndex + 1}`),
-          shortDescription: String(lesson?.description || "No description available."),
+          shortDescription: String(lesson?.description || "Open this lesson to view guided practice and quiz steps."),
           difficulty: String(lesson?.difficultyLevel || "Easy").replace(/^./, (char) => char.toUpperCase()),
           durationMinutes: Number(lesson?.duration || lesson?.durationMinutes || 0),
           mediaUrl: String(lesson?.contentUrl || lesson?.mediaUrl || lesson?.videoUrl || ""),
@@ -225,7 +221,7 @@ function LearningCards({ modules = [], loading = false, error = null, userProgre
               const isExpanded = expandedModule === module.moduleKey;
               const lessonsCount = module.categories.reduce((sum, category) => sum + category.lessons.length, 0);
               const previewUrl = String(module?.thumbnailPreview?.url || "");
-              const hasPreview = previewUrl && !isPlaceholderMediaUrl(previewUrl);
+              const hasPreview = Boolean(previewUrl);
               const modulePreviewEmbed = toYouTubeEmbedUrl(previewUrl);
 
               function openModule() {
@@ -278,8 +274,8 @@ function LearningCards({ modules = [], loading = false, error = null, userProgre
 
                     <div className="w-full max-w-55 overflow-hidden rounded-2xl border border-white/70 bg-white/55">
                       {!hasPreview ? (
-                        <div className="flex h-28 items-center justify-center bg-slate-100 text-xs font-semibold text-slate-500">
-                          Preview unavailable
+                        <div className="relative h-28 bg-gradient-to-br from-slate-100 via-slate-200/60 to-slate-100">
+                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_28%,rgba(255,255,255,0.75),transparent_48%),radial-gradient(circle_at_78%_72%,rgba(148,163,184,0.28),transparent_46%)]" />
                         </div>
                       ) : modulePreviewEmbed ? (
                         <iframe
@@ -374,15 +370,15 @@ function LearningCards({ modules = [], loading = false, error = null, userProgre
                           <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                             {category.lessons.map((lesson) => {
                               const lessonMediaUrl = String(lesson?.mediaUrl || "");
-                              const hasLessonPreview = lessonMediaUrl && !isPlaceholderMediaUrl(lessonMediaUrl);
+                              const hasLessonPreview = Boolean(lessonMediaUrl);
                               const lessonPreviewEmbed = toYouTubeEmbedUrl(lessonMediaUrl);
 
                               return (
                               <article key={lesson.lessonKey} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
                                 <div className="overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
                                   {!hasLessonPreview ? (
-                                    <div className="flex h-24 items-center justify-center bg-slate-100 text-[11px] font-semibold text-slate-500">
-                                      Preview unavailable
+                                    <div className="relative h-24 bg-gradient-to-br from-slate-100 via-slate-200/60 to-slate-100">
+                                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_26%_26%,rgba(255,255,255,0.75),transparent_48%),radial-gradient(circle_at_78%_72%,rgba(148,163,184,0.26),transparent_46%)]" />
                                     </div>
                                   ) : lessonPreviewEmbed ? (
                                     <iframe
