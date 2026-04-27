@@ -126,6 +126,7 @@ function QuizPage() {
   );
 
   const answeredCount = Object.keys(answers).length;
+  const attemptProgress = questions.length > 0 ? (answeredCount / questions.length) * 100 : 0;
   const unansweredCount = Math.max(questions.length - answeredCount, 0);
 
   const activeQuestion = questions[currentQuestionIndex] || null;
@@ -374,10 +375,28 @@ function QuizPage() {
               </button>
             </div>
 
+            <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <div className="flex items-center justify-between gap-3 text-xs font-semibold tracking-[0.12em] text-slate-500 uppercase">
+                <span>Attempt progress</span>
+                <span>{Math.round(attemptProgress)}%</span>
+              </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
+                <motion.div
+                  className="h-full rounded-full bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-cyan-400"
+                  initial={false}
+                  animate={{ width: `${attemptProgress}%` }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                />
+              </div>
+              <p className="mt-2 text-xs text-slate-500">
+                Answered {answeredCount} of {questions.length} questions
+              </p>
+            </div>
+
             {activeQuestion ? (
               <div className="mt-5">
                 <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
-                  Answered {Object.keys(answers).length}/{questions.length}
+                  Answered {answeredCount}/{questions.length}
                 </p>
                 <p className="text-sm font-semibold text-indigo-700">
                   {activeQuestion.moduleTitle} - {activeQuestion.lessonTitle}
