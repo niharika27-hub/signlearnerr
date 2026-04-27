@@ -6,7 +6,12 @@
   "main": "server.js",
   "scripts": {
     "dev": "node --watch server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "seed:modules": "node utils/seedModules.js",
+    "import:modules": "node utils/importModuleManifest.js --file ../docs/examples/module-manifest.example.json --mode upsert",
+    "check:progress": "node utils/checkProgressConsistency.mjs",
+    "dedupe:quiz-attempts": "node utils/dedupeQuizAttempts.mjs --preview",
+    "dedupe:quiz-attempts:apply": "node utils/dedupeQuizAttempts.mjs --apply"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

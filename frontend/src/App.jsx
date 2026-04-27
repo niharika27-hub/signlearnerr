@@ -6,9 +6,11 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useLenisSmoothScroll } from "@/hooks/useLenisSmoothScroll";
 import HomePage from "@/pages/HomePage";
 import LearnPage from "@/pages/LearnPage";
+import LearnModulePage from "@/pages/LearnModulePage";
 import LoginPage from "@/pages/LoginPage";
 import PracticePage from "@/pages/PracticePage";
 import ProgressPage from "@/pages/ProgressPage";
+import QuizPage from "@/pages/QuizPage";
 import ProfilePage from "@/pages/ProfilePage";
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/pages/ResetPasswordPage";
@@ -43,6 +45,14 @@ function App() {
             }
           />
           <Route
+            path="/learn/module/:moduleId"
+            element={
+              <ProtectedRoute>
+                <LearnModulePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/practice"
             element={
               <ProtectedRoute>
@@ -55,6 +65,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProgressPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/quiz"
+            element={
+              <ProtectedRoute>
+                <QuizPage />
               </ProtectedRoute>
             }
           />

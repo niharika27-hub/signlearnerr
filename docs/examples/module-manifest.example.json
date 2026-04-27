@@ -1,0 +1,109 @@
+{
+  "modules": [
+    {
+      "title": "Basic Alphabets",
+      "description": "ASL finger-spelling A-Z with static hand-shape drills.",
+      "icon": "Signature",
+      "category": "alphabet",
+      "orderIndex": 1,
+      "isSequential": true,
+      "roleCategories": ["learner", "support-circle", "accessibility-needs"],
+      "lessons": [
+        {
+          "title": "A-I Hand Shapes",
+          "description": "Letters A-I with recognition practice.",
+          "contentUrl": "https://www.youtube.com/watch?v=M7lc1UVf-VE",
+          "duration": 10,
+          "order": 1,
+          "difficultyLevel": "beginner"
+        },
+        {
+          "title": "J-R Finger-spelling Flow",
+          "description": "Letters J-R transitions and flow.",
+          "contentUrl": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+          "duration": 10,
+          "order": 2,
+          "difficultyLevel": "intermediate"
+        },
+        {
+          "title": "S-Z + Recall Quiz",
+          "description": "Letters S-Z recall and fluency practice.",
+          "contentUrl": "https://www.youtube.com/watch?v=ysz5S6PUM-U",
+          "duration": 10,
+          "order": 3,
+          "difficultyLevel": "advanced"
+        }
+      ]
+    },
+    {
+      "title": "Words",
+      "description": "High-frequency vocabulary from WLASL/MS-ASL style classes.",
+      "icon": "BookText",
+      "category": "vocabulary",
+      "orderIndex": 2,
+      "isSequential": true,
+      "roleCategories": ["learner", "support-circle", "accessibility-needs"],
+      "lessons": [
+        {
+          "title": "Common Daily Words",
+          "description": "Greetings, people, common actions.",
+          "contentUrl": "https://www.youtube.com/watch?v=M7lc1UVf-VE",
+          "duration": 12,
+          "order": 1,
+          "difficultyLevel": "beginner"
+        },
+        {
+          "title": "People, Places, Actions",
+          "description": "Vocabulary groups for people, places, and actions.",
+          "contentUrl": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+          "duration": 12,
+          "order": 2,
+          "difficultyLevel": "intermediate"
+        },
+        {
+          "title": "Word Recognition Challenge",
+          "description": "Receptive practice with varied signers.",
+          "contentUrl": "https://www.youtube.com/watch?v=ysz5S6PUM-U",
+          "duration": 12,
+          "order": 3,
+          "difficultyLevel": "advanced"
+        }
+      ]
+    },
+    {
+      "title": "Sentences",
+      "description": "Sentence-level ASL practice from How2Sign/OpenASL style clips.",
+      "icon": "MessageCircle",
+      "category": "sentences",
+      "orderIndex": 3,
+      "isSequential": true,
+      "roleCategories": ["learner", "support-circle", "accessibility-needs"],
+      "lessons": [
+        {
+          "title": "Simple Sentence Patterns",
+          "description": "Continuous signing intro clips.",
+          "contentUrl": "https://www.youtube.com/watch?v=M7lc1UVf-VE",
+          "duration": 15,
+          "order": 1,
+          "difficultyLevel": "beginner"
+        },
+        {
+          "title": "Questions and Responses",
+          "description": "Practice ASL questions and answers.",
+          "contentUrl": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+          "duration": 15,
+          "order": 2,
+          "difficultyLevel": "intermediate"
+        },
+        {
+          "title": "Context Conversation Drill",
+          "description": "Beginner conversation patterns in context.",
+          "contentUrl": "https://www.youtube.com/watch?v=ysz5S6PUM-U",
+          "duration": 15,
+          "order": 3,
+          "difficultyLevel": "advanced"
+        }
+      ]
+    }
+  ]
+}

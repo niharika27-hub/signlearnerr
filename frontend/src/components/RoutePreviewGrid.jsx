@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Brain, Camera, Trophy } from "lucide-react";
+import { ArrowRight, Brain, Camera, ClipboardCheck, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import StickySectionLabel from "@/components/StickySectionLabel";
 
@@ -24,6 +24,13 @@ const blocks = [
     to: "/progress",
     icon: Trophy,
     glow: "from-emerald-300/35 via-teal-200/20 to-transparent",
+  },
+  {
+    title: "Quiz Arena",
+    desc: "Timed checks and scenario questions to validate retention.",
+    to: "/quiz",
+    icon: ClipboardCheck,
+    glow: "from-fuchsia-300/35 via-pink-200/20 to-transparent",
   },
 ];
 

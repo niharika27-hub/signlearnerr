@@ -46,27 +46,76 @@ function CircleMeter({ percent }) {
   );
 }
 
-function ProgressSection({ progress = null, loading = false, error = null }) {
+function ProgressSection({
+  progress = null,
+  loading = false,
+  error = null,
+  onContinueLearning = null,
+}) {
+  const streak = Number(progress?.streak ?? 0);
+  const rawTotalXp = Number(progress?.totalXp ?? 0);
+  const rawXpThisWeek = Number(progress?.xpThisWeek ?? 0);
+  const overallProgress = Math.max(0, Math.min(100, Number(progress?.overallProgress ?? 0)));
+  const lessonsCompleted = Number(progress?.lessonsCompleted ?? 0);
+  const totalLessons = Number(progress?.totalLessons ?? 0);
+  const moduleProgressList = Array.isArray(progress?.moduleProgress) ? progress.moduleProgress : [];
+
+  // Keep XP display internally consistent even when payload fields are briefly out of sync.
+  const totalXp = Math.max(rawTotalXp, lessonsCompleted);
+  const xpThisWeek = Math.min(rawXpThisWeek, totalXp);
+
+  const topModuleProgress = [...moduleProgressList]
+    .map((entry) => {
+      const moduleName =
+        entry?.moduleId?.title ||
+        entry?.moduleTitle ||
+        entry?.title ||
+        "Untitled module";
+      const percentage = Math.max(
+        0,
+        Math.min(100, Math.round(Number(entry?.progressPercentage ?? 0)))
+      );
+
+      return {
+        id: String(entry?._id || entry?.moduleId?._id || moduleName),
+        name: moduleName,
+        percentage,
+        lessonsCompleted: Number(entry?.lessonsCompleted ?? 0),
+        totalLessons: Number(entry?.totalLessons ?? 0),
+      };
+    })
+    .sort((a, b) => b.percentage - a.percentage)
+    .slice(0, 6);
+
   // Create stat objects with real data or defaults
   const stats = [
     {
       label: "Streak",
-      value: `${progress?.streak ?? 0} Days`,
-      percent: Math.min(progress?.streak ?? 0, 100),
+      value: `${streak} Day${streak === 1 ? "" : "s"}`,
+      percent: Math.min(streak, 100),
+      metricLabel: "Streak goal",
+      metricValue: `${Math.min(streak, 100)}%`,
+      contextText: streak > 0 ? "You practiced recently. Keep momentum." : "Start today to build your streak.",
       icon: Flame,
       color: "from-orange-300 to-amber-300",
     },
     {
-      label: "XP Points",
-      value: `${progress?.totalXp ?? 0} XP`,
-      percent: Math.min((progress?.totalXp ?? 0) / 50, 100), // Scale for display
+      label: "XP",
+      value: `${totalXp} XP`,
+      percent: Math.min((totalXp / 50) * 100, 100),
+      metricLabel: "This week",
+      metricValue: `+${xpThisWeek} XP`,
+      contextText: `${lessonsCompleted}/${Math.max(totalLessons, lessonsCompleted)} lessons converted to XP`,
       icon: Zap,
       color: "from-cyan-300 to-blue-300",
     },
     {
-      label: "Overall Progress",
-      value: `${Math.round(progress?.overallProgress ?? 0)}%`,
-      percent: progress?.overallProgress ?? 0,
+      label: "Course Completion",
+      value: `${Math.round(overallProgress)}%`,
+      percent: overallProgress,
+      metricLabel: "Completed",
+      metricValue: `${Math.round(overallProgress)}%`,
+      contextText: `${lessonsCompleted}/${Math.max(totalLessons, lessonsCompleted)} lessons complete`,
       icon: Trophy,
       color: "from-emerald-300 to-teal-300",
     },
@@ -75,10 +124,19 @@ function ProgressSection({ progress = null, loading = false, error = null }) {
   // Create continue modules from module progress
   const continueModules = [];
   if (progress?.modulesCompleted !== undefined && progress?.totalModules !== undefined) {
+    const modulesCompleted = Number(progress.modulesCompleted ?? 0);
+    const totalModules = Math.max(Number(progress.totalModules ?? 0), modulesCompleted);
+    const hasAnyCompletion = modulesCompleted > 0 || lessonsCompleted > 0;
+
     continueModules.push({
-      title: `${progress.modulesCompleted} of ${progress.totalModules} modules completed`,
-      progress: progress.totalModules > 0 ? (progress.modulesCompleted / progress.totalModules) * 100 : 0,
-      eta: `${progress.lessonsCompleted ?? 0} lessons done`,
+      title: hasAnyCompletion
+        ? `${modulesCompleted} of ${totalModules} modules completed`
+        : "No modules completed yet",
+      progress: totalModules > 0 ? (modulesCompleted / totalModules) * 100 : 0,
+      eta: hasAnyCompletion
+        ? `${lessonsCompleted}/${Math.max(totalLessons, lessonsCompleted)} lessons done`
+        : "Complete your first lesson to start visible progress.",
+      ctaLabel: hasAnyCompletion ? "Continue Learning" : "Start Learning",
     });
   }
 
@@ -104,7 +162,7 @@ function ProgressSection({ progress = null, loading = false, error = null }) {
 
         {error && (
           <motion.div
-            className="mb-6 rounded-xl bg-red-50 border border-red-200 p-4 text-red-700"
+            className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -144,6 +202,7 @@ function ProgressSection({ progress = null, loading = false, error = null }) {
                       <p className="mt-2 text-2xl font-semibold text-slate-900">
                         {stat.value}
                       </p>
+                      <p className="mt-1 text-xs font-medium text-slate-500">{stat.contextText}</p>
                     </div>
                     <div
                       className={`rounded-2xl bg-gradient-to-br p-3 text-slate-900 ${stat.color}`}
@@ -155,8 +214,8 @@ function ProgressSection({ progress = null, loading = false, error = null }) {
                   <div className="flex items-center justify-between">
                     <div className="mr-4 flex-1">
                       <div className="mb-2 flex justify-between text-xs font-semibold text-slate-600">
-                        <span>Weekly Goal</span>
-                        <span>{Math.round(stat.percent)}%</span>
+                        <span>{stat.metricLabel}</span>
+                        <span>{stat.metricValue}</span>
                       </div>
                       <div className="h-2.5 rounded-full bg-slate-200/70">
                         <motion.div
@@ -187,7 +246,7 @@ function ProgressSection({ progress = null, loading = false, error = null }) {
             <h4 className="font-display text-2xl font-semibold text-slate-900 sm:text-3xl">
               Continue learning
             </h4>
-            <div className="mt-5 -mx-1 flex snap-x gap-4 overflow-x-auto px-1 pb-2">
+            <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(320px,380px)_1fr]">
               {continueModules.map((module, index) => (
                 <motion.article
                   key={module.title}
@@ -195,7 +254,7 @@ function ProgressSection({ progress = null, loading = false, error = null }) {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, amount: 0.4 }}
                   transition={{ duration: 0.5, delay: index * 0.08 }}
-                  className="glass min-w-[280px] snap-start rounded-3xl p-5 shadow-soft sm:min-w-[320px]"
+                  className="glass rounded-3xl p-5 shadow-soft"
                 >
                   <p className="text-lg font-semibold text-slate-900">{module.title}</p>
                   <div className="mt-2 inline-flex items-center gap-1.5 text-sm text-slate-600">
@@ -212,12 +271,57 @@ function ProgressSection({ progress = null, loading = false, error = null }) {
                       style={{ width: `${module.progress}%` }}
                     />
                   </div>
-                  <button className="mt-5 inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
-                    Continue Learning
+                  <button
+                    type="button"
+                    onClick={onContinueLearning || undefined}
+                    className="mt-5 inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+                  >
+                    {module.ctaLabel}
                     <ArrowRight className="h-4 w-4" />
                   </button>
                 </motion.article>
               ))}
+
+              <motion.article
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.55, delay: 0.1 }}
+                className="glass rounded-3xl p-5 shadow-soft"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold tracking-[0.12em] text-slate-500 uppercase">
+                    Module Snapshot
+                  </p>
+                  <span className="rounded-full border border-slate-200 bg-white/85 px-2.5 py-1 text-xs font-semibold text-slate-600">
+                    {topModuleProgress.length} visible
+                  </span>
+                </div>
+
+                {topModuleProgress.length === 0 ? (
+                  <p className="mt-4 text-sm text-slate-600">
+                    Module-level progress appears after your first lesson completion.
+                  </p>
+                ) : (
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    {topModuleProgress.map((entry) => (
+                      <div key={entry.id} className="rounded-2xl border border-slate-200 bg-white/80 p-3">
+                        <p className="truncate text-sm font-semibold text-slate-900">{entry.name}</p>
+                        <p className="mt-1 text-xs font-medium text-slate-500">
+                          {entry.lessonsCompleted}/{Math.max(entry.totalLessons, entry.lessonsCompleted)} lessons
+                        </p>
+                        <div className="mt-2 h-2 rounded-full bg-slate-200/80">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-indigo-300 via-blue-300 to-cyan-300"
+                            style={{ width: `${entry.percentage}%` }}
+                          />
+                        </div>
+                        <p className="mt-1 text-right text-xs font-semibold text-slate-600">{entry.percentage}%</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </motion.article>
             </div>
           </motion.div>
         )}

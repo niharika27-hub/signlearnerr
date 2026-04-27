@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import HeroSection from "@/components/HeroSection";
+import QuizSection from "@/components/QuizSection";
 import RoutePreviewGrid from "@/components/RoutePreviewGrid";
 import StorySection from "@/components/StorySection";
 import TransformationSection from "@/components/TransformationSection";
@@ -11,6 +12,7 @@ function HomePage() {
       <HeroSection />
       <StorySection />
       <RoutePreviewGrid />
+      <QuizSection />
 
       <motion.section
         data-scene="Signature Motion"

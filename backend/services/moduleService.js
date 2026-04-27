@@ -4,6 +4,32 @@ import { LessonCompletion } from "../models/LessonCompletion.js";
 import { ModuleProgress } from "../models/ModuleProgress.js";
 import { UserProgress } from "../models/UserProgress.js";
 import { UserModuleAssignment } from "../models/UserModuleAssignment.js";
+import mongoose from "mongoose";
+import User from "../models/User.js";
+
+function createHttpError(statusCode, message) {
+	const error = new Error(message);
+	error.statusCode = statusCode;
+	return error;
+}
+
+function buildUserIdentifiers(inputUserId, userDoc = null) {
+	const values = new Set();
+
+	if (inputUserId) {
+		values.add(String(inputUserId));
+	}
+
+	if (userDoc?.id) {
+		values.add(String(userDoc.id));
+	}
+
+	if (userDoc?._id) {
+		values.add(String(userDoc._id));
+	}
+
+	return Array.from(values);
+}
 
 /**
  * Get all modules filtered by user's role category
@@ -105,13 +131,31 @@ export async function getModuleWithLessons(moduleId, userId) {
  */
 export async function completeLesson(userId, lessonId, score = null) {
 	try {
+		if (!mongoose.Types.ObjectId.isValid(lessonId)) {
+			throw createHttpError(400, "Invalid lesson ID");
+		}
+
 		// Get lesson details
 		const lesson = await Lesson.findById(lessonId);
 		if (!lesson) {
-			throw new Error("Lesson not found");
+			throw createHttpError(404, "Lesson not found");
 		}
 
-		const moduleId = lesson.moduleId;
+		let moduleId = lesson.moduleId;
+		if (!moduleId) {
+			const parentModule = await Module.findOne({ lessons: lesson._id }).select("_id").lean();
+			if (!parentModule?._id) {
+				throw createHttpError(404, "Module not found for lesson");
+			}
+			moduleId = parentModule._id;
+		}
+
+		const normalizedScore =
+			score === null || score === undefined
+				? null
+				: Number.isFinite(Number(score))
+					? Math.round(Number(score))
+					: null;
 
 		// Check if already completed
 		const existingCompletion = await LessonCompletion.findOne({
@@ -124,10 +168,14 @@ export async function completeLesson(userId, lessonId, score = null) {
 		if (existingCompletion) {
 			// Update existing completion (retry/retake)
 			lessonCompletion = existingCompletion;
-			lessonCompletion.attempts += 1;
+			const currentAttempts = Number.isFinite(existingCompletion.attempts)
+				? existingCompletion.attempts
+				: 0;
+			lessonCompletion.attempts = currentAttempts + 1;
 			lessonCompletion.isRetake = true;
-			if (score !== null) {
-				lessonCompletion.score = score;
+			lessonCompletion.completedAt = new Date();
+			if (normalizedScore !== null) {
+				lessonCompletion.score = normalizedScore;
 			}
 			await lessonCompletion.save();
 		} else {
@@ -136,7 +184,7 @@ export async function completeLesson(userId, lessonId, score = null) {
 				userId,
 				lessonId,
 				moduleId,
-				score,
+				score: normalizedScore,
 			});
 		}
 
@@ -177,22 +225,29 @@ export async function completeLesson(userId, lessonId, score = null) {
  */
 export async function updateModuleProgress(userId, moduleId) {
 	try {
+		if (!mongoose.Types.ObjectId.isValid(moduleId)) {
+			throw createHttpError(400, "Invalid module ID");
+		}
+
 		// Get module to know total lessons
 		const module = await Module.findById(moduleId);
 		if (!module) {
-			throw new Error("Module not found");
+			throw createHttpError(404, "Module not found");
 		}
 
-		const totalLessons = module.lessons.length;
+		const totalLessons = Array.isArray(module.lessons) ? module.lessons.length : 0;
 
-		// Count completed lessons
-		const completedCount = await LessonCompletion.countDocuments({
+		// Count unique completed lessons to keep progress bounded even if legacy duplicate rows exist.
+		const completedLessonIds = await LessonCompletion.distinct("lessonId", {
 			userId,
 			moduleId,
 		});
+		const completedCount = completedLessonIds.length;
 
-		const progressPercentage = totalLessons > 0 ? (completedCount / totalLessons) * 100 : 0;
-		const isCompleted = completedCount === totalLessons && totalLessons > 0;
+		const boundedCompletedCount = Math.min(completedCount, totalLessons);
+		const progressPercentage =
+			totalLessons > 0 ? (boundedCompletedCount / totalLessons) * 100 : 0;
+		const isCompleted = boundedCompletedCount === totalLessons && totalLessons > 0;
 
 		// Update or create ModuleProgress
 		let moduleProgress = await ModuleProgress.findOneAndUpdate(
@@ -222,23 +277,57 @@ export async function updateModuleProgress(userId, moduleId) {
  */
 export async function updateUserProgress(userId) {
 	try {
-		// Get all module progress for user
-		const moduleProgresses = await ModuleProgress.find({ userId });
+		const userFilters = [{ id: userId }];
+		if (mongoose.Types.ObjectId.isValid(userId)) {
+			userFilters.push({ _id: userId });
+		}
+
+		// Resolve the user by app-level id and legacy _id where needed.
+		const user = await User.findOne({ $or: userFilters }).select("id roleCategory").lean();
+		const userIdentifiers = buildUserIdentifiers(userId, user);
+
+		// Aggregate module progress using all known identifiers for resilience.
+		const moduleProgresses = await ModuleProgress.find({
+			userId: { $in: userIdentifiers },
+		});
+
+		// Resolve all modules visible to this user so overall progress is calculated against full scope.
+		let availableModules = [];
+		if (user?.roleCategory) {
+			const canonicalUserId = user?.id ? String(user.id) : String(userId);
+			availableModules = await getModulesForUser(canonicalUserId, user.roleCategory);
+		}
+
+		const totalModules = availableModules.length;
+		const availableModuleIds = availableModules.map((moduleDoc) => moduleDoc._id);
+		const totalLessons = availableModules.reduce(
+			(sum, moduleDoc) => sum + (Array.isArray(moduleDoc.lessons) ? moduleDoc.lessons.length : 0),
+			0
+		);
+
+		const completedLessonIds = await LessonCompletion.distinct("lessonId", {
+			userId: { $in: userIdentifiers },
+			moduleId: { $in: availableModuleIds },
+		});
 
 		// Calculate totals
-		const totalLessons = moduleProgresses.reduce((sum, mp) => sum + mp.totalLessons, 0);
-		const completedLessons = moduleProgresses.reduce((sum, mp) => sum + mp.lessonsCompleted, 0);
-		const completedModules = moduleProgresses.filter((mp) => mp.progressPercentage === 100).length;
-		const totalModules = moduleProgresses.length;
+		const completedLessonsRaw = completedLessonIds.length;
+		const completedLessons = Math.min(completedLessonsRaw, totalLessons);
+		const availableModuleIdSet = new Set(availableModuleIds.map((value) => String(value)));
+		const completedModules = moduleProgresses.filter(
+			(mp) =>
+				availableModuleIdSet.has(String(mp.moduleId)) && Number(mp.progressPercentage) === 100
+		).length;
 
 		const overallProgress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
-		// Calculate XP (1 XP per lesson)
+		// XP rule: 1 XP for each first-time unique lesson completion.
 		const totalXp = completedLessons;
-		const xpThisWeek = await calculateXpThisWeek(userId);
+		const xpThisWeek = await calculateXpThisWeek(userIdentifiers);
+		const xpThisMonth = await calculateXpThisMonth(userIdentifiers);
 
 		// Calculate streak
-		const streak = await calculateStreak(userId);
+		const streak = await calculateStreak(userIdentifiers);
 
 		// Update or create UserProgress
 		let userProgress = await UserProgress.findOneAndUpdate(
@@ -251,6 +340,7 @@ export async function updateUserProgress(userId) {
 				overallProgressPercentage: Math.round(overallProgress),
 				totalXp,
 				xpThisWeek,
+				xpThisMonth,
 				streak,
 				lastActivityDate: new Date(),
 				updatedAt: new Date(),
@@ -272,6 +362,10 @@ export async function updateUserProgress(userId) {
  */
 export async function calculateXpThisWeek(userId) {
 	try {
+		const userIds = Array.isArray(userId)
+			? userId.map((value) => String(value))
+			: [String(userId)];
+
 		// Get start of current week (Monday)
 		const now = new Date();
 		const dayOfWeek = now.getDay();
@@ -280,15 +374,42 @@ export async function calculateXpThisWeek(userId) {
 		weekStart.setDate(now.getDate() - daysFromMonday);
 		weekStart.setHours(0, 0, 0, 0);
 
-		// Count lessons completed this week
-		const completionsThisWeek = await LessonCompletion.countDocuments({
-			userId,
-			completedAt: { $gte: weekStart },
+		// Count first-time completed lessons this week; retakes do not mint new XP.
+		const completedLessonIdsThisWeek = await LessonCompletion.distinct("lessonId", {
+			userId: { $in: userIds },
+			createdAt: { $gte: weekStart },
 		});
 
-		return completionsThisWeek; // 1 XP per lesson
+		return completedLessonIdsThisWeek.length;
 	} catch (error) {
 		console.error("Error calculating XP this week:", error);
+		return 0;
+	}
+}
+
+/**
+ * Calculate XP earned this month (first day to now)
+ * @param {string} userId - User ID
+ * @returns {Promise<number>} XP earned this month
+ */
+export async function calculateXpThisMonth(userId) {
+	try {
+		const userIds = Array.isArray(userId)
+			? userId.map((value) => String(value))
+			: [String(userId)];
+
+		const now = new Date();
+		const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+		monthStart.setHours(0, 0, 0, 0);
+
+		const completedLessonIdsThisMonth = await LessonCompletion.distinct("lessonId", {
+			userId: { $in: userIds },
+			createdAt: { $gte: monthStart },
+		});
+
+		return completedLessonIdsThisMonth.length;
+	} catch (error) {
+		console.error("Error calculating XP this month:", error);
 		return 0;
 	}
 }
@@ -300,10 +421,14 @@ export async function calculateXpThisWeek(userId) {
  */
 export async function calculateStreak(userId) {
 	try {
+		const userIds = Array.isArray(userId)
+			? userId.map((value) => String(value))
+			: [String(userId)];
+
 		// Get all unique dates user completed lessons, sorted descending
 		const completions = await LessonCompletion.aggregate([
 			{
-				$match: { userId },
+				$match: { userId: { $in: userIds } },
 			},
 			{
 				$group: {

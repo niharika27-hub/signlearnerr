@@ -5,14 +5,21 @@ import {
 	createAdminModule,
 	deleteAdminLesson,
 	deleteAdminModule,
+	getAdminCloudinaryUploadSignature,
 	getAdminModules,
 	getAdminUsers,
 	unassignModuleFromUser,
 	updateAdminModule,
 } from "@/lib/authApi";
 import { useAuth } from "@/lib/AuthContext";
+import { uploadFileToCloudinary } from "@/lib/cloudinaryUpload";
+import {
+	CORE_MODULE_CATEGORIES,
+	formatCategoryLabel,
+	normalizeModuleCategory,
+} from "@/lib/moduleCategories";
 
-const CATEGORY_OPTIONS = ["alphabet", "vocabulary", "sentences", "conversation"];
+const CATEGORY_OPTIONS = CORE_MODULE_CATEGORIES;
 const ROLE_CATEGORY_OPTIONS = ["learner", "support-circle", "accessibility-needs"];
 
 const EMPTY_MODULE_FORM = {
@@ -34,6 +41,32 @@ const EMPTY_LESSON_FORM = {
 	order: 1,
 	difficultyLevel: "beginner",
 };
+
+function inferResourceType(file) {
+	if (!file?.type) {
+		return "auto";
+	}
+
+	if (file.type.startsWith("video/")) {
+		return "video";
+	}
+
+	if (file.type.startsWith("image/")) {
+		return "image";
+	}
+
+	return "auto";
+}
+
+function buildPublicId(fileName) {
+	const baseName = String(fileName || "lesson-asset")
+		.replace(/\.[^/.]+$/, "")
+		.toLowerCase()
+		.replace(/[^a-z0-9-_]+/g, "-")
+		.replace(/^-+|-+$/g, "");
+
+	return `${Date.now()}-${baseName || "lesson-asset"}`;
+}
 
 function RoleCategoryCheckboxes({ value, onChange }) {
 	return (
@@ -62,16 +95,18 @@ function RoleCategoryCheckboxes({ value, onChange }) {
 	);
 }
 
-function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRefresh }) {
+function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRefresh, onUploadLessonAsset }) {
 	const [isSaving, setIsSaving] = useState(false);
+	const [isUploading, setIsUploading] = useState(false);
 	const [error, setError] = useState("");
+	const [uploadError, setUploadError] = useState("");
 	const [saved, setSaved] = useState("");
 	const [selectedUserId, setSelectedUserId] = useState("");
 	const [moduleForm, setModuleForm] = useState({
 		title: moduleItem.title,
 		description: moduleItem.description,
 		icon: moduleItem.icon,
-		category: moduleItem.category,
+		category: normalizeModuleCategory(moduleItem.category),
 		orderIndex: moduleItem.orderIndex,
 		isSequential: moduleItem.isSequential,
 		isActive: moduleItem.isActive,
@@ -137,6 +172,29 @@ function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRef
 			setError(err.response?.data?.message || "Failed to add lesson.");
 		} finally {
 			setIsSaving(false);
+		}
+	}
+
+	async function handleUploadLessonFile(event) {
+		const file = event.target.files?.[0];
+		event.target.value = "";
+
+		if (!file) {
+			return;
+		}
+
+		setError("");
+		setUploadError("");
+		setSaved("");
+		setIsUploading(true);
+		try {
+			const uploadedUrl = await onUploadLessonAsset(moduleItem._id, file);
+			setLessonForm((current) => ({ ...current, contentUrl: uploadedUrl }));
+			setSaved("Media uploaded. Add lesson to save this URL.");
+		} catch (err) {
+			setUploadError(err.message || "Failed to upload media.");
+		} finally {
+			setIsUploading(false);
 		}
 	}
 
@@ -235,7 +293,7 @@ function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRef
 						className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
 					>
 						{CATEGORY_OPTIONS.map((item) => (
-							<option key={item} value={item}>{item}</option>
+							<option key={item} value={item}>{formatCategoryLabel(item)}</option>
 						))}
 					</select>
 				</label>
@@ -359,7 +417,7 @@ function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRef
 					))}
 				</ul>
 
-				<form onSubmit={handleAddLesson} className="mt-3 grid gap-2 md:grid-cols-5">
+				<form onSubmit={handleAddLesson} className="mt-3 grid gap-2 md:grid-cols-6">
 					<input
 						required
 						value={lessonForm.title}
@@ -387,10 +445,31 @@ function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRef
 						placeholder="Description"
 						className="rounded-lg border border-slate-200 px-3 py-2 text-xs"
 					/>
+					<input
+						value={lessonForm.contentUrl}
+						onChange={(event) => setLessonForm((current) => ({ ...current, contentUrl: event.target.value }))}
+						placeholder="Content URL"
+						className="rounded-lg border border-slate-200 px-3 py-2 text-xs"
+					/>
 					<button type="submit" className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white">
 						Add Lesson
 					</button>
 				</form>
+
+				<div className="mt-2 rounded-xl border border-slate-200 bg-white px-3 py-2">
+					<label className="text-xs font-semibold text-slate-700">
+						Upload Lesson Media To Cloudinary
+						<input
+							type="file"
+							accept="image/*,video/*"
+							onChange={handleUploadLessonFile}
+							disabled={isUploading}
+							className="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-xs"
+						/>
+					</label>
+					{isUploading ? <p className="mt-1 text-xs font-semibold text-indigo-700">Uploading to Cloudinary...</p> : null}
+					{uploadError ? <p className="mt-1 text-xs font-semibold text-rose-700">{uploadError}</p> : null}
+				</div>
 			</section>
 		</article>
 	);
@@ -407,12 +486,16 @@ function AdminModulesPage() {
 	const [moduleForm, setModuleForm] = useState(EMPTY_MODULE_FORM);
 	const [savingModule, setSavingModule] = useState(false);
 
-	async function loadModules() {
+async function loadModules() {
 		setLoading(true);
 		setError("");
 		try {
 			const response = await getAdminModules();
-			setModules(response.data || []);
+			const normalizedModules = (response.data || []).map((moduleItem) => ({
+				...moduleItem,
+				category: normalizeModuleCategory(moduleItem.category),
+			}));
+			setModules(normalizedModules);
 		} catch (err) {
 			setError(err.response?.data?.message || "Failed to load modules.");
 		} finally {
@@ -446,12 +529,17 @@ function AdminModulesPage() {
 			return;
 		}
 
+		const normalizedModule = {
+			...nextModule,
+			category: normalizeModuleCategory(nextModule.category),
+		};
+
 		setModules((current) => {
-			const exists = current.some((item) => item._id === nextModule._id);
+			const exists = current.some((item) => item._id === normalizedModule._id);
 			if (exists) {
-				return current.map((item) => (item._id === nextModule._id ? { ...item, ...nextModule } : item));
+				return current.map((item) => (item._id === normalizedModule._id ? { ...item, ...normalizedModule } : item));
 			}
-			return [...current, nextModule];
+			return [...current, normalizedModule];
 		});
 	}
 
@@ -475,6 +563,26 @@ function AdminModulesPage() {
 		} finally {
 			setSavingModule(false);
 		}
+	}
+
+	async function handleUploadLessonAsset(moduleId, file) {
+		const resourceType = inferResourceType(file);
+		const signatureResponse = await getAdminCloudinaryUploadSignature({
+			folder: `signlearn/modules/${moduleId}`,
+			publicId: buildPublicId(file.name),
+			resourceType,
+		});
+
+		if (!signatureResponse?.success || !signatureResponse?.data) {
+			throw new Error(signatureResponse?.message || "Cloudinary signature request failed.");
+		}
+
+		const result = await uploadFileToCloudinary(file, signatureResponse.data);
+		if (!result.secureUrl) {
+			throw new Error("Cloudinary upload did not return a secure URL.");
+		}
+
+		return result.secureUrl;
 	}
 
 	if (!isAdmin) {
@@ -531,7 +639,7 @@ function AdminModulesPage() {
 							className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
 						>
 							{CATEGORY_OPTIONS.map((item) => (
-								<option key={item} value={item}>{item}</option>
+								<option key={item} value={item}>{formatCategoryLabel(item)}</option>
 							))}
 						</select>
 						<input
@@ -586,6 +694,7 @@ function AdminModulesPage() {
 							onModuleUpdated={upsertModule}
 							onModuleDeleted={removeModule}
 							onRefresh={loadModules}
+							onUploadLessonAsset={handleUploadLessonAsset}
 						/>
 					))}
 				</div>

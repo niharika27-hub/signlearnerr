@@ -57,9 +57,17 @@ export async function authMiddleware(request, response, next) {
       return response.status(401).json({ message: "User not found or inactive." });
     }
 
+    const resolvedUserId =
+      (typeof user.id === "string" && user.id.trim()) ||
+      (user._id ? String(user._id) : "");
+
+    if (!resolvedUserId) {
+      return response.status(401).json({ message: "User identifier not found." });
+    }
+
     request.user = {
-      id: user.id,
-      userId: user.id,
+      id: resolvedUserId,
+      userId: resolvedUserId,
       email: user.email,
       fullName: user.fullName,
       roleCategory: user.roleCategory,
