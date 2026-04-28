@@ -47,3 +47,28 @@ export async function sendPasswordResetOtpEmail({ to, fullName, otp, expiresInMi
 
 	return { delivered: true, provider: "smtp" };
 }
+
+export async function sendContactEmail({ to, fromEmail, fromName, subject, message }) {
+	const transporter = createTransport();
+
+	const finalSubject = subject || `Contact form: ${fromName || fromEmail}`;
+	const text = [
+		`From: ${fromName || "Anonymous"} <${fromEmail || "noreply@example.com"}>`,
+		"",
+		message || "(no message)",
+	].join("\n");
+
+	if (!transporter) {
+		console.log("Contact email ->", { to, fromEmail, fromName, subject, message });
+		return { delivered: false, provider: "console" };
+	}
+
+	await transporter.sendMail({
+		from: process.env.SMTP_FROM || process.env.SMTP_USER,
+		to,
+		subject: finalSubject,
+		text,
+	});
+
+	return { delivered: true, provider: "smtp" };
+}

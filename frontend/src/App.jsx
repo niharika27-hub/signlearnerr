@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import AppNavbar from "@/components/AppNavbar";
+import Footer from "@/components/Footer";
 import ScrollProgressHud from "@/components/ScrollProgressHud";
 import SignLanguageBackground from "@/components/SignLanguageBackground";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -110,6 +111,7 @@ function App() {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <Footer />
       </div>
     </main>
   );

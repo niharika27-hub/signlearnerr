@@ -8,7 +8,7 @@ const apiClient = axios.create({
 	headers: {
 		"Content-Type": "application/json",
 	},
-	timeout: 5000, // 5 second timeout
+	timeout: 15000, // 15 second timeout (allow longer for contact/email)
 	withCredentials: true, // Send cookies with requests
 });
 
@@ -281,6 +281,13 @@ export async function saveQuizAttempt(payload) {
 export async function getQuizAttempts(limit = 5) {
 	const safeLimit = Math.max(1, Math.min(Number(limit) || 5, 20));
 	const response = await apiClient.get(`/learning/quiz/attempts?limit=${safeLimit}`);
+	return response.data;
+}
+
+// Contact / feedback
+export async function sendFeedback(payload) {
+	// payload: { name, email, message, page, type }
+	const response = await apiClient.post(`/contact`, payload);
 	return response.data;
 }
 

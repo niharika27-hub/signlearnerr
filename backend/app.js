@@ -8,6 +8,7 @@ import authRoutes from "./routes/authRoutes.js";
 import learningRoutes from "./routes/learningRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 import mongoose from "mongoose";
 
 const app = express();
@@ -103,5 +104,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/learning", learningRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/teacher", teacherRoutes);
+app.use("/api/contact", contactRoutes);
 
 export default app;
