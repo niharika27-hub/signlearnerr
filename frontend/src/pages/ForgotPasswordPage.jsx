@@ -5,7 +5,7 @@ import StickySectionLabel from "@/components/StickySectionLabel";
 import { requestPasswordReset } from "@/lib/authApi";
 
 function ForgotPasswordPage() {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
