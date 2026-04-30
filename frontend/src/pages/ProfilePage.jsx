@@ -9,6 +9,7 @@ import {
   getRolesForCategory,
 } from "@/lib/profileStorage";
 import { updateProfile, changePassword, deleteAccount, uploadAvatarFile } from "@/lib/authApi";
+import { saveStoredProfile } from "@/lib/profileStorage";
 import { prepareAvatarImageFile } from "@/lib/imageProcessing";
 import { useAuth } from "@/lib/AuthContext";
 
@@ -128,6 +129,14 @@ function ProfilePage() {
       avatar: updatedUser.avatar ?? resolvedAvatar,
     }));
     setAvatarLoadFailed(false);
+    try {
+      // Persist the updated profile to cookie storage for cross-tab updates
+      saveStoredProfile(updatedUser);
+    } catch (err) {
+      // Non-blocking: log but don't interrupt UX
+      // eslint-disable-next-line no-console
+      console.error("Failed to persist stored profile:", err);
+    }
   }
 
   async function handleAvatarRemoval() {
