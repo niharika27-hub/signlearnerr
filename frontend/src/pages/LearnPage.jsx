@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   BookOpen,
@@ -67,11 +67,11 @@ const coreLearningSections = [
 ];
 
 const roadmapSteps = [
-  { label: "Alphabets & Numbers", icon: "🔤", status: "complete" },
-  { label: "Core Vocabulary", icon: "📚", status: "current" },
-  { label: "Sentence Patterns", icon: "💬", status: "upcoming" },
-  { label: "Conversations", icon: "🤝", status: "upcoming" },
-  { label: "Advanced Fluency", icon: "⭐", status: "upcoming" },
+  { label: "Alphabets & Numbers", icon: "🔤" },
+  { label: "Core Vocabulary", icon: "📚" },
+  { label: "Sentence Patterns", icon: "💬" },
+  { label: "Conversations", icon: "🤝" },
+  { label: "Advanced Fluency", icon: "⭐" },
 ];
 
 function AnimatedCounter({ target, suffix = "", duration = 1.5 }) {
@@ -113,6 +113,15 @@ function LearnPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const dynamicRoadmapSteps = useMemo(() => {
+    const completed = Number(userProgress.modulesCompleted || 0);
+    return roadmapSteps.map((step, i) => {
+      if (i < completed) return { ...step, status: "complete" };
+      if (i === completed) return { ...step, status: "current" };
+      return { ...step, status: "upcoming" };
+    });
+  }, [userProgress.modulesCompleted]);
+
   useEffect(() => {
     const fetchModules = async () => {
       try {
@@ -149,6 +158,28 @@ function LearnPage() {
     const nextModuleId = module._id || module.id;
     if (!nextModuleId) return;
     navigate(`/learn/module/${nextModuleId}`);
+  }
+
+  function navigateToSection(section) {
+    if (!section) return navigate("/learn");
+    // try to find a module that matches the section title or id
+    const needle = String(section).toLowerCase();
+    const found = modules.find((m) => {
+      const title = String(m.title || "").toLowerCase();
+      if (title.includes(needle) || needle.includes(title)) return true;
+      // check module categories titles
+      const catMatch = (m.categories || []).some((c) => String(c.title || "").toLowerCase().includes(needle));
+      if (catMatch) return true;
+      return false;
+    });
+
+    if (found) {
+      const nextModuleId = found._id || found.id || found.moduleKey;
+      if (nextModuleId) return navigate(`/learn/module/${nextModuleId}`);
+    }
+
+    // fallback: go to generic learn page
+    navigate("/learn");
   }
 
   return (
@@ -326,7 +357,7 @@ function LearnPage() {
 
           {/* Roadmap timeline */}
           <div className="relative flex flex-wrap items-center justify-center gap-4 sm:gap-0">
-            {roadmapSteps.map((step, i) => (
+            {dynamicRoadmapSteps.map((step, i) => (
               <div key={step.label} className="flex items-center">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -361,7 +392,7 @@ function LearnPage() {
                 </motion.div>
 
                 {/* Connector line */}
-                {i < roadmapSteps.length - 1 && (
+                {i < dynamicRoadmapSteps.length - 1 && (
                   <div className="hidden h-0.5 w-8 sm:block lg:w-14">
                     <div
                       className={`h-full rounded-full ${
@@ -412,7 +443,13 @@ function LearnPage() {
                   viewport={{ once: true, amount: 0.25 }}
                   transition={{ duration: 0.45, delay: index * 0.08 }}
                   whileHover={{ y: -6, scale: 1.02 }}
-                  className={`group relative overflow-hidden rounded-3xl border bg-linear-to-br p-6 shadow-soft transition-all ${section.tone}`}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => navigateToSection(section.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") navigateToSection(section.id);
+                  }}
+                  className={`group relative overflow-hidden rounded-3xl border bg-linear-to-br p-6 shadow-soft transition-all ${section.tone} cursor-pointer`}
                 >
                   {/* Hover glow */}
                   <div
