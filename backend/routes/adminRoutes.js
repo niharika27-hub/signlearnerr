@@ -154,7 +154,7 @@ adminRoutes.post("/modules/:moduleId/assignments", async (request, response) => 
 		await UserModuleAssignment.findOneAndUpdate(
 			{ userId: userDoc.id, moduleId },
 			{ userId: userDoc.id, moduleId, assignedBy: request.adminUser?.email || null },
-			{ upsert: true, new: true, setDefaultsOnInsert: true }
+			{ upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
 		);
 
 		return response.status(201).json({
@@ -274,7 +274,7 @@ adminRoutes.patch("/modules/:moduleId", async (request, response) => {
 			update.roleCategories = filtered;
 		}
 
-		const updatedModule = await Module.findByIdAndUpdate(moduleId, update, { new: true, runValidators: true });
+		const updatedModule = await Module.findByIdAndUpdate(moduleId, update, { returnDocument: "after", runValidators: true });
 		if (!updatedModule) {
 			return response.status(404).json({ success: false, message: "Module not found." });
 		}
@@ -384,7 +384,7 @@ adminRoutes.patch("/lessons/:lessonId", async (request, response) => {
 			update.difficultyLevel = payload.difficultyLevel;
 		}
 
-		const updatedLesson = await Lesson.findByIdAndUpdate(lessonId, update, { new: true, runValidators: true });
+		const updatedLesson = await Lesson.findByIdAndUpdate(lessonId, update, { returnDocument: "after", runValidators: true });
 		if (!updatedLesson) {
 			return response.status(404).json({ success: false, message: "Lesson not found." });
 		}

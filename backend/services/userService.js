@@ -97,7 +97,7 @@ export async function createUser(userData) {
 export async function updateUser(userId, updateData) {
 	try {
 		const user = await User.findOneAndUpdate({ id: userId }, updateData, {
-			new: true,
+			returnDocument: "after",
 			runValidators: true,
 		});
 		return user;
@@ -115,7 +115,7 @@ export async function deleteUser(userId) {
 		const user = await User.findOneAndUpdate(
 			{ id: userId },
 			{ isActive: false },
-			{ new: true }
+			{ returnDocument: "after" }
 		);
 		return user;
 	} catch (error) {

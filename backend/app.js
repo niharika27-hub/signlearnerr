@@ -12,13 +12,26 @@ import contactRoutes from "./routes/contactRoutes.js";
 import mongoose from "mongoose";
 
 const app = express();
-const allowedOrigins = (
-	process.env.CORS_ORIGINS ||
-	"https://signlearnerr.vercel.app"
-)
-	.split(",")
-	.map((value) => value.trim())
-	.filter(Boolean);
+const allowedOrigins = new Set(
+	[
+		...(process.env.CORS_ORIGINS || "https://signlearnerr.vercel.app")
+			.split(",")
+			.map((value) => value.trim())
+			.filter(Boolean),
+		process.env.FRONTEND_URL,
+	]
+		.filter(Boolean)
+		.map((value) => String(value).replace(/\/$/, ""))
+);
+
+function isSignlearnVercelOrigin(origin) {
+	try {
+		const parsed = new URL(origin);
+		return parsed.hostname.endsWith(".vercel.app") && parsed.hostname.includes("signlearnerr");
+	} catch (_error) {
+		return false;
+	}
+}
 
 function isLoopbackOrigin(origin) {
 	try {
@@ -29,15 +42,22 @@ function isLoopbackOrigin(origin) {
 	}
 }
 
-const isDevelopment = process.env.NODE_ENV !== "production";
-
 app.use(
 	cors({
 		origin(origin, callback) {
 			if (!origin) return callback(null, true);
-			if (allowedOrigins.includes(origin) || isLoopbackOrigin(origin)) {
+
+			const normalizedOrigin = String(origin).replace(/\/$/, "");
+
+			if (
+				allowedOrigins.has(normalizedOrigin) ||
+				isLoopbackOrigin(normalizedOrigin) ||
+				isSignlearnVercelOrigin(normalizedOrigin)
+			) {
 				return callback(null, true);
 			}
+
+			console.warn("Blocked CORS origin:", normalizedOrigin);
 			return callback(new Error("CORS origin not allowed"), false);
 		},
 		credentials: true,

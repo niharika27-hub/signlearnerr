@@ -20,6 +20,11 @@ function getAuthCookieOptions() {
 	};
 }
 
+function getAuthCookieClearOptions() {
+	const { maxAge, ...cookieOptions } = getAuthCookieOptions();
+	return cookieOptions;
+}
+
 function createOtp() {
 	return String(randomInt(100000, 1000000));
 }
@@ -176,7 +181,7 @@ export async function login(request, response) {
 	}
 }
 export async function logout(request, response) {
-	response.clearCookie("authToken", getAuthCookieOptions());
+	response.clearCookie("authToken", getAuthCookieClearOptions());
 	return response.json({ message: "Logged out successfully." });
 }
 export async function updateProfile(request, response) {

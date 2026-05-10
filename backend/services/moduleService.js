@@ -260,7 +260,7 @@ export async function updateModuleProgress(userId, moduleId) {
 				lastAccessedAt: new Date(),
 				updatedAt: new Date(),
 			},
-			{ upsert: true, new: true }
+			{ upsert: true, returnDocument: "after" }
 		);
 
 		return moduleProgress;
@@ -345,7 +345,7 @@ export async function updateUserProgress(userId) {
 				lastActivityDate: new Date(),
 				updatedAt: new Date(),
 			},
-			{ upsert: true, new: true }
+			{ upsert: true, returnDocument: "after" }
 		);
 
 		return userProgress;
@@ -575,7 +575,7 @@ export async function createLesson(data) {
 			await Module.findByIdAndUpdate(
 				data.moduleId,
 				{ $push: { lessons: lesson._id } },
-				{ new: true }
+				{ returnDocument: "after" }
 			);
 		}
 

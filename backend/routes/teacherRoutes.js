@@ -151,7 +151,7 @@ teacherRoutes.patch("/lessons/:lessonId", async (request, response) => {
 			update.difficultyLevel = payload.difficultyLevel;
 		}
 
-		const updatedLesson = await Lesson.findByIdAndUpdate(lessonId, update, { new: true, runValidators: true });
+		const updatedLesson = await Lesson.findByIdAndUpdate(lessonId, update, { returnDocument: "after", runValidators: true });
 		if (!updatedLesson) {
 			return response.status(404).json({ success: false, message: "Lesson not found." });
 		}
