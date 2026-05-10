@@ -46,17 +46,18 @@ authRoutes.get("/google", passport.authenticate("google", {
 }));
 
 // Google callback
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 authRoutes.get("/google/callback", (req, res, next) => {
   passport.authenticate("google", (error, user) => {
     if (error) {
       const oauthDetails =
         error?.oauthError?.data || error?.message || "Google OAuth authentication failed.";
       console.error("Google OAuth callback error:", oauthDetails);
-      return res.redirect("http://localhost:5173/login?error=google_oauth");
+      return res.redirect(`${FRONTEND_URL}/login?error=google_oauth`);
     }
 
     if (!user) {
-      return res.redirect("http://localhost:5173/login?error=google_oauth");
+      return res.redirect(`${FRONTEND_URL}/login?error=google_oauth`);
     }
 
     const token = generateToken(user.id, user.email);
@@ -65,11 +66,11 @@ authRoutes.get("/google/callback", (req, res, next) => {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
     });
 
-    return res.redirect("http://localhost:5173/");
+    return res.redirect(FRONTEND_URL);
   })(req, res, next);
 });
 export default authRoutes;

@@ -33,7 +33,13 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 
 app.use(
 	cors({
-		origin: "https://signlearnerr.vercel.app",
+		origin(origin, callback) {
+			if (!origin) return callback(null, true);
+			if (allowedOrigins.includes(origin) || isLoopbackOrigin(origin)) {
+				return callback(null, true);
+			}
+			return callback(new Error("CORS origin not allowed"), false);
+		},
 		credentials: true,
 	})
 );
@@ -43,14 +49,15 @@ app.use(express.json());
 app.use(cookieParser());
 app.set("trust proxy", 1);
 app.use(session({
+	name: "signlearn.sid",
 	secret: process.env.SESSION_SECRET || "your-secret-key",
 	resave: false,
 	saveUninitialized: false,
 	cookie: {
-		secure: true,
+		secure: process.env.NODE_ENV === "production",
 		httpOnly: true,
 		maxAge: 24 * 60 * 60 * 1000,
-		sameSite: "none",
+		sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 	},
 }));
 
