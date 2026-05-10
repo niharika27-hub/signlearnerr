@@ -94,7 +94,6 @@ export async function logoutUser() {
 	const response = await apiClient.post("/auth/logout");
 	return response.data;
 }
-
 export async function requestPasswordReset(payload) {
 	const response = await apiClient.post("/auth/forgot-password", payload);
 	return response.data;

@@ -35,16 +35,16 @@ app.use(
 	cors({
 		origin: (origin, callback) => {
 			if (!origin) {
-				return callback(new Error("Not allowed by CORS"));
+				return callback(null, true);
 			}
 
 			if (allowedOrigins.includes(origin)) {
-				return callback(new Error("Not allowed by CORS"));
+				return callback(null, true);
 			}
 
 			// In local development, allow localhost on any port so Vite can auto-pick free ports.
 			if (isDevelopment && isLoopbackOrigin(origin)) {
-				return callback(new Error("Not allowed by CORS"));
+				return callback(null, true);
 			}
 
 			return callback(new Error("Not allowed by CORS"));
@@ -58,6 +58,7 @@ app.use(
 
 app.use(express.json());
 app.use(cookieParser());
+app.set("trust proxy", 1);
 app.use(session({
 	secret: process.env.SESSION_SECRET || "your-secret-key",
 	resave: false,
