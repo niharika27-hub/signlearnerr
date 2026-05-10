@@ -33,28 +33,11 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 
 app.use(
 	cors({
-		origin: (origin, callback) => {
-			if (!origin) {
-				return callback(null, true);
-			}
-
-			if (allowedOrigins.includes(origin)) {
-				return callback(null, true);
-			}
-
-			// In local development, allow localhost on any port so Vite can auto-pick free ports.
-			if (isDevelopment && isLoopbackOrigin(origin)) {
-				return callback(null, true);
-			}
-
-			return callback(new Error("Not allowed by CORS"));
-		},
+		origin: "https://signlearnerr.vercel.app",
 		credentials: true,
-		methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-		allowedHeaders: ["Content-Type", "Authorization"],
-		maxAge: 3600,
 	})
 );
+
 
 app.use(express.json());
 app.use(cookieParser());
