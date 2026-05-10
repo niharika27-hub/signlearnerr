@@ -14,7 +14,7 @@ import mongoose from "mongoose";
 const app = express();
 const allowedOrigins = (
 	process.env.CORS_ORIGINS ||
-	"http://localhost:5173,https://signlearnerr.vercel.app/"
+	"https://signlearnerr.vercel.app"
 )
 	.split(",")
 	.map((value) => value.trim())
@@ -35,19 +35,19 @@ app.use(
 	cors({
 		origin: (origin, callback) => {
 			if (!origin) {
-				return callback(null, true);
+				return callback(new Error("Not allowed by CORS"));
 			}
 
 			if (allowedOrigins.includes(origin)) {
-				return callback(null, true);
+				return callback(new Error("Not allowed by CORS"));
 			}
 
 			// In local development, allow localhost on any port so Vite can auto-pick free ports.
 			if (isDevelopment && isLoopbackOrigin(origin)) {
-				return callback(null, true);
+				return callback(new Error("Not allowed by CORS"));
 			}
 
-			return callback(null, false);
+			return callback(new Error("Not allowed by CORS"));
 		},
 		credentials: true,
 		methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -98,11 +98,9 @@ app.get("/api/health", (_request, response) => {
 		},
 	});
 });
-
 app.use("/api/auth", authRoutes);
 app.use("/api/learning", learningRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/contact", contactRoutes);
-
 export default app;
