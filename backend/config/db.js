@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 function resolveMongoUri() {
 	const primary = process.env.MONGODB_URI;
@@ -8,12 +11,10 @@ function resolveMongoUri() {
 
 export async function connectDB() {
 	try {
-		const mongoUri = resolveMongoUri();
+		const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+		console.log(`Attempting to connect to MongoDB at: ${mongoUri}`);
 
-		const connection = await mongoose.connect(mongoUri, {
-			retryWrites: true,
-			w: "majority",
-		});
+		const connection = await mongoose.connect(mongoUri)
 
 		console.log(`MongoDB connected to: ${connection.connection.host}`);
 		return connection;
