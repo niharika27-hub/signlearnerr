@@ -10,7 +10,8 @@ import {
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
+  const apiBaseUrl = import.meta.env.VITE_API_URL ?? "https://signlearnerr.onrender.com";
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -201,7 +202,7 @@ function LoginPage() {
 
                   <button
                     type="button"
-                    onClick={() => (window.location.href = "https://signlearnerr.onrender.com/api/auth/google")}
+                    onClick={() => (window.location.href = `${apiBaseUrl}/api/auth/google`)}
                     className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white/80 px-4 py-3.5 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-white hover:shadow-sm"
                   >
                     <span className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white shadow-sm transition group-hover:border-slate-300">
