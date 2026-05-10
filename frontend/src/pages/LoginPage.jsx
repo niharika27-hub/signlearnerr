@@ -26,9 +26,19 @@ function LoginPage() {
   const [selectedRole, setSelectedRole] = useState(roleOptions[0]?.value || "");
 
   useEffect(() => {
-    // Token handling removed - Google callback sets cookie directly
-    // init() in AuthContext will automatically restore user from cookie
-  }, []);
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (token) {
+      loginWithGoogle(token).then((result) => {
+        if (result.success) {
+          navigate("/profile");
+        } else {
+          setErrorMessage(result.error || "Google login failed");
+        }
+      });
+    }
+  }, [loginWithGoogle, navigate]);
 
   function inferCategoryFromRole(roleValue) {
     if (ROLE_OPTIONS_BY_CATEGORY["accessibility-needs"].some((item) => item.value === roleValue)) {

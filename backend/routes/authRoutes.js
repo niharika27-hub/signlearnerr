@@ -70,7 +70,7 @@ authRoutes.get("/google/callback", (req, res, next) => {
       path: "/",
     });
 
-    return res.redirect(FRONTEND_URL);
+    return res.redirect(`${FRONTEND_URL}/login?token=${encodeURIComponent(token)}`);
   })(req, res, next);
 });
 export default authRoutes;

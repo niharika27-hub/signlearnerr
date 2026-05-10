@@ -8,6 +8,18 @@ import { uploadBufferToCloudinary } from "../utils/cloudinary.js";
 
 const RESET_OTP_TTL_MS = 10 * 60 * 1000;
 
+function getAuthCookieOptions() {
+	const isProduction = process.env.NODE_ENV === "production";
+
+	return {
+		maxAge: 30 * 24 * 60 * 60 * 1000,
+		httpOnly: true,
+		secure: isProduction,
+		sameSite: isProduction ? "none" : "lax",
+		path: "/",
+	};
+}
+
 function createOtp() {
 	return String(randomInt(100000, 1000000));
 }
@@ -80,13 +92,7 @@ export async function signup(request, response) {
 		const userProfile = sanitizeUser(newUser);
 
 		// Set JWT in httpOnly cookie
-		response.cookie("authToken", token, {
-			maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "Lax",
-			path: "/",
-		});
+		response.cookie("authToken", token, getAuthCookieOptions());
 
 		return response.status(201).json({
 			message: "Account created successfully.",
@@ -157,13 +163,7 @@ export async function login(request, response) {
 		const userProfile = sanitizeUser(user);
 
 		// Set JWT in httpOnly cookie
-		response.cookie("authToken", token, {
-			maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "Lax",
-			path: "/",
-		});
+		response.cookie("authToken", token, getAuthCookieOptions());
 
 		return response.json({
 			message: "Login successful.",
@@ -176,12 +176,7 @@ export async function login(request, response) {
 	}
 }
 export async function logout(request, response) {
-	response.clearCookie("authToken", {
-		path: "/",
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
-		sameSite: "Lax",
-	});
+	response.clearCookie("authToken", getAuthCookieOptions());
 	return response.json({ message: "Logged out successfully." });
 }
 export async function updateProfile(request, response) {
