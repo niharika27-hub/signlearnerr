@@ -70,7 +70,8 @@ authRoutes.get("/google/callback", (req, res, next) => {
       path: "/",
     });
 
-    return res.redirect(`${FRONTEND_URL}/login?token=${encodeURIComponent(token)}`);
+    // Redirect to home; cookie is already set so frontend can read it via AuthContext.init()
+    return res.redirect(FRONTEND_URL);
   })(req, res, next);
 });
 export default authRoutes;
