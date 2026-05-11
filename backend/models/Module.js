@@ -21,6 +21,10 @@ const moduleSchema = new mongoose.Schema(
 			type: String, // Icon name (e.g., "Signature", "BookText", "MessageCircle")
 			required: true,
 		},
+		thumbnailUrl: {
+			type: String,
+			default: "",
+		},
 		category: {
 			type: String,
 			required: true,

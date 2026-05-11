@@ -10,6 +10,7 @@ import {
 	getAdminUsers,
 	unassignModuleFromUser,
 	updateAdminModule,
+	uploadAdminModulePhoto,
 } from "@/lib/authApi";
 import { useAuth } from "@/lib/AuthContext";
 import { uploadFileToCloudinary } from "@/lib/cloudinaryUpload";
@@ -26,6 +27,7 @@ const EMPTY_MODULE_FORM = {
 	title: "",
 	description: "",
 	icon: "BookText",
+	thumbnailUrl: "",
 	category: "alphabet",
 	orderIndex: 1,
 	isSequential: false,
@@ -68,6 +70,12 @@ function buildPublicId(fileName) {
 	return `${Date.now()}-${baseName || "lesson-asset"}`;
 }
 
+function formatRoleCategoryLabel(value) {
+	return String(value || "")
+		.replace(/-/g, " ")
+		.replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 function RoleCategoryCheckboxes({ value, onChange }) {
 	return (
 		<div className="flex flex-wrap gap-2">
@@ -95,7 +103,7 @@ function RoleCategoryCheckboxes({ value, onChange }) {
 	);
 }
 
-function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRefresh, onUploadLessonAsset }) {
+function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRefresh, onUploadLessonAsset, onUploadModuleAsset }) {
 	const [isSaving, setIsSaving] = useState(false);
 	const [isUploading, setIsUploading] = useState(false);
 	const [error, setError] = useState("");
@@ -106,6 +114,7 @@ function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRef
 		title: moduleItem.title,
 		description: moduleItem.description,
 		icon: moduleItem.icon,
+		thumbnailUrl: moduleItem.thumbnailUrl || "",
 		category: normalizeModuleCategory(moduleItem.category),
 		orderIndex: moduleItem.orderIndex,
 		isSequential: moduleItem.isSequential,
@@ -113,6 +122,7 @@ function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRef
 		roleCategories: moduleItem.roleCategories || [],
 	});
 	const [lessonForm, setLessonForm] = useState(EMPTY_LESSON_FORM);
+	const previewUrl = String(moduleForm.thumbnailUrl || moduleItem.thumbnailUrl || "").trim();
 
 	const assignedUsers = moduleItem.assignedUsers || [];
 	const availableUsers = users.filter((entry) => !assignedUsers.some((assigned) => assigned.id === entry.id));
@@ -133,6 +143,29 @@ function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRef
 			setError(err.response?.data?.message || "Failed to update module.");
 		} finally {
 			setIsSaving(false);
+		}
+	}
+
+	async function handleUploadModulePhoto(event) {
+		const file = event.target.files?.[0];
+		event.target.value = "";
+
+		if (!file) {
+			return;
+		}
+
+		setError("");
+		setUploadError("");
+		setSaved("");
+		setIsUploading(true);
+		try {
+			const uploadedUrl = await onUploadModuleAsset(file);
+			setModuleForm((current) => ({ ...current, thumbnailUrl: uploadedUrl }));
+			setSaved("Module photo uploaded. Save module to persist this URL.");
+		} catch (err) {
+			setUploadError(err.message || "Failed to upload module photo.");
+		} finally {
+			setIsUploading(false);
 		}
 	}
 
@@ -274,6 +307,53 @@ function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRef
 					/>
 				</label>
 			</div>
+
+			<div className="mt-3 grid gap-3 md:grid-cols-[1.2fr_0.8fr]">
+				<label className="text-sm font-semibold text-slate-700">
+					Module Photo URL
+					<input
+						value={moduleForm.thumbnailUrl}
+						onChange={(event) => setModuleForm((current) => ({ ...current, thumbnailUrl: event.target.value }))}
+						className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+						placeholder="https://res.cloudinary.com/..."
+					/>
+				</label>
+				<div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-3">
+					<label className="text-xs font-semibold text-slate-700">
+						Upload Module Photo
+						<input
+							type="file"
+							accept="image/*"
+							onChange={handleUploadModulePhoto}
+							disabled={isUploading}
+							className="mt-1 block w-full rounded-xl border border-slate-200 px-3 py-2 text-xs"
+						/>
+					</label>
+					{isUploading ? <p className="mt-1 text-xs font-semibold text-indigo-700">Uploading photo...</p> : null}
+					{uploadError ? <p className="mt-1 text-xs font-semibold text-rose-700">{uploadError}</p> : null}
+				</div>
+			</div>
+
+			<div className="mt-3 flex flex-wrap items-center gap-2">
+				<span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Visible to</span>
+				{(moduleForm.roleCategories || []).length > 0 ? (
+					(moduleForm.roleCategories || []).map((roleCategory) => (
+						<span key={roleCategory} className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+							{formatRoleCategoryLabel(roleCategory)}
+						</span>
+					))
+				) : (
+					<span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
+						All users
+					</span>
+				)}
+			</div>
+
+			{previewUrl ? (
+				<div className="mt-3 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+					<img src={previewUrl} alt={`${moduleItem.title} preview`} className="h-36 w-full object-cover" />
+				</div>
+			) : null}
 
 			<label className="mt-3 block text-sm font-semibold text-slate-700">
 				Description
@@ -585,6 +665,15 @@ async function loadModules() {
 		return result.secureUrl;
 	}
 
+	async function handleUploadModulePhoto(file) {
+		const response = await uploadAdminModulePhoto(file);
+		if (!response?.success || !response?.data?.url) {
+			throw new Error(response?.message || "Failed to upload module photo.");
+		}
+
+		return response.data.url;
+	}
+
 	if (!isAdmin) {
 		return (
 			<div className="pt-24 px-6 pb-16">
@@ -625,6 +714,45 @@ async function loadModules() {
 							className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
 						/>
 					</div>
+					<div className="mt-3 grid gap-3 md:grid-cols-[1.2fr_0.8fr]">
+						<label className="text-sm font-semibold text-slate-700">
+							Module Photo URL
+							<input
+								value={moduleForm.thumbnailUrl}
+								onChange={(event) => setModuleForm((current) => ({ ...current, thumbnailUrl: event.target.value }))}
+								placeholder="https://res.cloudinary.com/..."
+								className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+							/>
+						</label>
+						<div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-3">
+							<label className="text-xs font-semibold text-slate-700">
+								Upload Module Photo
+								<input
+									type="file"
+									accept="image/*"
+									onChange={async (event) => {
+										const file = event.target.files?.[0];
+										event.target.value = "";
+										if (!file) {
+											return;
+										}
+										try {
+											const uploadedUrl = await handleUploadModulePhoto(file);
+											setModuleForm((current) => ({ ...current, thumbnailUrl: uploadedUrl }));
+										} catch (err) {
+											setError(err.message || "Failed to upload module photo.");
+										}
+									}}
+									className="mt-1 block w-full rounded-xl border border-slate-200 px-3 py-2 text-xs"
+								/>
+							</label>
+						</div>
+					</div>
+					{moduleForm.thumbnailUrl ? (
+						<div className="mt-3 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+							<img src={moduleForm.thumbnailUrl} alt="New module preview" className="h-40 w-full object-cover" />
+						</div>
+					) : null}
 					<textarea
 						required
 						value={moduleForm.description}
@@ -695,6 +823,7 @@ async function loadModules() {
 							onModuleDeleted={removeModule}
 							onRefresh={loadModules}
 							onUploadLessonAsset={handleUploadLessonAsset}
+							onUploadModuleAsset={handleUploadModulePhoto}
 						/>
 					))}
 				</div>

@@ -59,13 +59,18 @@ export async function uploadAvatarFile(file) {
 	const formData = new FormData();
 	formData.append("avatar", file);
 
-	const response = await apiClient.post("/auth/upload-avatar", formData, {
-		headers: {
-			"Content-Type": "multipart/form-data",
-		},
+	const response = await fetch(`${API_BASE_URL}/api/auth/upload-avatar`, {
+		method: "POST",
+		body: formData,
+		credentials: "include",
 	});
 
-	return response.data;
+	const payload = await response.json().catch(() => ({}));
+	if (!response.ok) {
+		throw new Error(payload?.message || payload?.error || "Avatar upload failed.");
+	}
+
+	return payload;
 }
 
 export async function getProfile() {
@@ -182,6 +187,24 @@ export async function getTeacherCloudinaryUploadSignature(payload = {}) {
 export async function getAdminCloudinaryUploadSignature(payload = {}) {
 	const response = await apiClient.post("/admin/cloudinary/sign-upload", payload);
 	return response.data;
+}
+
+export async function uploadAdminModulePhoto(file) {
+	const formData = new FormData();
+	formData.append("file", file);
+
+	const response = await fetch(`${API_BASE_URL}/api/admin/modules/upload-photo`, {
+		method: "POST",
+		body: formData,
+		credentials: "include",
+	});
+
+	const payload = await response.json().catch(() => ({}));
+	if (!response.ok) {
+		throw new Error(payload?.message || payload?.error || "Module photo upload failed.");
+	}
+
+	return payload;
 }
 
 // ============================================================================

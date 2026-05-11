@@ -6,6 +6,7 @@ import { UserProgress } from "../models/UserProgress.js";
 import { UserModuleAssignment } from "../models/UserModuleAssignment.js";
 import mongoose from "mongoose";
 import User from "../models/User.js";
+import { getModuleThumbnailUrl } from "../utils/moduleThumbnails.js";
 
 function createHttpError(statusCode, message) {
 	const error = new Error(message);
@@ -45,7 +46,10 @@ export async function getModulesByRole(roleCategory) {
 			.sort({ orderIndex: 1 })
 			.populate("lessons", "title order");
 
-		return modules;
+		return modules.map((moduleDoc) => ({
+			...moduleDoc.toObject(),
+			thumbnailUrl: getModuleThumbnailUrl(moduleDoc),
+		}));
 	} catch (error) {
 		console.error("Error fetching modules by role:", error);
 		throw error;
@@ -56,16 +60,38 @@ export async function getModulesByRole(roleCategory) {
  * Get modules visible to a user using both role-based and explicit per-user assignment.
  * @param {string} userId - User ID
  * @param {string} roleCategory - Role category
+ * @param {Object} options - Visibility options
+ * @param {boolean} options.includeAllModules - If true, return all active modules
  * @returns {Promise<Array>} Modules for this user
  */
-export async function getModulesForUser(userId, roleCategory) {
+export async function getModulesForUser(userId, roleCategory, options = {}) {
 	try {
+		const includeAllModules = Boolean(options.includeAllModules);
+		const canonicalUserId = String(userId || "");
+
+		if (includeAllModules) {
+			const allModules = await Module.find({
+				$or: [{ isActive: true }, { isActive: { $exists: false } }],
+			})
+				.sort({ orderIndex: 1 })
+				.populate("lessons", "title order");
+
+			return allModules.map((moduleDoc) => ({
+				...moduleDoc.toObject(),
+				thumbnailUrl: getModuleThumbnailUrl(moduleDoc),
+			}));
+		}
+
 		const assignments = await UserModuleAssignment.find({ userId }).select("moduleId").lean();
 		const assignedModuleIds = assignments.map((entry) => entry.moduleId);
 
-		const filters = [{ roleCategories: roleCategory }];
+		const filters = roleCategory ? [{ roleCategories: roleCategory }] : [];
 		if (assignedModuleIds.length > 0) {
 			filters.push({ _id: { $in: assignedModuleIds } });
+		}
+
+		if (filters.length === 0) {
+			return [];
 		}
 
 		const modules = await Module.find({
@@ -77,7 +103,10 @@ export async function getModulesForUser(userId, roleCategory) {
 			.sort({ orderIndex: 1 })
 			.populate("lessons", "title order");
 
-		return modules;
+		return modules.map((moduleDoc) => ({
+			...moduleDoc.toObject(),
+			thumbnailUrl: getModuleThumbnailUrl(moduleDoc),
+		}));
 	} catch (error) {
 		console.error("Error fetching modules for user:", error);
 		throw error;
@@ -114,6 +143,7 @@ export async function getModuleWithLessons(moduleId, userId) {
 
 		return {
 			...module.toObject(),
+			thumbnailUrl: getModuleThumbnailUrl(module),
 			lessons: lessonsWithStatus,
 		};
 	} catch (error) {
@@ -272,11 +302,14 @@ export async function updateModuleProgress(userId, moduleId) {
 
 /**
  * Update user overall progress and streak
- * @param {string} userId - User ID
+	 * @param {string} userId - User ID
+	 * @param {Object} options - Progress scope options
+	 * @param {boolean} options.includeAllModules - If true, calculate progress across all active modules
  * @returns {Promise<Object>} Updated user progress
  */
-export async function updateUserProgress(userId) {
+export async function updateUserProgress(userId, options = {}) {
 	try {
+		const includeAllModules = Boolean(options.includeAllModules);
 		const userFilters = [{ id: userId }];
 		if (mongoose.Types.ObjectId.isValid(userId)) {
 			userFilters.push({ _id: userId });
@@ -293,7 +326,9 @@ export async function updateUserProgress(userId) {
 
 		// Resolve all modules visible to this user so overall progress is calculated against full scope.
 		let availableModules = [];
-		if (user?.roleCategory) {
+		if (includeAllModules) {
+			availableModules = await getModulesForUser(canonicalUserId, user?.roleCategory, { includeAllModules: true });
+		} else if (user?.roleCategory) {
 			const canonicalUserId = user?.id ? String(user.id) : String(userId);
 			availableModules = await getModulesForUser(canonicalUserId, user.roleCategory);
 		}

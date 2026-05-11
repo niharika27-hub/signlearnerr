@@ -10,12 +10,16 @@ import mongoose from "mongoose";
 
 const learningRoutes = Router();
 
-async function buildUserProgressPayload(userId) {
+async function buildUserProgressPayload(userId, options = {}) {
 	const { UserProgress } = await import("../models/UserProgress.js");
 	const { ModuleProgress } = await import("../models/ModuleProgress.js");
+	const UserModule = await import("../models/User.js");
+	const User = UserModule.default;
+	const user = await User.findOne({ id: userId }).select("id role roleCategory email").lean();
+	const includeAllModules = Boolean(options.includeAllModules) || String(user?.role || "").toLowerCase() === "admin";
 
 	// Keep denormalized UserProgress aligned with current module scope.
-	await updateUserProgress(userId);
+	await updateUserProgress(userId, { includeAllModules });
 
 	const userProgress = await UserProgress.findOne({ userId }).lean();
 	const moduleProgress = await ModuleProgress.find({ userId })
@@ -49,8 +53,9 @@ learningRoutes.use(authMiddleware);
  */
 learningRoutes.get("/modules", async (req, res) => {
 	try {
-		const { id: userId, roleCategory } = req.user;
-		const modules = await getModulesForUser(userId, roleCategory);
+		const { id: userId, roleCategory, role, isAdminOverride } = req.user;
+		const includeAllModules = String(role || "").toLowerCase() === "admin" || Boolean(isAdminOverride);
+		const modules = await getModulesForUser(userId, roleCategory, { includeAllModules });
 
 		res.json({
 			success: true,
@@ -135,8 +140,10 @@ learningRoutes.post("/lessons/:lessonId/complete", async (req, res) => {
  */
 learningRoutes.get("/progress", async (req, res) => {
 	try {
-		const { id: userId } = req.user;
-		const data = await buildUserProgressPayload(userId);
+		const { id: userId, role, isAdminOverride } = req.user;
+		const data = await buildUserProgressPayload(userId, {
+			includeAllModules: String(role || "").toLowerCase() === "admin" || Boolean(isAdminOverride),
+		});
 
 		res.json({
 			success: true,
@@ -157,8 +164,10 @@ learningRoutes.get("/progress", async (req, res) => {
  */
 learningRoutes.get("/user/progress", async (req, res) => {
 	try {
-		const { id: userId } = req.user;
-		const data = await buildUserProgressPayload(userId);
+		const { id: userId, role, isAdminOverride } = req.user;
+		const data = await buildUserProgressPayload(userId, {
+			includeAllModules: String(role || "").toLowerCase() === "admin" || Boolean(isAdminOverride),
+		});
 
 		res.json({
 			success: true,
@@ -183,7 +192,7 @@ learningRoutes.get("/user/progress/modules", async (req, res) => {
 		const { ModuleProgress } = await import("../models/ModuleProgress.js");
 
 		const modules = await ModuleProgress.find({ userId })
-			.populate("moduleId", "title icon category")
+			.populate("moduleId", "title icon category thumbnailUrl")
 			.sort({ lastAccessedAt: -1 })
 			.lean();
 

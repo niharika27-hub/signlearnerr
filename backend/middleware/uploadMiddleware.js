@@ -18,3 +18,11 @@ export const avatarUpload = multer({
     fileSize: 3 * 1024 * 1024,
   },
 });
+
+export const modulePhotoUpload = multer({
+	storage,
+	fileFilter: imageFileFilter,
+	limits: {
+    fileSize: 20 * 1024 * 1024,
+	},
+});

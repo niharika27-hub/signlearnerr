@@ -4,12 +4,17 @@ import passport from "./config/passport.js";
 import cors from "cors";
 import express from "express";
 import cookieParser from "cookie-parser";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import authRoutes from "./routes/authRoutes.js";
 import learningRoutes from "./routes/learningRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import mongoose from "mongoose";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const allowedOrigins = new Set(
@@ -68,6 +73,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.set("trust proxy", 1);
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 app.use(session({
 	name: "signlearn.sid",
 	secret: process.env.SESSION_SECRET || "your-secret-key",
