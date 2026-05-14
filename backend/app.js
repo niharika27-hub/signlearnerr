@@ -1,5 +1,6 @@
 import "dotenv/config";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import passport from "./config/passport.js";
 import cors from "cors";
 import express from "express";
@@ -74,11 +75,19 @@ app.use(express.json());
 app.use(cookieParser());
 app.set("trust proxy", 1);
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
+
+const sessionStore = new MongoStore({
+	mongoUrl: process.env.MONGODB_URI || "mongodb://localhost:27017/signlearn",
+	touchAfter: 24 * 3600,
+	ttl: 24 * 60 * 60,
+});
+
 app.use(session({
 	name: "signlearn.sid",
 	secret: process.env.SESSION_SECRET || "your-secret-key",
 	resave: false,
 	saveUninitialized: false,
+	store: sessionStore,
 	cookie: {
 		secure: process.env.NODE_ENV === "production",
 		httpOnly: true,
