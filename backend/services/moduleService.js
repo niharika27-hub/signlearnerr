@@ -325,11 +325,11 @@ export async function updateUserProgress(userId, options = {}) {
 		});
 
 		// Resolve all modules visible to this user so overall progress is calculated against full scope.
+		const canonicalUserId = user?.id ? String(user.id) : String(userId);
 		let availableModules = [];
 		if (includeAllModules) {
 			availableModules = await getModulesForUser(canonicalUserId, user?.roleCategory, { includeAllModules: true });
 		} else if (user?.roleCategory) {
-			const canonicalUserId = user?.id ? String(user.id) : String(userId);
 			availableModules = await getModulesForUser(canonicalUserId, user.roleCategory);
 		}
 
