@@ -204,26 +204,47 @@ quizRoutes.get("/cloudinary/images", authMiddleware, requireQuizManager, async (
 		const folder = String(req.query.folder || "signlearnerr/alphabets").trim() || "signlearnerr/alphabets";
 		const maxResults = Math.max(1, Math.min(Number(req.query.limit) || 50, 100));
 
-		const response = await cloudinary.api.resources({
-			resource_type: "image",
-			type: "upload",
-			prefix: folder,
-			max_results: maxResults,
-			direction: "asc",
-		});
+		let resources = [];
 
-		const images = Array.isArray(response?.resources)
-			? response.resources.map((item) => ({
-				publicId: item.public_id,
-				secureUrl: item.secure_url,
-				url: item.url,
-				folder,
-				format: item.format,
-				width: item.width,
-				height: item.height,
-				originalFilename: item.original_filename,
-			}))
-			: [];
+		// Cloudinary Media Library folders can be backed by `asset_folder` (dynamic folders),
+		// which may not match the public_id prefix. Search by asset_folder first.
+		try {
+			const safeFolder = folder.replace(/"/g, '\\"');
+			const searchExpression = `resource_type:image AND asset_folder="${safeFolder}"`;
+			const searchResponse = await cloudinary.search
+				.expression(searchExpression)
+				.sort_by("created_at", "desc")
+				.max_results(maxResults)
+				.execute();
+
+			resources = Array.isArray(searchResponse?.resources) ? searchResponse.resources : [];
+		} catch (searchError) {
+			console.warn("Cloudinary asset_folder search failed, falling back to prefix lookup:", searchError?.message || searchError);
+		}
+
+		if (resources.length === 0) {
+			const prefix = folder.endsWith("/") ? folder : `${folder}/`;
+			const fallbackResponse = await cloudinary.api.resources({
+				resource_type: "image",
+				type: "upload",
+				prefix,
+				max_results: maxResults,
+				direction: "asc",
+			});
+
+			resources = Array.isArray(fallbackResponse?.resources) ? fallbackResponse.resources : [];
+		}
+
+		const images = resources.map((item) => ({
+			publicId: item.public_id,
+			secureUrl: item.secure_url,
+			url: item.url,
+			folder,
+			format: item.format,
+			width: item.width,
+			height: item.height,
+			originalFilename: item.original_filename,
+		}));
 
 		return res.json({
 			success: true,
