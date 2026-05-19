@@ -352,9 +352,7 @@ function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRef
 
 			{previewUrl ? (
 				<div className="mt-3 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-					<img src={previewUrl} alt={`${moduleItem.title} preview`} className="h-36 w-full object-cover" />
-				</div>
-			) : null}
+				<img src={previewUrl} alt={`${moduleItem.title} preview`} className="h-24 w-full object-cover" />
 
 			<label className="mt-3 block text-sm font-semibold text-slate-700">
 				Description
