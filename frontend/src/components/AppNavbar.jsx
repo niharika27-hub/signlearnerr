@@ -11,8 +11,6 @@ const navItems = [
   { label: "Practice", to: "/practice" },
   { label: "Quiz", to: "/quiz" },
   { label: "Progress", to: "/progress" },
-  // Add a visible admin link so the admin modules page can be reached from the navbar
-  { label: "Admin", to: "/admin/modules" },
 ];
 
 const authItems = [
