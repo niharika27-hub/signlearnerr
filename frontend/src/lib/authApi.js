@@ -435,3 +435,13 @@ export async function sendFeedback(payload) {
 	return response.data;
 }
 
+// Badges / Achievements
+export async function getUserBadges() {
+	const response = await apiClient.get("/badges/my-badges");
+	return response.data;
+}
+
+export async function getBadgeStats() {
+	const response = await apiClient.get("/badges/stats");
+	return response.data;
+}

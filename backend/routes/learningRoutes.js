@@ -6,6 +6,7 @@ import {
 	completeLesson,
 	updateUserProgress,
 } from "../services/moduleService.js";
+import { checkAndAwardBadges } from "../services/badgeService.js";
 import mongoose from "mongoose";
 
 const learningRoutes = Router();
@@ -113,9 +114,13 @@ learningRoutes.post("/lessons/:lessonId/complete", async (req, res) => {
 
 		const progress = await completeLesson(userId, lessonId, score);
 
+		// Check and award badges after lesson completion
+		const newBadges = await checkAndAwardBadges(userId);
+
 		res.json({
 			success: true,
 			data: progress,
+			newBadges: newBadges,
 		});
 	} catch (error) {
 		console.error("Error completing lesson:", error);

@@ -13,6 +13,7 @@ import PracticePage from "@/pages/PracticePage";
 import ProgressPage from "@/pages/ProgressPage";
 import QuizPage from "@/pages/QuizPage";
 import ProfilePage from "@/pages/ProfilePage";
+import BadgesPage from "@/pages/BadgesPage";
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/pages/ResetPasswordPage";
 import SignUpPage from "@/pages/SignUpPage";
@@ -26,8 +27,8 @@ function App() {
   useLenisSmoothScroll(pathname);
 
   return (
-    <main className="relative overflow-hidden text-slate-900">
-      <div className="app-atmosphere" />
+    <main className="relative overflow-hidden text-slate-900 dark:text-slate-100">
+      <div className="app-atmosphere dark:bg-slate-950" />
       <SignLanguageBackground />
       <div className="ambient-fill" />
       <div className="mesh-lines" />
@@ -82,6 +83,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/badges"
+            element={
+              <ProtectedRoute>
+                <BadgesPage />
               </ProtectedRoute>
             }
           />

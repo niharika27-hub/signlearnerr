@@ -1,9 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, LogOut, ChevronDown, User, BarChart3, BookOpen } from "lucide-react";
+import { Menu, X, LogOut, ChevronDown, User, BarChart3, BookOpen, Moon, Sun, Award } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import { getStoredProfile } from "@/lib/profileStorage";
+import { useDarkMode } from "@/hooks/useDarkMode";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -21,14 +22,15 @@ const authItems = [
 function linkClass({ isActive }) {
   return `rounded-xl px-4 py-2 text-sm font-semibold tracking-wide transition ${
     isActive
-      ? "bg-indigo-100 text-indigo-900"
-      : "text-slate-600 hover:bg-white/75 hover:text-slate-900"
+      ? "bg-indigo-100 text-indigo-900 dark:bg-indigo-900/40 dark:text-indigo-300"
+      : "text-slate-600 hover:bg-white/75 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/75 dark:hover:text-slate-100"
   }`;
 }
 
 function AppNavbar() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { isDark, toggle: toggleDarkMode } = useDarkMode();
   const [isOpen, setIsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileUserMenuOpen, setIsMobileUserMenuOpen] = useState(false);
@@ -61,6 +63,7 @@ function AppNavbar() {
   const userMenuItems = [
     { label: "Profile", to: "/profile", icon: User },
     { label: "Progress", to: "/progress", icon: BarChart3 },
+    { label: "Badges", to: "/badges", icon: Award },
     ...(isAdmin ? [{ label: "Admin Panel", to: "/admin/modules", icon: BookOpen }] : []),
     ...(isTeacher ? [{ label: "Teacher Panel", to: "/teacher/lessons", icon: BookOpen }] : []),
   ];
@@ -103,8 +106,8 @@ function AppNavbar() {
 
   return (
     <header className="pointer-events-none fixed top-0 right-0 left-0 z-50 p-4">
-      <nav className="pointer-events-auto mx-auto flex w-full max-w-6xl items-center justify-between rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3 shadow-soft backdrop-blur-xl">
-        <NavLink to="/" className="font-display text-lg font-semibold text-slate-900">
+      <nav className="pointer-events-auto mx-auto flex w-full max-w-6xl items-center justify-between rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3 shadow-soft backdrop-blur-xl dark:border-slate-700/70 dark:bg-slate-900/70">
+        <NavLink to="/" className="font-display text-lg font-semibold text-slate-900 dark:text-white">
           SignLearn AI
         </NavLink>
 
@@ -117,6 +120,14 @@ function AppNavbar() {
             ))}
           </div>
           <div className="ml-2 flex items-center gap-2 border-l border-slate-200 pl-3">
+            <button
+              type="button"
+              onClick={toggleDarkMode}
+              className="inline-flex items-center justify-center rounded-xl border border-slate-200/80 bg-white/75 p-2 text-slate-600 transition hover:bg-white hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/75 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+              aria-label="Toggle dark mode"
+            >
+              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
             {activeUser ? (
               <div className="relative" ref={userMenuRef}>
                 <button
