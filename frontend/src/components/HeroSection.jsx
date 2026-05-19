@@ -46,7 +46,7 @@ function HeroSection() {
   return (
     <section
       data-scene="Opening Hero"
-      className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-24"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-8"
     >
       <motion.video
         autoPlay

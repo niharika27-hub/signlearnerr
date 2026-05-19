@@ -6,7 +6,7 @@ function TransformationSection() {
   return (
     <section
       data-scene="Transformation"
-      className="relative overflow-hidden px-6 py-24 sm:py-32"
+      className="relative overflow-hidden px-6 py-8 sm:py-12"
     >
       <div className="mx-auto max-w-6xl">
         <StickySectionLabel label="Transformation" align="right" />
@@ -44,7 +44,7 @@ function TransformationSection() {
           transition={{ duration: 0.7, delay: 0.2 }}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-cyan-300/30 via-violet-200/20 to-emerald-300/30" />
-          <div className="relative flex aspect-video items-center justify-center rounded-2xl bg-slate-100/70">
+          <div className="relative flex h-56 sm:h-72 items-center justify-center rounded-2xl bg-slate-100/70">
             <motion.video
               autoPlay
               muted

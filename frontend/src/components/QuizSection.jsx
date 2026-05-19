@@ -23,7 +23,7 @@ const quizModes = [
 
 function QuizSection() {
   return (
-    <section data-scene="Quiz Section" className="px-6 py-20">
+    <section data-scene="Quiz Section" className="px-6 py-8">
       <div className="mx-auto max-w-6xl">
         <StickySectionLabel label="Quiz Section" />
         <motion.div

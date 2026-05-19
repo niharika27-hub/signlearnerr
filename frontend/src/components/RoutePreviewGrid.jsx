@@ -36,7 +36,7 @@ const blocks = [
 
 function RoutePreviewGrid() {
   return (
-    <section data-scene="Experience Paths" className="px-6 py-20">
+    <section data-scene="Experience Paths" className="px-6 py-8">
       <div className="mx-auto max-w-6xl">
         <StickySectionLabel label="Experience Paths" />
         <div className="mb-8">

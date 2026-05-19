@@ -46,7 +46,7 @@ function StorySection() {
   });
 
   return (
-    <section ref={sectionRef} data-scene="Struggle Story" className="relative h-[190vh]">
+    <section ref={sectionRef} data-scene="Struggle Story" className="relative h-[120vh]">
       <motion.div
         style={{ y: bgY, scale: bgScale }}
         className="absolute inset-0 -z-0 bg-[radial-gradient(circle_at_20%_30%,rgba(64,179,255,0.24),transparent_35%),radial-gradient(circle_at_80%_50%,rgba(115,92,255,0.2),transparent_38%),linear-gradient(to_bottom,#f7fbff,#ecf5ff,#e9f2ff)]"
