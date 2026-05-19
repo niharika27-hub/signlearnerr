@@ -8,6 +8,7 @@ import {
 } from "@/lib/authApi";
 import { uploadFileToCloudinary } from "@/lib/cloudinaryUpload";
 import { useAuth } from "@/lib/AuthContext";
+import QuizQuestionManager from "@/components/QuizQuestionManager";
 
 const EMPTY_LESSON_FORM = {
   title: "",
@@ -371,6 +372,12 @@ function ModuleLessonsCard({ moduleItem, onModulesChanged, onUploadLessonAsset }
           {isUploading ? <p className="mt-1 text-xs font-semibold text-indigo-700">Uploading to Cloudinary...</p> : null}
           {uploadError ? <p className="mt-1 text-xs font-semibold text-rose-700">{uploadError}</p> : null}
         </div>
+
+        <QuizQuestionManager
+          lessonId={lesson._id}
+          moduleId={moduleId}
+          lessonTitle={lesson.title}
+        />
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {saved ? <span className="text-xs font-semibold text-emerald-700">{saved}</span> : null}

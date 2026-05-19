@@ -1,4 +1,5 @@
 import axios from "axios";
+import { uploadFileToCloudinary } from "./cloudinaryUpload";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? "https://signlearnerr.onrender.com";
 
@@ -190,21 +191,36 @@ export async function getAdminCloudinaryUploadSignature(payload = {}) {
 }
 
 export async function uploadAdminModulePhoto(file) {
-	const formData = new FormData();
-	formData.append("file", file);
+	const resourceType = "image";
+	const publicId = `admin-module-${Date.now()}-${String(file?.name || "module-photo")
+		.replace(/\.[^/.]+$/, "")
+		.toLowerCase()
+		.replace(/[^a-z0-9-_]+/g, "-")
+		.replace(/^-+|-+$/g, "") || "module-photo"}`;
 
-	const response = await fetch(`${API_BASE_URL}/api/admin/modules/upload-photo`, {
-		method: "POST",
-		body: formData,
-		credentials: "include",
+	const signatureResponse = await getAdminCloudinaryUploadSignature({
+		folder: "signlearn/modules",
+		publicId,
+		resourceType,
 	});
 
-	const payload = await response.json().catch(() => ({}));
-	if (!response.ok) {
-		throw new Error(payload?.message || payload?.error || "Module photo upload failed.");
+	if (!signatureResponse?.success || !signatureResponse?.data) {
+		throw new Error(signatureResponse?.message || "Cloudinary signature request failed.");
 	}
 
-	return payload;
+	const uploadResult = await uploadFileToCloudinary(file, signatureResponse.data);
+	if (!uploadResult?.secureUrl) {
+		throw new Error("Cloudinary upload did not return a secure URL.");
+	}
+
+	return {
+		success: true,
+		data: {
+			url: uploadResult.secureUrl,
+			publicId: uploadResult.publicId,
+			resourceType: uploadResult.resourceType,
+		},
+	};
 }
 
 // ============================================================================
@@ -303,6 +319,99 @@ export async function saveQuizAttempt(payload) {
 export async function getQuizAttempts(limit = 5) {
 	const safeLimit = Math.max(1, Math.min(Number(limit) || 5, 20));
 	const response = await apiClient.get(`/learning/quiz/attempts?limit=${safeLimit}`);
+	return response.data;
+}
+
+/**
+ * Get all quiz questions for a lesson from database
+ * @param {string} lessonId - MongoDB lesson ID
+ * @returns {Promise} { success: boolean, data: Array<QuizQuestion>, count: number }
+ */
+export async function getQuizQuestionsForLesson(lessonId) {
+	const response = await apiClient.get(`/quiz/lessons/${lessonId}/questions`);
+	return response.data;
+}
+
+/**
+ * Get all quiz questions for a module
+ * @param {string} moduleId - MongoDB module ID
+ * @returns {Promise} { success: boolean, data: Array<QuizQuestion>, count: number }
+ */
+export async function getQuizQuestionsForModule(moduleId) {
+	const response = await apiClient.get(`/quiz/modules/${moduleId}/questions`);
+	return response.data;
+}
+
+/**
+ * Get a specific quiz question by ID
+ * @param {string} questionId - MongoDB question ID
+ * @returns {Promise} { success: boolean, data: QuizQuestion }
+ */
+export async function getQuizQuestion(questionId) {
+	const response = await apiClient.get(`/quiz/questions/${questionId}`);
+	return response.data;
+}
+
+/**
+ * Get quiz questions by type (e.g., "alphabet-recognition")
+ * @param {string} questionType - One of: alphabet-recognition, handshape-to-letter, text-based, image-to-text
+ * @param {number} limit - max questions to fetch
+ * @returns {Promise} { success: boolean, data: Array<QuizQuestion>, count: number }
+ */
+export async function getQuizQuestionsByType(questionType, limit = 10) {
+	const response = await apiClient.get(`/quiz/questions/type/${questionType}?limit=${limit}`);
+	return response.data;
+}
+
+/**
+ * Browse Cloudinary images for quiz authoring
+ * @param {Object} payload
+ * @param {string} payload.folder - Cloudinary folder prefix
+ * @param {number} payload.limit - Max images to return
+ * @returns {Promise} { success: boolean, data: { folder, count, images } }
+ */
+export async function getQuizCloudinaryImages(payload = {}) {
+	const params = new URLSearchParams();
+	if (payload.folder) {
+		params.set("folder", payload.folder);
+	}
+	if (payload.limit) {
+		params.set("limit", String(payload.limit));
+	}
+
+	const queryString = params.toString();
+	const response = await apiClient.get(`/quiz/cloudinary/images${queryString ? `?${queryString}` : ""}`);
+	return response.data;
+}
+
+/**
+ * Create a new quiz question (admin/teacher only)
+ * @param {Object} payload - Question data
+ * @returns {Promise} { success: boolean, data: QuizQuestion }
+ */
+export async function createQuizQuestion(payload) {
+	const response = await apiClient.post(`/quiz/questions`, payload);
+	return response.data;
+}
+
+/**
+ * Update a quiz question (admin/teacher only)
+ * @param {string} questionId - MongoDB question ID
+ * @param {Object} payload - Updated question data
+ * @returns {Promise} { success: boolean, data: QuizQuestion }
+ */
+export async function updateQuizQuestion(questionId, payload) {
+	const response = await apiClient.put(`/quiz/questions/${questionId}`, payload);
+	return response.data;
+}
+
+/**
+ * Delete a quiz question (admin only)
+ * @param {string} questionId - MongoDB question ID
+ * @returns {Promise} { success: boolean }
+ */
+export async function deleteQuizQuestion(questionId) {
+	const response = await apiClient.delete(`/quiz/questions/${questionId}`);
 	return response.data;
 }
 

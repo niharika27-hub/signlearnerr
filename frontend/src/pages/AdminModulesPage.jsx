@@ -14,6 +14,7 @@ import {
 } from "@/lib/authApi";
 import { useAuth } from "@/lib/AuthContext";
 import { uploadFileToCloudinary } from "@/lib/cloudinaryUpload";
+import QuizQuestionManager from "@/components/QuizQuestionManager";
 import {
 	CORE_MODULE_CATEGORIES,
 	formatCategoryLabel,
@@ -497,6 +498,17 @@ function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRef
 					))}
 				</ul>
 
+				<div className="mt-3 space-y-3">
+					{(moduleItem.lessons || []).map((lesson) => (
+						<QuizQuestionManager
+							key={`quiz-${lesson._id}`}
+							lessonId={lesson._id}
+							moduleId={moduleItem._id}
+							lessonTitle={lesson.title}
+						/>
+					))}
+				</div>
+
 				<form onSubmit={handleAddLesson} className="mt-3 grid gap-2 md:grid-cols-6">
 					<input
 						required
@@ -550,6 +562,7 @@ function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRef
 					{isUploading ? <p className="mt-1 text-xs font-semibold text-indigo-700">Uploading to Cloudinary...</p> : null}
 					{uploadError ? <p className="mt-1 text-xs font-semibold text-rose-700">{uploadError}</p> : null}
 				</div>
+
 			</section>
 		</article>
 	);

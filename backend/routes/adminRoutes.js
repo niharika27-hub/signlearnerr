@@ -2,15 +2,11 @@ import { Router } from "express";
 import mongoose from "mongoose";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { adminMiddleware } from "../middleware/adminMiddleware.js";
-import { modulePhotoUpload } from "../middleware/uploadMiddleware.js";
 import { Module } from "../models/Module.js";
 import { Lesson } from "../models/Lesson.js";
 import User from "../models/User.js";
 import { UserModuleAssignment } from "../models/UserModuleAssignment.js";
 import { getModuleThumbnailUrl } from "../utils/moduleThumbnails.js";
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import {
 	buildSignedUploadPayload,
 	isCloudinaryConfigured,
@@ -19,10 +15,6 @@ import {
 const VALID_CATEGORIES = ["alphabet", "vocabulary", "sentences", "conversation"];
 const VALID_ROLE_CATEGORIES = ["learner", "support-circle", "accessibility-needs"];
 const VALID_DIFFICULTIES = ["beginner", "intermediate", "advanced"];
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const MODULE_UPLOAD_DIR = path.join(__dirname, "../public/uploads/modules");
 
 const adminRoutes = Router();
 
@@ -136,56 +128,6 @@ adminRoutes.post("/cloudinary/sign-upload", async (request, response) => {
 			.status(500)
 			.json({ success: false, message: "Failed to sign Cloudinary upload." });
 	}
-});
-
-adminRoutes.post("/modules/upload-photo", (request, response) => {
-	modulePhotoUpload.single("file")(request, response, async (error) => {
-		if (error) {
-			if (error.code === "LIMIT_FILE_SIZE") {
-				return response.status(413).json({
-					success: false,
-					message: "Image is too large. Please upload a file up to 20MB.",
-				});
-			}
-
-			if (error.message === "Only image files are allowed.") {
-				return response.status(400).json({ success: false, message: error.message });
-			}
-
-			console.error("Admin module photo upload multer error:", error);
-			return response.status(400).json({ success: false, message: error.message || "Invalid upload." });
-		}
-
-		try {
-			if (!request.file) {
-				return response.status(400).json({ success: false, message: "No image file uploaded." });
-			}
-
-			await mkdir(MODULE_UPLOAD_DIR, { recursive: true });
-			const extension = path.extname(request.file.originalname || "").toLowerCase() || ".png";
-			const safeBaseName = String(request.file.originalname || "module-photo")
-				.replace(/\.[^/.]+$/, "")
-				.toLowerCase()
-				.replace(/[^a-z0-9-_]+/g, "-")
-				.replace(/^-+|-+$/g, "") || "module-photo";
-			const fileName = `${Date.now()}-${safeBaseName}${extension}`;
-			const filePath = path.join(MODULE_UPLOAD_DIR, fileName);
-
-			await writeFile(filePath, request.file.buffer);
-
-			const baseUrl = `${request.protocol}://${request.get("host")}`;
-			return response.status(201).json({
-				success: true,
-				data: {
-					url: `${baseUrl}/uploads/modules/${fileName}`,
-					fileName,
-				},
-			});
-		} catch (uploadError) {
-			console.error("Admin module photo upload error:", uploadError);
-			return response.status(500).json({ success: false, message: "Failed to upload module photo." });
-		}
-	});
 });
 
 adminRoutes.post("/modules/:moduleId/assignments", async (request, response) => {

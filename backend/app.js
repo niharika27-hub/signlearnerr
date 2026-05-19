@@ -12,6 +12,7 @@ import learningRoutes from "./routes/learningRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import quizRoutes from "./routes/quizRoutes.js";
 import mongoose from "mongoose";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -129,4 +130,5 @@ app.use("/api/learning", learningRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/quiz", quizRoutes);
 export default app;

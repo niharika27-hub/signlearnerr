@@ -4,8 +4,10 @@ import { BookCheck, CheckCircle2, CircleCheckBig, Clock3, Crosshair, Target } fr
 import { useNavigate, useSearchParams } from "react-router-dom";
 import StickySectionLabel from "@/components/StickySectionLabel";
 import { Particles } from "@/components/ui/particles";
+import QuizOptionRenderer from "@/components/QuizOptionRenderer";
 import learningContent from "@/data/learning-content.json";
 import { completeLesson, getApiErrorMessage, getQuizAttempts, saveQuizAttempt } from "@/lib/authApi";
+import { useQuizQuestions } from "@/hooks/useQuizQuestions";
 
 const modes = [
   {
@@ -90,6 +92,29 @@ function normalizeAttempt(input = {}) {
   };
 }
 
+function describeQuizOption(option) {
+  if (typeof option === "string") {
+    return option;
+  }
+
+  if (option && typeof option === "object") {
+    if (typeof option.text === "string" && option.text.trim()) {
+      return option.text.trim();
+    }
+
+    if (typeof option.imageAlt === "string" && option.imageAlt.trim()) {
+      return option.imageAlt.trim();
+    }
+
+    if (typeof option.image === "string" && option.image.trim()) {
+      const segments = option.image.split("/").filter(Boolean);
+      return segments[segments.length - 1] || option.image;
+    }
+  }
+
+  return "Option";
+}
+
 function QuizPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -107,7 +132,16 @@ function QuizPage() {
 
   const questionBank = useMemo(() => toQuestionBank(), []);
 
+  // Load questions from database with fallback to JSON
+  const { questions: dbQuestions, loading: loadingDbQuestions } = useQuizQuestions(lessonId, []);
+
   const scopedQuestionBank = useMemo(() => {
+    const hasDatabaseQuestions = lessonId && Array.isArray(dbQuestions) && dbQuestions.length > 0;
+
+    if (hasDatabaseQuestions) {
+      return dbQuestions;
+    }
+
     if (!lessonTitle) {
       return questionBank;
     }
@@ -118,7 +152,13 @@ function QuizPage() {
     );
 
     return filteredQuestions.length > 0 ? filteredQuestions : questionBank;
-  }, [lessonTitle, questionBank]);
+  }, [lessonId, lessonTitle, dbQuestions, questionBank]);
+
+  useEffect(() => {
+    if (!selectedModeId) {
+      setQuestions(scopedQuestionBank);
+    }
+  }, [scopedQuestionBank, selectedModeId]);
 
   const selectedMode = useMemo(
     () => modes.find((entry) => entry.id === selectedModeId) || null,
@@ -128,6 +168,7 @@ function QuizPage() {
   const answeredCount = Object.keys(answers).length;
   const attemptProgress = questions.length > 0 ? (answeredCount / questions.length) * 100 : 0;
   const unansweredCount = Math.max(questions.length - answeredCount, 0);
+  const isQuestionLoading = Boolean(lessonId) && loadingDbQuestions && scopedQuestionBank.length === 0;
 
   const activeQuestion = questions[currentQuestionIndex] || null;
 
@@ -198,14 +239,16 @@ function QuizPage() {
     const questionReview = questions.map((question, index) => {
       const selectedOptionIndex = Number(answers[index]);
       const isCorrect = selectedOptionIndex === question.correctOptionIndex;
+      const selectedOption = question.options[selectedOptionIndex];
+      const correctOption = question.options[question.correctOptionIndex];
 
       return {
         id: question.id,
         question: question.question,
         selectedOptionIndex,
-        selectedOption: question.options[selectedOptionIndex] || "Not answered",
+        selectedOption: describeQuizOption(selectedOption),
         correctOptionIndex: question.correctOptionIndex,
-        correctOption: question.options[question.correctOptionIndex] || "",
+        correctOption: describeQuizOption(correctOption),
         explanation: question.explanation || "",
         isCorrect,
       };
@@ -312,6 +355,10 @@ function QuizPage() {
             <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">
               Quick mode active: scores are saved as practice attempts. Open a lesson quiz to sync with progress.
             </div>
+          ) : isQuestionLoading ? (
+            <div className="mt-4 rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm font-semibold text-cyan-900">
+              Loading lesson questions from the database...
+            </div>
           ) : null}
         </div>
       </motion.section>
@@ -401,33 +448,34 @@ function QuizPage() {
                 <p className="text-sm font-semibold text-indigo-700">
                   {activeQuestion.moduleTitle} - {activeQuestion.lessonTitle}
                 </p>
+
+                {/* Display question image if available */}
+                {activeQuestion.questionImage && (
+                  <div className="mt-3 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 p-2">
+                    <img
+                      src={activeQuestion.questionImage}
+                      alt={activeQuestion.questionImageAlt || "Question illustration"}
+                      className="w-full max-h-48 object-cover rounded-lg"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+
                 <h3 className="mt-2 text-lg font-semibold text-slate-900">{activeQuestion.question}</h3>
 
-                <div className="mt-4 grid gap-2">
-                  {activeQuestion.options.map((option, optionIndex) => {
-                    const isActive = answers[currentQuestionIndex] === optionIndex;
-                    return (
-                      <button
-                        key={`${activeQuestion.id}-${option}`}
-                        type="button"
-                        onClick={() => {
-                          setAnswers((current) => ({
-                            ...current,
-                            [currentQuestionIndex]: optionIndex,
-                          }));
-                          setFeedbackMessage("");
-                        }}
-                        className={`rounded-xl border px-4 py-3 text-left text-sm font-medium transition ${
-                          isActive
-                            ? "border-indigo-300 bg-indigo-50 text-indigo-900"
-                            : "border-slate-200 bg-white text-slate-700 hover:border-indigo-200"
-                        }`}
-                      >
-                        {option}
-                      </button>
-                    );
-                  })}
-                </div>
+                {/* Use new QuizOptionRenderer that handles both text and image options */}
+                <QuizOptionRenderer
+                  options={activeQuestion.options}
+                  selectedIndex={answers[currentQuestionIndex] ?? -1}
+                  onSelect={(optionIndex) => {
+                    setAnswers((current) => ({
+                      ...current,
+                      [currentQuestionIndex]: optionIndex,
+                    }));
+                    setFeedbackMessage("");
+                  }}
+                  disabled={false}
+                />
 
                 <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
                   <button
