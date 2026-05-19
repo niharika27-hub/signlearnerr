@@ -451,11 +451,11 @@ function QuizPage() {
 
                 {/* Display question image if available */}
                 {activeQuestion.questionImage && (
-                  <div className="mt-3 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 p-2">
+                  <div className="mt-3 flex justify-center rounded-xl overflow-hidden border border-slate-200 bg-slate-50 p-2">
                     <img
                       src={activeQuestion.questionImage}
                       alt={activeQuestion.questionImageAlt || "Question illustration"}
-                      className="w-full max-h-48 object-cover rounded-lg"
+                      className="max-h-40 w-auto max-w-full rounded-lg object-contain"
                       loading="lazy"
                     />
                   </div>

@@ -95,7 +95,7 @@ function ImageOptionGrid({ options, selectedIndex, onSelect, disabled }) {
 						<img
 							src={imageUrl}
 							alt={altText}
-							className="w-full h-24 sm:h-32 object-cover"
+							className="h-20 w-full object-contain bg-white sm:h-24"
 							loading="lazy"
 							onError={(e) => {
 								e.currentTarget.style.display = "none";
