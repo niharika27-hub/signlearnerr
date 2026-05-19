@@ -45,10 +45,11 @@ quizRoutes.get("/lessons/:lessonId/questions", authMiddleware, async (req, res) 
 			.lean();
 
 		if (!questions || questions.length === 0) {
-			return res.status(404).json({
-				success: false,
+			return res.json({
+				success: true,
 				message: "No quiz questions found for this lesson",
 				data: [],
+				count: 0,
 			});
 		}
 

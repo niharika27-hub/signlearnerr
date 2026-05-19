@@ -328,8 +328,21 @@ export async function getQuizAttempts(limit = 5) {
  * @returns {Promise} { success: boolean, data: Array<QuizQuestion>, count: number }
  */
 export async function getQuizQuestionsForLesson(lessonId) {
-	const response = await apiClient.get(`/quiz/lessons/${lessonId}/questions`);
-	return response.data;
+	try {
+		const response = await apiClient.get(`/quiz/lessons/${lessonId}/questions`);
+		return response.data;
+	} catch (error) {
+		if (axios.isAxiosError(error) && error.response?.status === 404) {
+			return {
+				success: true,
+				data: [],
+				count: 0,
+				message: "No quiz questions found for this lesson",
+			};
+		}
+
+		throw error;
+	}
 }
 
 /**
