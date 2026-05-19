@@ -11,6 +11,8 @@ const navItems = [
   { label: "Practice", to: "/practice" },
   { label: "Quiz", to: "/quiz" },
   { label: "Progress", to: "/progress" },
+  // Add a visible admin link so the admin modules page can be reached from the navbar
+  { label: "Admin", to: "/admin/modules" },
 ];
 
 const authItems = [
@@ -56,11 +58,8 @@ function AppNavbar() {
   const roleValue = String(activeUser?.role || "").toLowerCase();
   const isAdmin = roleValue === "admin" || Boolean(activeUser?.isAdminOverride);
   const isTeacher = roleValue === "teacher";
-  const computedNavItems = isAdmin
-    ? [...navItems, { label: "Admin", to: "/admin/modules" }]
-    : isTeacher
-      ? [...navItems, { label: "Teacher", to: "/teacher/lessons" }]
-    : navItems;
+  // Base nav items already include an Admin link; only add the teacher shortcut for teachers.
+  const computedNavItems = isTeacher ? [...navItems, { label: "Teacher", to: "/teacher/lessons" }] : navItems;
   const userMenuItems = [
     { label: "Profile", to: "/profile", icon: User },
     { label: "Progress", to: "/progress", icon: BarChart3 },
