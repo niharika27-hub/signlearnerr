@@ -47,7 +47,10 @@ export default function Badges() {
         setError(null);
       } catch (err) {
         console.error("Error fetching badges:", err);
-        setError("Failed to load badges");
+        // Gracefully handle backend not available yet
+        setBadges([]);
+        setStats(null);
+        setError(null);
       } finally {
         setLoading(false);
       }
@@ -107,27 +110,27 @@ export default function Badges() {
       {/* Badges Grid */}
       {badges.length > 0 ? (
         <div>
-          <h2 className="mb-4 text-lg font-bold text-slate-900 dark:text-slate-100">Your Achievements</h2>
+          <h2 className="mb-4 text-lg font-bold text-slate-900">Your Achievements</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {badges.map((badge) => (
               <div
                 key={badge._id}
-                className="group rounded-2xl border border-slate-200 bg-white/70 p-4 backdrop-blur transition hover:border-indigo-300 hover:bg-indigo-50/50 dark:border-slate-700 dark:bg-slate-800/70 dark:hover:border-indigo-600 dark:hover:bg-slate-700/50"
+                className="group rounded-2xl border border-slate-200 bg-white/70 p-4 backdrop-blur transition hover:border-indigo-300 hover:bg-indigo-50/50"
               >
                 <div className="mb-3 flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-900">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100">
                     <BadgeIcon icon={badge.badgeIcon} />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+                    <h3 className="font-semibold text-slate-900">
                       {badge.badgeName}
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-slate-500">
                       {new Date(badge.earnedAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
-                <p className="text-sm text-slate-600 dark:text-slate-300">
+                <p className="text-sm text-slate-600">
                   {badge.badgeDescription}
                 </p>
               </div>
@@ -135,9 +138,9 @@ export default function Badges() {
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-8 text-center dark:border-slate-700 dark:bg-slate-900/30">
-          <Trophy className="mx-auto mb-3 h-12 w-12 text-slate-300 dark:text-slate-600" />
-          <p className="text-slate-600 dark:text-slate-400">
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-8 text-center">
+          <Trophy className="mx-auto mb-3 h-12 w-12 text-slate-300" />
+          <p className="text-slate-600">
             No badges earned yet. Keep learning to unlock achievements!
           </p>
         </div>

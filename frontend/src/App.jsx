@@ -27,8 +27,8 @@ function App() {
   useLenisSmoothScroll(pathname);
 
   return (
-    <main className="relative overflow-hidden text-slate-900 dark:text-slate-100">
-      <div className="app-atmosphere dark:bg-slate-950" />
+    <main className="relative overflow-hidden text-slate-900">
+      <div className="app-atmosphere" />
       <SignLanguageBackground />
       <div className="ambient-fill" />
       <div className="mesh-lines" />
