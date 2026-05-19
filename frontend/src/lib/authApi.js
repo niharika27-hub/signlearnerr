@@ -199,7 +199,7 @@ export async function uploadAdminModulePhoto(file) {
 		.replace(/^-+|-+$/g, "") || "module-photo"}`;
 
 	const signatureResponse = await getAdminCloudinaryUploadSignature({
-		folder: "signlearn/modules",
+		folder: "signlearnerr/modules",
 		publicId,
 		resourceType,
 	});

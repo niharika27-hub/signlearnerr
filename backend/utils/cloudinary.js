@@ -31,7 +31,7 @@ export function getCloudinaryConfig() {
 		cloudName: process.env.CLOUDINARY_CLOUD_NAME || "",
 		apiKey: process.env.CLOUDINARY_API_KEY || "",
 		apiSecret: process.env.CLOUDINARY_API_SECRET || "",
-		defaultFolder: process.env.CLOUDINARY_UPLOAD_FOLDER || "signlearn",
+		defaultFolder: process.env.CLOUDINARY_UPLOAD_FOLDER || "signlearnerr",
 	};
 }
 
@@ -42,7 +42,7 @@ export function buildSignedUploadPayload(options = {}) {
 	}
 
 	const timestamp = Math.floor(Date.now() / 1000);
-	const folder = String(options.folder || config.defaultFolder || "signlearn").trim();
+	const folder = String(options.folder || config.defaultFolder || "signlearnerr").trim();
 	const publicId = options.publicId ? String(options.publicId).trim() : "";
 	const resourceType = normalizeResourceType(options.resourceType);
 
