@@ -499,13 +499,42 @@ function ModuleCard({ moduleItem, users, onModuleUpdated, onModuleDeleted, onRef
 				</ul>
 
 				<div className="mt-3 space-y-3">
+					{/* Toggleable quiz manager per lesson to make the section visible explicitly */}
 					{(moduleItem.lessons || []).map((lesson) => (
-						<QuizQuestionManager
-							key={`quiz-${lesson._id}`}
-							lessonId={lesson._id}
-							moduleId={moduleItem._id}
-							lessonTitle={lesson.title}
-						/>
+						<div key={`quiz-wrap-${lesson._id}`} className="space-y-2">
+							<div className="flex items-center justify-between">
+								<div className="text-xs text-slate-700">#{lesson.order} {lesson.title}</div>
+								<button
+									type="button"
+									onClick={() => {
+										// toggle a DOM element id to reveal the quiz manager below
+										const el = document.getElementById(`quiz-${lesson._id}`);
+										if (el) {
+											el.style.display = el.style.display === "none" ? "block" : "none";
+										} else {
+											// nothing to toggle yet; create a small anchor for focus
+											const anchor = document.createElement("div");
+											anchor.id = `quiz-${lesson._id}`;
+											anchor.style.display = "block";
+											// insert after this button's parent node
+											const parent = document.querySelector(`#quiz-wrap-${lesson._id}`) || null;
+											if (parent) parent.appendChild(anchor);
+										}
+									}}
+									className="rounded-lg border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-800"
+								>
+									Manage Quiz
+								</button>
+							</div>
+
+							<div id={`quiz-${lesson._id}`} className="mt-2">
+								<QuizQuestionManager
+									lessonId={lesson._id}
+									moduleId={moduleItem._id}
+									lessonTitle={lesson.title}
+								/>
+							</div>
+						</div>
 					))}
 				</div>
 
